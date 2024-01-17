@@ -9,6 +9,21 @@ public class Bit{
     public Bit(boolean value){
         this.value = value;
     }
+    
+    /**
+     * The copy constructor
+     * @param value
+     */
+    public Bit(Bit value){
+        this.value = value.getValue();
+    }
+
+    /**
+     * Default constructor. Sets the value to FALSE.
+     */
+    public Bit(){
+        this.value = false;
+    }
 
     /**
      * Set
