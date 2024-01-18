@@ -10,13 +10,13 @@ public class UnitTest {
         b = new Bit(false);
         Assert.assertFalse(b.getValue());
 
-        // Set 1
+        // Set with value
         b.set(true);
         Assert.assertTrue(b.getValue());
         b.set(false);
         Assert.assertFalse(b.getValue());        
 
-        // Set 2
+        // Set without value.
         b.set();
         Assert.assertTrue(b.getValue());
         b.set();
@@ -69,5 +69,55 @@ public class UnitTest {
         // Not
         Assert.assertTrue(f1.not().getValue());
         Assert.assertFalse(t1.not().getValue());
+    }
+
+    @Test 
+    public void Word_init() throws Exception{
+        // Constructor
+        Word w = new Word();
+
+        // getBit() with all false
+        for(int i=0; i<w.WORD_SIZE; i++)
+            Assert.assertFalse(w.getBit(i).getValue());
+        
+        // setBit() with only true
+        for(int i=0; i<w.WORD_SIZE; i = i+2){
+            w.setBit(i, new Bit(true));
+        }
+
+        // toString()
+        Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", w.toString());
+
+        // copy()
+        Word w2 = new Word();
+        w2.Copy(w);
+        Assert.assertEquals(w.toString(), w2.toString());
+
+        // setBit() with false
+        for(int i=0; i<w.WORD_SIZE; i = i+2)
+            w.setBit(i, new Bit(false));
+        
+        // TODO: set()
+
+        // TODO: getUnsigned()
+
+        // TODO: getSigned()
+
+    }
+
+    @Test
+    public void Word_logic() throws Exception{
+        // TODO: AND 
+
+        // TODO: OR 
+        
+        // TODO: NOT
+        
+        // TODO: XOR
+        
+        // TODO: rightShift
+        
+        // TODO: leftShift
+
     }
 }
