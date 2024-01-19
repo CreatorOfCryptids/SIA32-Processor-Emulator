@@ -1,7 +1,7 @@
 public class Word {
 
     private Bit[] bits = new Bit[32];
-    public final int WORD_SIZE = 32;
+    public static final int WORD_SIZE = 32; // I know this is taboo, but it makes it easier to change later if I want to. Fight me.
 
     /**
      * The default constructor.
@@ -35,6 +35,19 @@ public class Word {
             throw new Exception("The bit " + i + "is out of bounds for size 32");
         
         bits[i].set(value.getValue());
+    }
+
+    /**
+     * EXTRA METHOD: Changes the i'th bit in the word. This time with a boolean instead of a Bit.
+     * @param i
+     * @param value The new value of the i'th bit.
+     * @throws Exception If the inputed number is outside the array bounds.
+     */
+    public void setBit(int i, boolean value)throws Exception{
+        if(i < 0 || i>WORD_SIZE)
+            throw new Exception("The bit " + i + "is out of bounds for size 32");
+        
+        bits[i].set(value);
     }
 
     /**
@@ -120,7 +133,7 @@ public class Word {
     public Word leftShift(int amount) throws Exception{
         Word retWord = new Word();
 
-        for(int i =32; i>amount; i--)
+        for(int i = WORD_SIZE-1; i>amount; i--)
             retWord.setBit(i, bits[i-amount]);
 
         return retWord;
@@ -133,9 +146,11 @@ public class Word {
     public long getUnsigned(){
         long retval = 0;
 
-        for(int i=0; i<WORD_SIZE; i++)
+        for(int i=WORD_SIZE-1; i>=0; i--){
+            retval *= 2;
             if(bits[i].getValue())
-                retval += Math.pow(2, i);
+                retval++;
+        }
         
         return retval;
     }
@@ -205,7 +220,7 @@ public class Word {
     }
 
     /**
-     * EXTRA FUNCTION Determins if two words are equal.
+     * EXTRA FUNCTION: Determins if two words are equal.
      * @param other The second word to be compared.
      * @return True if they are equal, false if they are not.
      * @throws Exception

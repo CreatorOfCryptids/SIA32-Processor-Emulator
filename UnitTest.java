@@ -75,13 +75,15 @@ public class UnitTest {
     public void Word_init() throws Exception{
         // Constructor
         Word w = new Word();
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", w.toString());
+
 
         // getBit() with all false
-        for(int i=0; i<w.WORD_SIZE; i++)
+        for(int i=0; i<Word.WORD_SIZE; i++)
             Assert.assertFalse(w.getBit(i).getValue());
         
         // setBit() with only true
-        for(int i=0; i<w.WORD_SIZE; i = i+2){
+        for(int i=0; i<Word.WORD_SIZE; i = i+2){
             w.setBit(i, new Bit(true));
         }
 
@@ -94,7 +96,7 @@ public class UnitTest {
         Assert.assertEquals(w.toString(), w2.toString());
 
         // setBit() with false
-        for(int i=0; i<w.WORD_SIZE; i = i+2)
+        for(int i=0; i<Word.WORD_SIZE; i = i+2)
             w.setBit(i, new Bit(false));
         
         // set()
@@ -176,17 +178,74 @@ public class UnitTest {
 
     @Test
     public void Word_logic() throws Exception{
-        // TODO: AND 
 
-        // TODO: OR 
+        Word w1 = new Word();
+        Word w2 = new Word();
+        Word result;
+
+        for(int i = 0; i<Word.WORD_SIZE; i+=2)
+            w1.setBit(i, true);
         
-        // TODO: NOT
+        for(int i = 2; i<Word.WORD_SIZE-1; i+=4){
+            w2.setBit(i, true);
+            w2.setBit(i+1, true);
+        }
+
+        /* For reference:
+         * Assert.assertEquals("F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", w1.toString());
+         * Assert.assertEquals("T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F", w2.toString());
+         */
+
+        // AND 
+        result = w1.and(w2);
+        Assert.assertEquals("F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F", result.toString());
+
+        // OR 
+        result = w1.or(w2);
+        Assert.assertEquals("T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T", result.toString());
         
-        // TODO: XOR
+        // XOR
+        result = w1.xor(w2);
+        Assert.assertEquals("T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T", result.toString());
+
+        // NOT
+        result = w1.not();
+        Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", result.toString());
+
+        result = w2.not();
+        Assert.assertEquals("F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T", result.toString());
         
-        // TODO: rightShift
+        // rightShift
+        result = w1.rightShift(0);
+        Assert.assertEquals("F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", result.toString());
+
+        result = w1.rightShift(1);
+        Assert.assertEquals("F,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", result.toString());
+
+        result = w1.rightShift(2);
+        Assert.assertEquals("F,F,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", result.toString());
+
+        result = w1.rightShift(5);
+        Assert.assertEquals("F,F,F,F,F,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", result.toString());
+
+        result = w1.rightShift(Word.WORD_SIZE);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", result.toString());
         
         // TODO: leftShift
+        result = w1.rightShift(0);
+        Assert.assertEquals("F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", result.toString());
+
+        result = w1.leftShift(1);
+        Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", result.toString());
+
+        result = w1.leftShift(2);
+        Assert.assertEquals("F,F,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", result.toString());
+
+        result = w1.leftShift(5);
+        Assert.assertEquals("F,F,F,F,F,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", result.toString());
+
+        result = w1.leftShift(Word.WORD_SIZE);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", result.toString());
 
     }
 }
