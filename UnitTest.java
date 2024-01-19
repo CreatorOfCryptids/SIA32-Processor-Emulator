@@ -134,7 +134,7 @@ public class UnitTest {
 
         w.set(-5);
         Assert.assertEquals("T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,F,T,T", w.toString());
-        Assert.assertEquals(-1, w.getSigned());
+        Assert.assertEquals(-5, w.getSigned());
 
 
         w.set(-16);

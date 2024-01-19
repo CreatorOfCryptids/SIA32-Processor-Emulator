@@ -152,12 +152,15 @@ public class Word {
         if(bits[WORD_SIZE-1].getValue() == true)
             isPositive = false;
         
-        for(int i=WORD_SIZE-2; i>0; i--)
+        for(int i=WORD_SIZE-2; i>=0; i--){
+            retval *= 2;
             if(bits[i].getValue() == isPositive)
-                retval += Math.pow(2, i);
+                retval++;
+        }
+            
         
         if(isPositive == false)
-            retval = (retval * -1);
+            retval = (retval * -1) -1;
 
         return retval;
     }
