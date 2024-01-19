@@ -65,7 +65,7 @@ public class Bit{
     /**
      * Performs the AND logical function on the two bits.
      * @param other The second bit to be compared.
-     * @return A new bit containing the result of the AND function.
+     * @return A new Bit containing the result of the AND function.
      */
     public Bit and(Bit other){
         if(value && other.getValue() )
@@ -77,7 +77,7 @@ public class Bit{
     /**
      * Performs the OR logical function on the two bits.
      * @param other The second bit to be compared
-     * @return A new bit containing the result of the OR function.
+     * @return A new Bit containing the result of the OR function.
      */
     public Bit or(Bit other){
         if(value || other.getValue())
@@ -89,7 +89,7 @@ public class Bit{
     /**
      * Performs the XOR logical function on the two bits.
      * @param other The second bit to be compared
-     * @return A new bit containing the result of the XOR function.
+     * @return A new Bit containing the result of the XOR function.
      */
     public Bit xor(Bit other){
         if((value || other.getValue()) && !(value && other.getValue()))
@@ -99,7 +99,7 @@ public class Bit{
     }
     /**
      * Performs the NOT logical function on the bit.
-     * @return A bit containing the oposite value as the bit.
+     * @return A new Bit containing the oposite value as the bit.
      */
     public Bit not(){
         return new Bit(!value);

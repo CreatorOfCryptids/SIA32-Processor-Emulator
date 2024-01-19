@@ -86,7 +86,7 @@ public class UnitTest {
         }
 
         // toString()
-        Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", w.toString());
+        Assert.assertEquals("F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", w.toString());
 
         // copy()
         Word w2 = new Word();
@@ -97,12 +97,81 @@ public class UnitTest {
         for(int i=0; i<w.WORD_SIZE; i = i+2)
             w.setBit(i, new Bit(false));
         
-        // TODO: set()
+        // set()
+        w.set(0);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", w.toString());
+        Assert.assertEquals(0, w.getUnsigned());
+        Assert.assertEquals(0, w.getSigned());
 
-        // TODO: getUnsigned()
+        w.set(1);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T", w.toString());
+        Assert.assertEquals(1, w.getUnsigned());
+        Assert.assertEquals(1, w.getSigned());
 
-        // TODO: getSigned()
 
+        w.set(5);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,T", w.toString());
+        Assert.assertEquals(5, w.getUnsigned());
+        Assert.assertEquals(5, w.getSigned());
+
+
+        w.set(16);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F", w.toString());
+        Assert.assertEquals(16, w.getUnsigned());
+        Assert.assertEquals(16, w.getSigned());
+
+
+        w.set(44);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,T,T,F,F", w.toString());
+        Assert.assertEquals(44, w.getUnsigned());
+        Assert.assertEquals(44, w.getSigned());
+
+
+        w.set(-1);
+        Assert.assertEquals("T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T", w.toString());
+        Assert.assertEquals(-1, w.getSigned());
+
+
+        w.set(-5);
+        Assert.assertEquals("T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,F,T,T", w.toString());
+        Assert.assertEquals(-1, w.getSigned());
+
+
+        w.set(-16);
+        Assert.assertEquals("T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,F,F,F,F", w.toString());
+        Assert.assertEquals(-16, w.getSigned());
+
+
+        w.set(-44);
+        Assert.assertEquals("T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,F,T,F,T,F,F", w.toString());
+        Assert.assertEquals(-44, w.getSigned());
+
+
+        //00001111011001011100101111111010
+        w.set(258329594);
+        Assert.assertEquals("F,F,F,F,T,T,T,T,F,T,T,F,F,T,F,T,T,T,F,F,T,F,T,T,T,T,T,T,T,F,T,F", w.toString());
+        Assert.assertEquals(258329594, w.getUnsigned());
+        Assert.assertEquals(258329594, w.getSigned());
+
+
+        //01010001100001011110001000001100
+        w.set(1367728652);
+        Assert.assertEquals("F,T,F,T,F,F,F,T,T,F,F,F,F,T,F,T,T,T,T,F,F,F,T,F,F,F,F,F,T,T,F,F", w.toString());
+        Assert.assertEquals(1367728652, w.getUnsigned());
+        Assert.assertEquals(1367728652, w.getSigned());
+
+
+        //-01110111111000100101111000010000
+        w.set(-2011323920);
+        Assert.assertEquals("T,F,F,F,T,F,F,F,F,F,F,T,T,T,F,T,T,F,T,F,F,F,F,T,T,T,T,T,F,F,F,F", w.toString());
+        Assert.assertEquals(-2011323920, w.getSigned());
+
+
+
+        //-00110111110111110111000010000100
+        w.set(-937390212);
+        Assert.assertEquals("T,T,F,F,T,F,F,F,F,F,T,F,F,F,F,F,T,F,F,F,T,T,T,T,F,T,T,T,T,T,F,F", w.toString());
+        Assert.assertEquals(-937390212, w.getSigned());
     }
 
     @Test

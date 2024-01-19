@@ -145,15 +145,26 @@ public class Word {
      * @return An int with the signed value of the Word.
      */
     public int getSigned(){
+
         int retval = 0;
-        //TODO: Which bit stores the difference?\
+        boolean isPositive = true;
+
+        if(bits[WORD_SIZE-1].getValue() == true)
+            isPositive = false;
+        
+        for(int i=WORD_SIZE-2; i>0; i--)
+            if(bits[i].getValue() == isPositive)
+                retval += Math.pow(2, i);
+        
+        if(isPositive == false)
+            retval = (retval * -1);
 
         return retval;
     }
 
     /**
-     * Makes a new Word that is a copy of the input
-     * @param other The Word to be copied
+     * Makes a new Word that is a copy of the input.
+     * @param other The Word to be copied.
      * @throws Exception
      */
     public void Copy(Word other) throws Exception{
@@ -162,17 +173,29 @@ public class Word {
     }
 
     /**
-     * Sets the word to be the binary equivelent of the value
+     * Sets the word to be the binary equivelent of the value.
      * @param value The value to be stored in Binary
      */
     public void set(int value){
-        // TODO: Add negative functinoality.
-        int i = 0;
-        while(value > 0 && i<32){
+        /**
+         * Negative numbers are stored as the NOT of the absolute value plus 1. 
+         * i.e: (`(|negValue|)) + 1
+         * This can be rewriten as (`(|negValue| -1)).
+         */
+
+        boolean isPositive = value>=0;      
+        if(isPositive == false)
+            value = (value * -1) -1;
+
+        for(int i=0; i<WORD_SIZE; i++){
+            /**
+             * Conversion decimal -> binary can be done by finding dec % 2 (1 or 0) and storing 
+             * that as the least significant digit. Then divide the number and repeat
+             */
             if(value % 2 == 1)
-                bits[i++].set(true);    // Postinc to move to the next bit in the sequence
+                bits[i].set(isPositive);   // If the value is negative, this will NOT the input, giving the correct negative number.
             else
-                bits[i++].set(false);
+                bits[i].set(!isPositive);
             
             value /= 2;
         }
@@ -193,13 +216,13 @@ public class Word {
     }
     
     /**
-     * toString().
+     * toString(). Places the most significant bit (bit0) on the right.
      * @return A comma seperated list of the Bits with either T or F.
      */
     public String toString() {
-        String retString = bits[0].toString();
+        String retString = bits[WORD_SIZE-1].toString();
 
-        for(int i = 1; i< WORD_SIZE; i++)
+        for(int i = WORD_SIZE-2; i >= 0; i--)
             retString += ',' + bits[i].toString();
 
         return retString;
