@@ -1,7 +1,7 @@
 public class Word {
-
-    private Bit[] bits = new Bit[32];
+    
     public static final int WORD_SIZE = 32; // I know this is taboo, but it makes it easier to change later if I want to. Fight me.
+    private Bit[] bits = new Bit[WORD_SIZE];
 
     /**
      * The default constructor.
@@ -19,7 +19,7 @@ public class Word {
      */
     public Bit getBit(int i) throws Exception{
         if(i < 0 || i>WORD_SIZE)
-            throw new Exception("The bit " + i + "is out of bounds for size 32");
+            throw new Exception("The bit " + i + "is out of bounds for size " + WORD_SIZE);
  
         return new Bit(bits[i]);
     }  
@@ -32,7 +32,7 @@ public class Word {
      */
     public void setBit(int i, Bit value)throws Exception{
         if(i < 0 || i>WORD_SIZE)
-            throw new Exception("The bit " + i + "is out of bounds for size 32");
+            throw new Exception("The bit " + i + "is out of bounds for size " + WORD_SIZE);
         
         bits[i].set(value.getValue());
     }
@@ -45,7 +45,7 @@ public class Word {
      */
     public void setBit(int i, boolean value)throws Exception{
         if(i < 0 || i>WORD_SIZE)
-            throw new Exception("The bit " + i + "is out of bounds for size 32");
+            throw new Exception("The bit " + i + "is out of bounds for size " + WORD_SIZE);
         
         bits[i].set(value);
     }
@@ -118,8 +118,11 @@ public class Word {
     public Word rightShift(int amount) throws Exception{
         Word retWord = new Word();
 
-        for(int i =0; i<WORD_SIZE-amount; i++)  // subtract amount so the movement doesn't go out of bounds.
-            retWord.setBit(i, bits[i+amount]);
+        for(int i =0; i<WORD_SIZE; i++)  // subtract amount so the movement doesn't go out of bounds.
+            if(i+amount < WORD_SIZE && i+amount >= 0)
+                retWord.setBit(i, bits[i+amount]);
+            else 
+                retWord.setBit(i, new Bit());
 
         return retWord;
     }
@@ -133,8 +136,11 @@ public class Word {
     public Word leftShift(int amount) throws Exception{
         Word retWord = new Word();
 
-        for(int i = WORD_SIZE-1; i>amount; i--)
-            retWord.setBit(i, bits[i-amount]);
+        for(int i =0; i<WORD_SIZE; i++)  // subtract amount so the movement doesn't go out of bounds.
+            if(i-amount < WORD_SIZE && i-amount >= 0)
+                retWord.setBit(i, bits[i-amount]);
+            else 
+                retWord.setBit(i, new Bit());
 
         return retWord;
     }
