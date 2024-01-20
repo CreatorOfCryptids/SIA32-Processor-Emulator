@@ -1,6 +1,6 @@
 public class Word {
     
-    public static final int WORD_SIZE = 32; // I know this is taboo, but it makes it easier to change later if I want to. Fight me.
+    public static final int WORD_SIZE = 32; // I know "static" is taboo, but it makes it easier to change later if I want to. Fight me.
     private Bit[] bits = new Bit[WORD_SIZE];
 
     /**
@@ -20,8 +20,8 @@ public class Word {
     public Bit getBit(int i) throws Exception{
         if(i < 0 || i>WORD_SIZE)
             throw new Exception("The bit " + i + "is out of bounds for size " + WORD_SIZE);
- 
-        return new Bit(bits[i]);
+        else
+            return new Bit(bits[i]);
     }  
 
     /**
@@ -33,8 +33,8 @@ public class Word {
     public void setBit(int i, Bit value)throws Exception{
         if(i < 0 || i>WORD_SIZE)
             throw new Exception("The bit " + i + "is out of bounds for size " + WORD_SIZE);
-        
-        bits[i].set(value.getValue());
+        else
+            bits[i].set(value.getValue());
     }
 
     /**
@@ -46,8 +46,8 @@ public class Word {
     public void setBit(int i, boolean value)throws Exception{
         if(i < 0 || i>WORD_SIZE)
             throw new Exception("The bit " + i + "is out of bounds for size " + WORD_SIZE);
-        
-        bits[i].set(value);
+        else
+            bits[i].set(value);
     }
 
     /**
@@ -150,12 +150,13 @@ public class Word {
      * @return a long with the unsigned binary value of the Word.
      */
     public long getUnsigned(){
+
         long retval = 0;
 
         for(int i=WORD_SIZE-1; i>=0; i--){
-            retval *= 2;
-            if(bits[i].getValue())
-                retval++;
+            retval *= 2;                    // Poor man's leftShifting
+            if(bits[i].getValue())          // Switch bits to match
+                retval++;           
         }
         
         return retval;
@@ -167,6 +168,12 @@ public class Word {
      */
     public int getSigned(){
 
+        /*
+         * Negative numbers are stored as the NOT of the absolute value plus 1. 
+         * i.e: (`(|negValue|)) + 1
+         * This can be rewriten as (`(|negValue| -1)).
+         */
+
         int retval = 0;
         boolean isPositive = true;
 
@@ -174,14 +181,13 @@ public class Word {
             isPositive = false;
         
         for(int i=WORD_SIZE-2; i>=0; i--){
-            retval *= 2;
-            if(bits[i].getValue() == isPositive)
-                retval++;
-        }
-            
+            retval *= 2;                            // Poor man's leftShifting
+            if(bits[i].getValue() == isPositive)    // if it's negative the bits need to be NOTed
+                retval++;                           // Setting the right-most bit to match the stored number
+        }    
         
         if(isPositive == false)
-            retval = (retval * -1) -1;
+            retval = (retval * -1) -1;              // Adjusting the value back to negative.
 
         return retval;
     }
@@ -197,10 +203,11 @@ public class Word {
     }
 
     /**
-     * Sets the word to be the binary equivelent of the value.
+     * Sets the word to be the binary equivelent of the inputted value.
      * @param value The value to be stored in Binary
      */
     public void set(int value){
+
         /**
          * Negative numbers are stored as the NOT of the absolute value plus 1. 
          * i.e: (`(|negValue|)) + 1
@@ -217,11 +224,11 @@ public class Word {
              * that as the least significant digit. Then divide the number and repeat
              */
             if(value % 2 == 1)
-                bits[i].set(isPositive);   // If the value is negative, this will NOT the input, giving the correct negative number.
+                bits[i].set(isPositive);    // Comparing against isPositive will NOT the number when negative.
             else
                 bits[i].set(!isPositive);
             
-            value /= 2;
+            value /= 2;                     // The only rightShifting Java lets us have.
         }
     }
 

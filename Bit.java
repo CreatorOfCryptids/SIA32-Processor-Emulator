@@ -68,10 +68,11 @@ public class Bit{
      * @return A new Bit containing the result of the AND function.
      */
     public Bit and(Bit other){
-        if(value && other.getValue() )
+        return new Bit (value && other.getValue());
+        /*if(value && other.getValue())
             return new Bit(true);
         else
-            return new Bit(false);
+            return new Bit(false);*/
     }
 
     /**
@@ -80,10 +81,11 @@ public class Bit{
      * @return A new Bit containing the result of the OR function.
      */
     public Bit or(Bit other){
-        if(value || other.getValue())
+        return new Bit (value || other.getValue());
+        /*if(value || other.getValue())
             return new Bit(true);
         else
-            return new Bit(false);
+            return new Bit(false);*/
     }
 
     /**
@@ -92,10 +94,11 @@ public class Bit{
      * @return A new Bit containing the result of the XOR function.
      */
     public Bit xor(Bit other){
-        if((value || other.getValue()) && !(value && other.getValue()))
+        return new Bit((value || other.getValue()) && !(value && other.getValue()));
+        /*if(value || other.getValue()) && !(value && other.getValue()))
             return new Bit(true);
         else
-            return new Bit(false);
+            return new Bit(false);*/
     }
     /**
      * Performs the NOT logical function on the bit.
@@ -103,6 +106,10 @@ public class Bit{
      */
     public Bit not(){
         return new Bit(!value);
+        /*if(value)
+            return new Bit(false);
+        else
+            return new Bit(true);*/
     }
 
     /**
