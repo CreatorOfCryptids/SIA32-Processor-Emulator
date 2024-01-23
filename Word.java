@@ -197,7 +197,7 @@ public class Word {
      * @param other The Word to be copied.
      * @throws Exception
      */
-    public void Copy(Word other) throws Exception{
+    public void copy(Word other) throws Exception{
         for(int i =0; i<WORD_SIZE; i++)
             bits[i].set(other.getBit(i).getValue());
     }
@@ -258,4 +258,20 @@ public class Word {
 
         return retString;
     }
+
+    /*public String TESTtoString(){
+        String retString = booleanToString(bits[WORD_SIZE-1].getValue());
+
+        for(int i = WORD_SIZE-2; i >= 0; i--)
+            retString += booleanToString(bits[i].getValue());
+
+        return retString;
+    }
+
+    public String booleanToString(boolean value){
+        if(value)
+            return "1";
+        else
+            return "0";
+    }*/
 }

@@ -1,3 +1,9 @@
+/**
+ * Unit Tests for ICSI404 in Spring 2024.
+ * 
+ * @author Danny Peck (dpeck@albany.edu)
+ */
+
 import org.junit.*;
 
 public class UnitTest {
@@ -92,7 +98,7 @@ public class UnitTest {
 
         // copy()
         Word w2 = new Word();
-        w2.Copy(w);
+        w2.copy(w);
         Assert.assertEquals(w.toString(), w2.toString());
 
         // setBit() with false
