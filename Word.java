@@ -240,7 +240,7 @@ public class Word {
      */
     public boolean equals(Word other) throws Exception{
         for(int i = 1; i< WORD_SIZE; i++)
-            if(bits[i].and(other.getBit(i)).getValue() == false)
+            if(bits[i].getValue() == other.getBit(i).getValue())
                 return false;
         
         return true;
@@ -273,5 +273,6 @@ public class Word {
             return "1";
         else
             return "0";
-    }*/
+    }
+    /**/
 }

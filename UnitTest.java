@@ -288,4 +288,70 @@ public class UnitTest {
         Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", result.toString());
 
     }
+
+    @Test
+    public void ALU_logic() throws Exception{
+
+        ALU alu = new ALU();
+        Bit[] code = new Bit[4];
+
+        for(int i=0; i<4; i++)
+            code[i] = new Bit();
+
+        for(int i = 0; i<Word.WORD_SIZE; i+=2)
+            alu.op1.setBit(i, true);
+        
+        for(int i = 2; i<Word.WORD_SIZE-1; i+=4){
+            alu.op2.setBit(i, true);
+            alu.op2.setBit(i+1, true);
+        }
+        //1000 – and
+        code[0].set();
+
+        alu.doOperation(code);
+        Assert.assertEquals("F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F,F,T,F,F", alu.result.toString());
+
+        //1001 – or
+        code[3].set();
+
+        alu.doOperation(code);
+        Assert.assertEquals("T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T,T,T,F,T", alu.result.toString());
+
+        //1010 – xor
+        code[3].clear();
+        code[2].set();
+
+        alu.doOperation(code);
+        Assert.assertEquals("T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T", alu.result.toString());
+
+        //1011 – not (not “op1”; ignore op2)
+        code[3].set();
+
+        alu.doOperation(code);
+        Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", alu.result.toString());
+
+        //1100 – left shift (“op1” is the value to shift, “op2” is the amount to shift; ignore all but the lowest 5 bits)
+        code[1].set();
+        code[2].clear();
+        code[3].clear();
+
+        alu.doOperation(code);
+
+
+        //1101 – right shift (“op1” is the value to shift, “op2” is the amount to shift; ignore all but the lowest 5 bits)
+
+    }
+
+    @Test
+    public void ALU_Math() throws Exception{
+
+        ALU alu = new ALU();
+        Bit[] code = new Bit[4];
+
+        Assert.assertTrue(false);
+
+        // 1110 – add
+        // 1111 – subtract
+        // 0111 - multiply
+    }
 }
