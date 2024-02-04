@@ -45,6 +45,7 @@ public class ALU {
         }
         else if (code == 14){   // Add
             // TODO
+            add2();
         }
         else if (code == 15){   // Subtract
             // TODO
@@ -74,10 +75,24 @@ public class ALU {
     /**
      * 
      */
-    private Bit add2(Bit b1, Bit b2){
-        Bit carry = new Bit();
+    private void add2() throws Exception{
+        
+        Bit carry = new Bit(false);
 
-        return carry;
+        for(int i = 0; i<Word.WORD_SIZE; i++){
+            Bit a, b, cIn;
+            a = op1.getBit(i);
+            b = op2.getBit(i);
+            cIn = carry;
+
+            // S = A x B x Cin
+            result.setBit(i, (a).xor(b).xor(cIn));
+            // result.setBit(i, ((op1.getBit(i).xor(op2.getBit(i))).xor(carry)));
+
+            // Cout = (A*B) + (Cin * (A x B))
+            carry = ((a.and(b)).or(cIn.and(a.xor(b))));
+            // carry.set((op1.getBit(i).and(op2.getBit(i))).or((op1.getBit(i).xor(op2.getBit(i))).and(carry)).getValue());
+        }
     }
 
     private void add4(){
@@ -90,11 +105,6 @@ public class ALU {
 
     private void multiply(){
 
-    }
-
-    public Bit TESTadd2(Bit b1, Bit b2){
-
-        return add2(b1, b2);
     }
 
     public Word TESTadd4(Word op1, Word op2){

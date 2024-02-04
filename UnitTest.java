@@ -347,11 +347,61 @@ public class UnitTest {
 
         ALU alu = new ALU();
         Bit[] code = new Bit[4];
-
-        Assert.assertTrue(false);
+        for(int i =0; i<4; i++) code[i] = new Bit(true);
 
         // 1110 – add
+        code[3].clear();
+        
+            // 0 and 0
+            alu.op1.set(0);
+            alu.op2.set(0);
+            alu.doOperation(code);
+            Assert.assertEquals(0, alu.result.getSigned());
+
+            // Identity
+            alu.op1.set(1);
+            alu.op2.set(0);
+            alu.doOperation(code);
+            Assert.assertEquals(1, alu.result.getSigned());
+
+            alu.op1.set(0);
+            alu.op2.set(1);
+            alu.doOperation(code);
+            Assert.assertEquals(1, alu.result.getSigned());
+
+            // one negative
+            alu.op1.set(-1);
+            alu.op2.set(3);
+            alu.doOperation(code);
+            Assert.assertEquals(2, alu.result.getSigned());
+
+            alu.op1.set(5);
+            alu.op2.set(-10);
+            alu.doOperation(code);
+            Assert.assertEquals(-5, alu.result.getSigned());
+
+            // two negative
+            alu.op1.set(-20);
+            alu.op2.set(-100);
+            alu.doOperation(code);
+            Assert.assertEquals(-120, alu.result.getSigned());
+
+            // Rand ints (Yes, I was too lazy to calculate the expected value, thank you for noticing.)
+            alu.op1.set(-1400289207);
+            alu.op2.set(1623331231);
+            alu.doOperation(code);
+            Assert.assertEquals(1623331231-1400289207, alu.result.getSigned());
+
+            alu.op1.set(1975149539);
+            alu.op2.set(6618590);
+            alu.doOperation(code);
+            Assert.assertEquals(1975149539+6618590, alu.result.getSigned());
+        
         // 1111 – subtract
+        code[3].set();
+
         // 0111 - multiply
+        code[0].clear();
     }
+
 }
