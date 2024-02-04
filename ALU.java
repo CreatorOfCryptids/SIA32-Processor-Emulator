@@ -96,7 +96,12 @@ public class ALU {
     }
 
     private Word add4(Word op1, Word op2, Word op3, Word op4){
+
+        Word retval =  new Word();
+
         
+
+        return retval;
     }
 
     /**
