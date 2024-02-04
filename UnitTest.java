@@ -400,8 +400,78 @@ public class UnitTest {
         // 1111 – subtract
         code[3].set();
 
+            // 0 and 0
+            alu.op1.set(0);
+            alu.op2.set(0);
+            alu.doOperation(code);
+            Assert.assertEquals(0, alu.result.getSigned()); // 1981768129
+
+
+            // Identity
+            alu.op1.set(1);
+            alu.op2.set(0);
+            alu.doOperation(code);
+            Assert.assertEquals(1, alu.result.getSigned()); // 1981768129
+
+            // first 0
+            alu.op1.set(0);
+            alu.op2.set(1);
+            alu.doOperation(code);
+            Assert.assertEquals(-1, alu.result.getSigned());
+
+            // output 0
+            alu.op1.set(1);
+            alu.op2.set(1);
+            alu.doOperation(code);
+            Assert.assertEquals(0, alu.result.getSigned());
+
+            alu.op1.set(31415);
+            alu.op2.set(31415);
+            alu.doOperation(code);
+            Assert.assertEquals(0, alu.result.getSigned());
+
+            // one negative
+            alu.op1.set(-1);
+            alu.op2.set(3);
+            alu.doOperation(code);
+            Assert.assertEquals(-4, alu.result.getSigned());
+
+            alu.op1.set(5);
+            alu.op2.set(-10);
+            alu.doOperation(code);
+            Assert.assertEquals(15, alu.result.getSigned());
+
+            // two negative
+            alu.op1.set(-20);
+            alu.op2.set(-100);
+            alu.doOperation(code);
+            Assert.assertEquals(80, alu.result.getSigned());
+
+            // Rand ints (Yes, I was too lazy to calculate the expected value, thank you for noticing.)
+            alu.op1.set(2027887846);
+            alu.op2.set(573393827);
+            alu.doOperation(code);
+            Assert.assertEquals(2027887846-573393827, alu.result.getSigned());
+
+            alu.op1.set(1975149539);
+            alu.op2.set(6618590);
+            alu.doOperation(code);
+            Assert.assertEquals(1975149539-6618590, alu.result.getSigned());
+
         // 0111 - multiply
         code[0].clear();
+
+        // Add 4
+        Word op1, op2, op3, op4;
+        
+        op1 = new Word();
+        op2 = new Word();
+        op3 = new Word();
+        op4 = new Word();
+
+        alu.TESTadd4(op1, op2, op3, op4);
+
+
     }
 
 }

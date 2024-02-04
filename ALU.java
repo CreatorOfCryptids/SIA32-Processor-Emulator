@@ -44,11 +44,11 @@ public class ALU {
             }
         }
         else if (code == 14){   // Add
-            // TODO
             add2();
         }
         else if (code == 15){   // Subtract
             // TODO
+            subtract();
         }
         else if (code == 7){    // Multiply
             // TODO
@@ -78,42 +78,53 @@ public class ALU {
     private void add2() throws Exception{
         
         Bit carry = new Bit(false);
+        Bit a, b;
 
         for(int i = 0; i<Word.WORD_SIZE; i++){
-            Bit a, b, cIn;
+            
             a = op1.getBit(i);
             b = op2.getBit(i);
-            cIn = carry;
 
             // S = A x B x Cin
-            result.setBit(i, (a).xor(b).xor(cIn));
+            result.setBit(i, (a).xor(b).xor(carry));
             // result.setBit(i, ((op1.getBit(i).xor(op2.getBit(i))).xor(carry)));
 
             // Cout = (A*B) + (Cin * (A x B))
-            carry = ((a.and(b)).or(cIn.and(a.xor(b))));
+            carry = ((a.and(b)).or(carry.and(a.xor(b))));
             // carry.set((op1.getBit(i).and(op2.getBit(i))).or((op1.getBit(i).xor(op2.getBit(i))).and(carry)).getValue());
         }
     }
 
-    private void add4(){
-
+    private Word add4(Word op1, Word op2, Word op3, Word op4){
+        
     }
 
-    private void subtract(){
+    /**
+     * Uses the formula for boolean subtraction found at https://www.101computing.net/binary-subtraction-using-logic-gates/ to subtract op1 and op2.
+     * @throws Exception
+     */
+    private void subtract() throws Exception{
+        Bit borrow = new Bit(false);
+        Bit a, b;
 
+        for(int i = 0; i<Word.WORD_SIZE; i++){
+            a = op1.getBit(i);
+            b = op2.getBit(i);
+
+            // S = A x B x Bin
+            result.setBit(i, a.xor(b).xor(borrow));
+
+            // Bout = (A` * B) + ((AxB) * Bin)
+            borrow = ((a.not()).and(b)).or(((a.xor(b)).not()).and(borrow));
+        }
     }
 
     private void multiply(){
 
     }
 
-    public Word TESTadd4(Word op1, Word op2){
+    public Word TESTadd4(Word op1, Word op2, Word op3, Word op4){
 
-        this.op1 = op1;
-        this.op2 = op2;
-
-        add4();
-
-        return result;
+        return add4(op1, op2, op3, op4);
     }
 }
