@@ -404,14 +404,13 @@ public class UnitTest {
             alu.op1.set(0);
             alu.op2.set(0);
             alu.doOperation(code);
-            Assert.assertEquals(0, alu.result.getSigned()); // 1981768129
-
+            Assert.assertEquals(0, alu.result.getSigned()); 
 
             // Identity
             alu.op1.set(1);
             alu.op2.set(0);
             alu.doOperation(code);
-            Assert.assertEquals(1, alu.result.getSigned()); // 1981768129
+            Assert.assertEquals(1, alu.result.getSigned()); 
 
             // first 0
             alu.op1.set(0);
@@ -461,17 +460,61 @@ public class UnitTest {
         // 0111 - multiply
         code[0].clear();
 
-        // Add 4
-        Word op1, op2, op3, op4;
-        
-        op1 = new Word();
-        op2 = new Word();
-        op3 = new Word();
-        op4 = new Word();
+            // 0 and 0
+            alu.op1.set(0);
+            alu.op2.set(0);
+            alu.doOperation(code);
+            Assert.assertEquals(0, alu.result.getSigned()); 
 
-        alu.TESTadd4(op1, op2, op3, op4);
+            // Erasure
+            alu.op1.set(1);
+            alu.op2.set(0);
+            alu.doOperation(code);
+            Assert.assertEquals(0, alu.result.getSigned()); 
 
+            alu.op1.set(0);
+            alu.op2.set(1);
+            alu.doOperation(code);
+            Assert.assertEquals(0, alu.result.getSigned());
 
+            // Identity rule
+            alu.op1.set(1);
+            alu.op2.set(31415);
+            alu.doOperation(code);
+            Assert.assertEquals(31415, alu.result.getSigned());
+
+            // Positive
+            alu.op1.set(31415);
+            alu.op2.set(23);
+            alu.doOperation(code);
+            Assert.assertEquals(31415*23, alu.result.getSigned());
+
+            alu.op1.set(-1);
+            alu.op2.set(3);
+            alu.doOperation(code);
+            Assert.assertEquals(-3, alu.result.getSigned());
+
+            alu.op1.set(5);
+            alu.op2.set(-10);
+            alu.doOperation(code);
+            Assert.assertEquals(-50, alu.result.getSigned());
+
+            // two negative
+            alu.op1.set(-20);
+            alu.op2.set(-100);
+            alu.doOperation(code);
+            Assert.assertEquals(2000, alu.result.getSigned());
+
+            // Rand ints (Yes, I was too lazy to calculate the expected value, thank you for noticing.)
+            alu.op1.set(239780);
+            alu.op2.set(833);
+            alu.doOperation(code);
+            Assert.assertEquals(239780*833, alu.result.getSigned());
+
+            alu.op1.set(64);
+            alu.op2.set(64);
+            alu.doOperation(code);
+            Assert.assertEquals(64*64, alu.result.getSigned());
     }
 
 }
