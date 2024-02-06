@@ -8,7 +8,7 @@ public class ALU {
         result = new Word();
     }
     
-    private enum op{
+    private enum OP{
         AND,        // 1000
         OR,         // 1001
         XOR,        // 1010
@@ -20,7 +20,37 @@ public class ALU {
         MULTIPLY    // 0111
     }
 
+    private OP interpretOperation(Bit[] operation) throws Exception{
 
+        Bit first, second, third, fourth;
+        first = operation[0];
+        second = operation[1];
+        third = operation[2];
+        fourth = operation[3];
+
+
+        if(first.and(second.not()).and(third.not()).and(fourth.not()).getValue())   // 1000
+            return OP.AND;
+        else if (first.and(second.not()).and(third.not()).and(fourth).getValue())   // 1001
+            return OP.OR;
+        else if (first.and(second.not()).and(third).and(fourth.not()).getValue())   // 1010
+            return OP.XOR;
+        else if (first.and(second.not()).and(third).and(fourth).getValue())         // 1011
+            return OP.NOT;
+        else if (first.and(second).and(third.not().and(fourth.not())).getValue())   // 1100
+            return OP.LEFT;
+        else if (first.and(second).and(third.not()).and(fourth).getValue())         // 1101
+            return OP.RIGHT;
+        else if (first.and(second).and(third).and(fourth.not()).getValue())         // 1110
+            return OP.ADD;
+        else if (first.and(second).and(third).and(fourth).getValue())               // 1111
+            return OP.SUBTRACT;
+        else if (first.not().and(second.and(third).and(fourth)).getValue())         // 0111
+            return OP.MULTIPLY;
+        else 
+            throw new Exception("Unexpected code " + operation[0].toString() + operation[1].toString() + operation[2].toString() + operation[3].toString());
+
+    }
 
     /**
      * Performs the operation encoded by the passed Code Operation.
@@ -28,11 +58,58 @@ public class ALU {
      * @throws Exception
      */
     public void doOperation(Bit[] operation) throws Exception{
+        int shift;
 
-        switch(){
-            case
+        switch(interpretOperation(operation)){
+            case AND:
+                result.copy(op1.and(op2));
+                break;
+
+            case OR:
+                result.copy(op1.or(op2));
+                break;
+            
+            case XOR:
+                result.copy(op1.xor(op2));
+                break;
+
+            case NOT:
+                result.copy(op1.not());
+                break;
+
+            case LEFT:
+                result.copy(op1);
+                shift = 1;
+                for(int i = 1; i<5; i++){
+                    result.leftShift(shift);
+                    shift *= 2;
+                }
+                break;
+
+            case RIGHT:
+                result.copy(op1);
+                shift = 1;
+                for(int i = 1; i<5; i++){
+                    result.rightShift(shift);
+                    shift *= 2;
+                }
+                break;
+
+            case ADD:
+                add();
+                break;
+
+            case SUBTRACT:
+                subtract();
+                break;
+
+            case MULTIPLY:
+                multiply();
+                break;
+            
+            default:
+                throw new Exception("Unexpected code " + operation[0].toString() + operation[1].toString() + operation[2].toString() + operation[3].toString());            
         }
-        throw new Exception("Unexpected code " + operation[0].toString() + operation[1].toString() + operation[2].toString() + operation[3].toString());
         
         /*if(operation.length != 4)
             throw new Exception("Wrong number of operation bits");
@@ -170,9 +247,8 @@ public class ALU {
      */
     private void multiply() throws Exception{
 
-        
-
-        /*result = 
+        //* There's got to be a better way.
+        result = 
         add2(
             add4( 
                 add4( 
@@ -226,7 +302,8 @@ public class ALU {
                     op2.getBit(31).getValue() ? op1.leftShift(31) : new Word()
                 )
             )
-        );*/
+        );
+        /**/
     }
 
     /**
