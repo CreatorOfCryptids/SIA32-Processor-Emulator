@@ -20,6 +20,13 @@ public class ALU {
         MULTIPLY    // 0111
     }
 
+    /**
+     * Takes an operation and turns it into an enum for easy switching.
+     * 
+     * @param operation A sequence of four bits that contains the code for the desired operation.
+     * @return An enum that stores which operation was encoded.
+     * @throws Exception Throws an exception if the code does not reference a valid operation.
+     */
     private OP interpretOperation(Bit[] operation) throws Exception{
 
         Bit first, second, third, fourth;
@@ -54,7 +61,8 @@ public class ALU {
 
     /**
      * Performs the operation encoded by the passed Code Operation.
-     * @param operation An array of 4 Bits 
+     * 
+     * @param operation An array of 4 Bits.
      * @throws Exception
      */
     public void doOperation(Bit[] operation) throws Exception{
@@ -80,7 +88,7 @@ public class ALU {
             case LEFT:
                 result.copy(op1);
                 shift = 1;
-                for(int i = 1; i<5; i++){
+                for(int i = 1; i<5; i++){   // Only looks at the first 5 bits. Anything more would clear the word.
                     result.leftShift(shift);
                     shift *= 2;
                 }
@@ -110,68 +118,11 @@ public class ALU {
             default:
                 throw new Exception("Unexpected code " + operation[0].toString() + operation[1].toString() + operation[2].toString() + operation[3].toString());            
         }
-        
-        /*if(operation.length != 4)
-            throw new Exception("Wrong number of operation bits");
-
-        byte code = opCodeToNum(operation);
-        if(code == 8)           // AND
-            result.copy(op1.and(op2));
-        else if (code == 9)     // OR
-            result.copy(op1.or(op2));
-        else if (code == 10)    // XOR
-            result.copy(op1.xor(op2));
-        else if (code == 11)    // NOT            
-            result.copy(op1.not());
-        else if (code == 12){   // LeftShift
-            result.copy(op1);
-            int shift = 1;
-            for(int i = 1; i<5; i++){
-                result.leftShift(shift);
-                shift *= 2;
-            }
-        }
-        else if (code == 13){   // RightShift
-            result.copy(op1);
-            int shift = 1;
-            for(int i = 1; i<5; i++){
-                result.rightShift(shift);
-                shift *= 2;
-            }
-        }
-        else if (code == 14)    // Add
-            add();
-        else if (code == 15)    // Subtract
-            subtract();
-        else if (code == 7)     // Multiply
-            multiply();
-        else
-            throw new Exception("Unexpected code " + opCodeToNum(operation));
-        */
     }
 
     /**
-     * Turns the CodeOperation into a number for easy switching.
-     * @param operation
-     * @return
-     *
-    public byte opCodeToNum(Bit[] operation){
-        byte retval = 0;
-
-        if(operation[0].getValue())
-            retval+=8;
-        if(operation[1].getValue())
-            retval+=4;
-        if(operation[2].getValue())
-            retval+=2;
-        if(operation[3].getValue())
-            retval+=1;
-
-        return retval;
-    }/**/
-
-    /**
      * Calls add2 to add the two words together.
+     * 
      * @throws Exception
      */
     private void add() throws Exception{
@@ -180,6 +131,7 @@ public class ALU {
 
     /**
      * Adds two words together.
+     * 
      * @param op1 The first word to be added.
      * @param op2 The second word to be added.
      * @return The sum of the two words.
@@ -211,6 +163,7 @@ public class ALU {
 
     /**
      * Uses add2 to add four words together.
+     * 
      * @param op1 The first Word to add.
      * @param op2 The second Word to add.
      * @param op3 The thrid Word to add.
@@ -224,9 +177,11 @@ public class ALU {
 
     /**
      * Uses the formula for boolean subtraction found at https://www.101computing.net/binary-subtraction-using-logic-gates/ to subtract op1 and op2.
+     * 
      * @throws Exception
      */
     private void subtract() throws Exception{
+
         Bit borrow = new Bit(false);
         Bit a, b;
 
@@ -243,11 +198,15 @@ public class ALU {
     }
 
     /**
-     * Multiplys the two words together.
+     * Multiplys the two operands together.
      */
     private void multiply() throws Exception{
 
-        //* There's got to be a better way.
+        /*
+         * Finds the product by adding a series of bit shifts.
+         */
+
+        //* There's got to be a better way, but this works, and I'm lazy.
         result = 
         add2(
             add4( 
