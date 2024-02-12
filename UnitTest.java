@@ -259,7 +259,7 @@ public class UnitTest {
         result = w1.rightShift(-Word.WORD_SIZE);
         Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", result.toString());
 
-        // TODO: leftShift
+        // leftShift
         result = w1.rightShift(0);
         Assert.assertEquals("F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", result.toString());
 
@@ -348,6 +348,94 @@ public class UnitTest {
         ALU alu = new ALU();
         Bit[] code = new Bit[4];
         for(int i =0; i<4; i++) code[i] = new Bit(true);
+
+        // add4()
+            Word op1 = new Word();
+            Word op2 = new Word();
+            Word op3 = new Word();
+            Word op4 = new Word();
+
+            int num1=0, num2=0, num3=0, num4=0;
+
+            // Identity
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            // Increasing by one
+            num1 = 1;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            num2 = 1;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            num3 = 1;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            num4 = 1;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            // More than one
+            num1 = 56;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            num2 = 871;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            num3 = 31415;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            num4 = 1024;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            // Negatives
+            num3 = -314159;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
+
+            num2 = -420;
+            op1.set(num1);
+            op2.set(num2);
+            op3.set(num3);
+            op4.set(num4);
+            Assert.assertEquals(num1+num2+num3+num4, alu.TESTadd4(op1, op2, op3, op4).getSigned());
 
         // 1110 – add
         code[3].clear();
@@ -516,5 +604,4 @@ public class UnitTest {
             alu.doOperation(code);
             Assert.assertEquals(64*64, alu.result.getSigned());
     }
-
 }

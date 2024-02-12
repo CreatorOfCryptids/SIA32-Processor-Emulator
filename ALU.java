@@ -162,17 +162,51 @@ public class ALU {
     }
 
     /**
-     * Uses add2 to add four words together.
+     * Uses bit logic to add 4 words together.
      * 
      * @param op1 The first Word to add.
      * @param op2 The second Word to add.
      * @param op3 The thrid Word to add.
      * @param op4 The fourth Word to add.
-     * @return The sum of the four numbers.
+     * @return A new word containtin the sum of the four numbers.
      * @throws Exception
      */
     private Word add4(Word op1, Word op2, Word op3, Word op4) throws Exception{
-        return add2(add2(op1, op2), add2(op3, op4));
+
+        Word sum = new Word();
+        Word carry = new Word();
+        Word temp = new Word();
+        
+
+        for(int i=0; i<Word.WORD_SIZE; i++){
+            // TODO: Add
+            byte bitSum = 0;
+
+            if (op1.getBit(i).getValue() == true)
+                bitSum++;
+            
+            if (op2.getBit(i).getValue() == true)
+                bitSum++;
+
+            if (op3.getBit(i).getValue() == true)
+                bitSum++;
+
+            if (op4.getBit(i).getValue() == true)
+                bitSum++;
+            
+            if (carry.getBit(i).getValue() == true)
+                bitSum++;
+            
+            if (bitSum % 2 == 1)
+                sum.setBit(i, true);
+            
+            temp.set(bitSum/2);
+            temp = temp.leftShift(i+1);
+            
+            carry = add2(carry, temp);
+        }
+
+        return sum;
     }
 
     /**
@@ -266,7 +300,7 @@ public class ALU {
     }
 
     /**
-     * TEST VERSION!!!!! Uses add2 to add four words together.
+     * TEST VERSION!!!!! Uses bit logic to add 4 words together.
      * @param op1 The first Word to add.
      * @param op2 The second Word to add.
      * @param op3 The thrid Word to add.
