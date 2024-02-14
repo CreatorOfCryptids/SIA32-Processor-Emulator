@@ -176,7 +176,6 @@ public class ALU {
         Word sum = new Word();
         Word carry = new Word();
         Word temp = new Word();
-        
 
         for(int i=0; i<Word.WORD_SIZE; i++){
             // TODO: Add
@@ -197,8 +196,14 @@ public class ALU {
             if (carry.getBit(i).getValue() == true)
                 bitSum++;
             
+            // XOR the bits at index i to get the sum.
+            sum.setBit(i, op1.getBit(i).xor(op2.getBit(i)).xor(op3.getBit(i).xor(op4.getBit(i))).xor(carry.getBit(i)));
+
+            /*
+            // Don't need a false case becuase Bits default to false.
             if (bitSum % 2 == 1)
                 sum.setBit(i, true);
+            /**/
             
             temp.set(bitSum/2);
             temp = temp.leftShift(i+1);

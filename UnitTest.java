@@ -604,4 +604,82 @@ public class UnitTest {
             alu.doOperation(code);
             Assert.assertEquals(64*64, alu.result.getSigned());
     }
+
+    @Test
+    public void Memory() throws Exception {
+
+        Word address = new Word();
+        Word writen = new Word();
+
+        // Load
+        String[] data = new String[]{"11111111111111111111111111111111","00000000000000000000000000000000","01010101010101010101010101010101"};
+        MainMemory.load(data);
+
+        address.set(0);
+        Assert.assertEquals("T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T", MainMemory.read(address).toString());
+
+        address.set(1);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", MainMemory.read(address).toString());
+
+        address.set(2);         // input is little endian, output is big endian.
+        Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", MainMemory.read(address).toString());
+
+        // Read
+        address.set(3);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", MainMemory.read(address).toString());
+
+        address.set(1023);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", MainMemory.read(address).toString());
+
+        // Write
+        address.set(5);
+
+        for(int i = 0; i<Word.WORD_SIZE; i+=2)
+            writen.setBit(i, true);
+
+        MainMemory.write(address, writen);
+
+        Assert.assertEquals("F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", MainMemory.read(address).toString());
+
+        address.set(5);
+        for(int i = 0; i<Word.WORD_SIZE; i++){
+            writen.setBit(i, false);
+        }
+        for(int i = 2; i<Word.WORD_SIZE-1; i+=4){
+            writen.setBit(i, true);
+            writen.setBit(i+1, true);
+        }
+
+        MainMemory.write(address, writen);
+
+        Assert.assertEquals("T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F,T,T,F,F", MainMemory.read(address).toString());
+
+        // Load 2: Electric Boogaloo (seeing if it will overwrite data as expected).
+        address.set(0);
+        for(int i = 0; i<Word.WORD_SIZE; i++){
+            writen.setBit(i, false);
+        }
+        for(int i = 0; i<Word.WORD_SIZE; i+=2)
+            writen.setBit(i, true);
+
+        MainMemory.write(address, writen);
+
+        Assert.assertEquals("F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T", MainMemory.read(address).toString());
+
+        MainMemory.load(data);
+
+        address.set(0);
+        Assert.assertEquals("T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T", MainMemory.read(address).toString());
+
+        address.set(1);
+        Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", MainMemory.read(address).toString());
+
+        address.set(2);         // input is little endian, output is big endian.
+        Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", MainMemory.read(address).toString());
+    }
+
+    @Test
+    public void CPU_1() throws Exception{
+        // TODO: Next assignment.
+    }
 }

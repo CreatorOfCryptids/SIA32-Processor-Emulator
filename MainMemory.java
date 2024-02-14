@@ -52,7 +52,7 @@ public class MainMemory {
      * 
      * @param data The array of strings containing the data to be loaded.
      */
-    public static void load(String[] data){
+    public static void load(String[] data) throws Exception{
 
         for(int i=0; i<data.length; i++){
             // If not initialized, init.
@@ -61,10 +61,13 @@ public class MainMemory {
             }
 
             // Loop over word to set
-            for(int j = 0; j<Word.WORD_SIZE; i++)
+            for(int j = 0; j<Word.WORD_SIZE; j++){
+
                 // Words are all F by default, so only need to set.
-                if(data[i].charAt(j) == '1')
-                    memory[i].set(j);
+                if(data[i].charAt(j) == '1'){
+                    memory[i].setBit(j, true);
+                }  
+            }
         }
     }
 }

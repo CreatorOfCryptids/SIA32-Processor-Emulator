@@ -259,20 +259,13 @@ public class Word {
         return retString;
     }
 
-    /*public String TESTtoString(){
-        String retString = booleanToString(bits[WORD_SIZE-1].getValue());
+    public void increment(){
 
-        for(int i = WORD_SIZE-2; i >= 0; i--)
-            retString += booleanToString(bits[i].getValue());
+        Bit carry = new Bit(true);
 
-        return retString;
+        for(int i=0; (i<WORD_SIZE) && (carry.getValue() == true); i++){
+            bits[i] = bits[i].xor(carry);
+            carry = bits[i].and(carry);
+        }
     }
-
-    public String booleanToString(boolean value){
-        if(value)
-            return "1";
-        else
-            return "0";
-    }
-    /**/
 }
