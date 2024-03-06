@@ -287,6 +287,17 @@ public class UnitTest {
         result = w1.leftShift(-Word.WORD_SIZE);
         Assert.assertEquals("F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F", result.toString());
 
+        // Increment
+        w1.set(0);
+
+        w1.increment();
+        Assert.assertEquals(1, w1.getSigned());
+
+        w1.set(-1025);
+        for(int i = -1024; i<1024; i++){
+            w1.increment();
+            Assert.assertEquals(i, w1.getSigned());
+        }
     }
 
     @Test

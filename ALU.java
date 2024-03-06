@@ -1,12 +1,6 @@
 public class ALU {
     
     public Word op1, op2, result;
-
-    ALU() throws Exception{
-        op1 = new Word();
-        op2 = new Word();
-        result = new Word();
-    }
     
     private enum OP{
         AND,        // 1000
@@ -18,6 +12,17 @@ public class ALU {
         ADD,        // 1110
         SUBTRACT,   // 1111
         MULTIPLY    // 0111
+    }
+
+    /**
+     * ALU Constructor.
+     * 
+     * @throws Exception
+     */
+    ALU() throws Exception{
+        op1 = new Word();
+        op2 = new Word();
+        result = new Word();
     }
 
     /**

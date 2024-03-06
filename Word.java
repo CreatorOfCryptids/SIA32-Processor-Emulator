@@ -1,7 +1,7 @@
 public class Word {
     
-    public static final int WORD_SIZE = 32; // I know "static" is taboo, but it makes it easier to change later if I want to. Fight me.
-    private Bit[] bits = new Bit[WORD_SIZE];
+    public static final int WORD_SIZE = 32;     // I know "static" is taboo, but it makes it easier to change later if I want to. Fight me.
+    private Bit[] bits = new Bit[WORD_SIZE];    // Lowest index is the lowest value (Big endian)
 
     /**
      * The default constructor.
@@ -13,6 +13,7 @@ public class Word {
 
     /**
      * Returns the i'th bit in the Word.
+     * 
      * @param i
      * @return The i'th bit in the Word.
      * @throws Exception If the inputed number is outside the array bounds.
@@ -26,6 +27,7 @@ public class Word {
 
     /**
      * Changes the i'th bit in the word.
+     * 
      * @param i
      * @param value The new Value of the i'th bit.
      * @throws Exception If the inputed number is outside the array bounds.
@@ -39,6 +41,7 @@ public class Word {
 
     /**
      * EXTRA METHOD: Changes the i'th bit in the word. This time with a boolean instead of a Bit.
+     * 
      * @param i
      * @param value The new value of the i'th bit.
      * @throws Exception If the inputed number is outside the array bounds.
@@ -52,6 +55,7 @@ public class Word {
 
     /**
      * Performs the AND logical function on two Words.
+     * 
      * @param other The second Word to be compared.
      * @return A new Word containing the result of the AND operation.
      * @throws Exception
@@ -67,6 +71,7 @@ public class Word {
     
     /**
      * Performs the OR logical function on two Words.
+     * 
      * @param other The second Word to be compared.
      * @return A new Word containing the result of the OR operation.
      * @throws Exception
@@ -82,6 +87,7 @@ public class Word {
 
     /**
      * Performs the XOR logical function on two Words.
+     * 
      * @param other The second Word to be compared.
      * @return A new Word containing the result of the XOR operation.
      * @throws Exception
@@ -97,6 +103,7 @@ public class Word {
 
     /**
      * Performs the XOR logical function on the Words.
+     * 
      * @return A new Word containing the result of the NOT operation.
      * @throws Exception
      */
@@ -111,6 +118,7 @@ public class Word {
 
     /**
      * Right shifts the Bits from lowest index to hightest.
+     * 
      * @param amount The distance shifted.
      * @return A new Word right shifted from the original.
      * @throws Exception
@@ -129,6 +137,7 @@ public class Word {
 
     /**
      * Left shifts the Bits from highest index to lowest.
+     * 
      * @param amount The distance shifted.
      * @return A new Word left shifted from the original.
      * @throws Exception
@@ -146,7 +155,8 @@ public class Word {
     }
 
     /**
-     * Returns the Word's value as an unsigned long
+     * Returns the Word's value as an unsigned long.
+     * 
      * @return a long with the unsigned binary value of the Word.
      */
     public long getUnsigned(){
@@ -164,6 +174,7 @@ public class Word {
 
     /**
      * Returns the Word's value as a signed int.
+     * 
      * @return An int with the signed value of the Word.
      */
     public int getSigned(){
@@ -182,9 +193,9 @@ public class Word {
         
         for(int i=WORD_SIZE-2; i>=0; i--){
             retval *= 2;                            // Poor man's leftShifting
-            if(bits[i].getValue() == isPositive)    // if it's negative the bits need to be NOTed
+            if(bits[i].getValue() == isPositive)    // if it's negative the bits need to be NOT-ed
                 retval++;                           // Setting the right-most bit to match the stored number
-        }    
+        }
         
         if(isPositive == false)
             retval = (retval * -1) -1;              // Adjusting the value back to negative.
@@ -194,6 +205,7 @@ public class Word {
 
     /**
      * Makes a new Word that is a copy of the input.
+     * 
      * @param other The Word to be copied.
      * @throws Exception
      */
@@ -204,6 +216,7 @@ public class Word {
 
     /**
      * Sets the word to be the binary equivelent of the inputted value.
+     * 
      * @param value The value to be stored in Binary
      */
     public void set(int value){
@@ -233,7 +246,8 @@ public class Word {
     }
 
     /**
-     * EXTRA FUNCTION: Determins if two words are equal.
+     * EXTRA FUNCTION: Determines if two words are equal.
+     * 
      * @param other The second word to be compared.
      * @return True if they are equal, false if they are not.
      * @throws Exception
@@ -247,7 +261,8 @@ public class Word {
     }
     
     /**
-     * toString(). Places the most significant bit (bit0) on the right.
+     * The toString() method. Places the most significant bit (bit0) on the right (littleendian).
+     * 
      * @return A comma seperated list of the Bits with either T or F.
      */
     public String toString() {
@@ -259,13 +274,18 @@ public class Word {
         return retString;
     }
 
+    /**
+     * Increments the integer value of the word by one.
+     */
     public void increment(){
 
         Bit carry = new Bit(true);
+        Bit original = new Bit();
 
         for(int i=0; (i<WORD_SIZE) && (carry.getValue() == true); i++){
+            original = bits[i];
             bits[i] = bits[i].xor(carry);
-            carry = bits[i].and(carry);
+            carry = original.and(carry);
         }
     }
 }
