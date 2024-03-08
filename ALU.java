@@ -211,7 +211,7 @@ public class ALU {
             /**/
             
             temp.set(bitSum/2);
-            temp = temp.leftShift(i+1);
+            temp = temp.rightShift(i+1);
             
             carry = add2(carry, temp);
         }
@@ -250,59 +250,59 @@ public class ALU {
          * Finds the product by adding a series of bit shifts.
          */
 
-        //* There's got to be a better way, but this works, and I'm lazy.
+        //* There's probably a better way, but this works, and I'm lazy.
         result = 
         add2(
             add4( 
                 add4( 
-                    op2.getBit(0).getValue() ? op1.leftShift(0) : new Word(),
-                    op2.getBit(1).getValue() ? op1.leftShift(1) : new Word(),
-                    op2.getBit(2).getValue() ? op1.leftShift(2) : new Word(),
-                    op2.getBit(3).getValue() ? op1.leftShift(3) : new Word()
+                    op2.getBit(0).getValue() ? op1.rightShift(0) : new Word(),
+                    op2.getBit(1).getValue() ? op1.rightShift(1) : new Word(),
+                    op2.getBit(2).getValue() ? op1.rightShift(2) : new Word(),
+                    op2.getBit(3).getValue() ? op1.rightShift(3) : new Word()
                 ),
                 add4( 
-                    op2.getBit(4).getValue() ? op1.leftShift(4) : new Word(),
-                    op2.getBit(5).getValue() ? op1.leftShift(5) : new Word(),
-                    op2.getBit(6).getValue() ? op1.leftShift(6) : new Word(),
-                    op2.getBit(7).getValue() ? op1.leftShift(7) : new Word()
+                    op2.getBit(4).getValue() ? op1.rightShift(4) : new Word(),
+                    op2.getBit(5).getValue() ? op1.rightShift(5) : new Word(),
+                    op2.getBit(6).getValue() ? op1.rightShift(6) : new Word(),
+                    op2.getBit(7).getValue() ? op1.rightShift(7) : new Word()
                 ),
                 add4( 
-                    op2.getBit(8).getValue() ? op1.leftShift(8) : new Word(),
-                    op2.getBit(9).getValue() ? op1.leftShift(9) : new Word(),
-                    op2.getBit(10).getValue() ? op1.leftShift(10) : new Word(),
-                    op2.getBit(11).getValue() ? op1.leftShift(11) : new Word()
+                    op2.getBit(8).getValue() ? op1.rightShift(8) : new Word(),
+                    op2.getBit(9).getValue() ? op1.rightShift(9) : new Word(),
+                    op2.getBit(10).getValue() ? op1.rightShift(10) : new Word(),
+                    op2.getBit(11).getValue() ? op1.rightShift(11) : new Word()
                 ),
                 add4( 
-                    op2.getBit(12).getValue() ? op1.leftShift(12) : new Word(),
-                    op2.getBit(13).getValue() ? op1.leftShift(13) : new Word(),
-                    op2.getBit(14).getValue() ? op1.leftShift(14) : new Word(),
-                    op2.getBit(15).getValue() ? op1.leftShift(15) : new Word()
+                    op2.getBit(12).getValue() ? op1.rightShift(12) : new Word(),
+                    op2.getBit(13).getValue() ? op1.rightShift(13) : new Word(),
+                    op2.getBit(14).getValue() ? op1.rightShift(14) : new Word(),
+                    op2.getBit(15).getValue() ? op1.rightShift(15) : new Word()
                 )
             ),
             add4( 
                 add4( 
-                    op2.getBit(16).getValue() ? op1.leftShift(16) : new Word(),
-                    op2.getBit(17).getValue() ? op1.leftShift(17) : new Word(),
-                    op2.getBit(18).getValue() ? op1.leftShift(18) : new Word(),
-                    op2.getBit(19).getValue() ? op1.leftShift(19) : new Word()
+                    op2.getBit(16).getValue() ? op1.rightShift(16) : new Word(),
+                    op2.getBit(17).getValue() ? op1.rightShift(17) : new Word(),
+                    op2.getBit(18).getValue() ? op1.rightShift(18) : new Word(),
+                    op2.getBit(19).getValue() ? op1.rightShift(19) : new Word()
                 ),
                 add4( 
-                    op2.getBit(20).getValue() ? op1.leftShift(20) : new Word(),
-                    op2.getBit(21).getValue() ? op1.leftShift(21) : new Word(),
-                    op2.getBit(22).getValue() ? op1.leftShift(22) : new Word(),
-                    op2.getBit(23).getValue() ? op1.leftShift(23) : new Word()
+                    op2.getBit(20).getValue() ? op1.rightShift(20) : new Word(),
+                    op2.getBit(21).getValue() ? op1.rightShift(21) : new Word(),
+                    op2.getBit(22).getValue() ? op1.rightShift(22) : new Word(),
+                    op2.getBit(23).getValue() ? op1.rightShift(23) : new Word()
                 ),
                 add4( 
-                    op2.getBit(24).getValue() ? op1.leftShift(24) : new Word(),
-                    op2.getBit(25).getValue() ? op1.leftShift(25) : new Word(),
-                    op2.getBit(26).getValue() ? op1.leftShift(26) : new Word(),
-                    op2.getBit(27).getValue() ? op1.leftShift(27) : new Word()
+                    op2.getBit(24).getValue() ? op1.rightShift(24) : new Word(),
+                    op2.getBit(25).getValue() ? op1.rightShift(25) : new Word(),
+                    op2.getBit(26).getValue() ? op1.rightShift(26) : new Word(),
+                    op2.getBit(27).getValue() ? op1.rightShift(27) : new Word()
                 ),
                 add4( 
-                    op2.getBit(28).getValue() ? op1.leftShift(28) : new Word(),
-                    op2.getBit(29).getValue() ? op1.leftShift(29) : new Word(),
-                    op2.getBit(30).getValue() ? op1.leftShift(30) : new Word(),
-                    op2.getBit(31).getValue() ? op1.leftShift(31) : new Word()
+                    op2.getBit(28).getValue() ? op1.rightShift(28) : new Word(),
+                    op2.getBit(29).getValue() ? op1.rightShift(29) : new Word(),
+                    op2.getBit(30).getValue() ? op1.rightShift(30) : new Word(),
+                    op2.getBit(31).getValue() ? op1.rightShift(31) : new Word()
                 )
             )
         );

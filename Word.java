@@ -126,9 +126,9 @@ public class Word {
     public Word rightShift(int amount) throws Exception{
         Word retWord = new Word();
 
-        for(int i =0; i<WORD_SIZE; i++)  // subtract amount so the movement doesn't go out of bounds.
-            if(i+amount < WORD_SIZE && i+amount >= 0)
-                retWord.setBit(i, bits[i+amount]);
+        for(int i =0; i<WORD_SIZE; i++)  
+            if(i-amount < WORD_SIZE && i-amount >= 0)   // subtract amount so the movement doesn't go out of bounds.
+                retWord.setBit(i, bits[i-amount]);
             else 
                 retWord.setBit(i, new Bit());
 
@@ -145,9 +145,9 @@ public class Word {
     public Word leftShift(int amount) throws Exception{
         Word retWord = new Word();
 
-        for(int i =0; i<WORD_SIZE; i++)  // subtract amount so the movement doesn't go out of bounds.
-            if(i-amount < WORD_SIZE && i-amount >= 0)
-                retWord.setBit(i, bits[i-amount]);
+        for(int i =0; i<WORD_SIZE; i++)  
+            if(i+amount < WORD_SIZE && i+amount >= 0)   // add the amount so the movement doesn't go out of bounds.
+                retWord.setBit(i, bits[i+amount]);
             else 
                 retWord.setBit(i, new Bit());
 
@@ -201,6 +201,7 @@ public class Word {
             retval = (retval * -1) -1;              // Adjusting the value back to negative.
 
         return retval;
+        /**/
     }
 
     /**
@@ -261,15 +262,16 @@ public class Word {
     }
     
     /**
-     * The toString() method. Places the most significant bit (bit0) on the right (littleendian).
+     * The toString() method. Places the most significant bit (bit0) on the Right (BigEndian).
      * 
      * @return A comma seperated list of the Bits with either T or F.
      */
     public String toString() {
-        String retString = bits[WORD_SIZE-1].toString();
+        String retString = "";
+        for(int i = 0; i < WORD_SIZE - 1; i++)
+            retString += bits[i].toString() + ',';
 
-        for(int i = WORD_SIZE-2; i >= 0; i--)
-            retString += ',' + bits[i].toString();
+        retString += bits[WORD_SIZE-1].toString();
 
         return retString;
     }
