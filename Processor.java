@@ -16,7 +16,7 @@ public class Processor {
     private Bit[] function;     // function code            specified in bits 18-21
     private Word rd;            // The destination register specified in bits 22-26
     private OpCode op;          // The current opCode,      specified in bits 27-31
-    
+
     private ALU alu;            // Reference to the ALU.
 
     private enum OpCode{
@@ -99,10 +99,10 @@ public class Processor {
             imm.copy(CI.rightShift(26).leftShift(26));
 
             // get RS1
-            rs1 = registers[CI.rightShift(19).leftShift(26).getSigned()];
+            rs1.copy(registers[CI.rightShift(19).leftShift(26).getSigned()]);
 
             // get RS2
-            rs2 = registers[CI.rightShift(14).leftShift(26).getSigned()];
+            rs2.copy(registers[CI.rightShift(14).leftShift(26).getSigned()]);
 
             // get function
             function[0] = CI.getBit(23);
@@ -111,7 +111,7 @@ public class Processor {
             function[3] = CI.getBit(26);
 
             // get RD
-            rd = registers[CI.rightShift(5).leftShift(26).getSigned()];
+            rd.copy(registers[CI.rightShift(5).leftShift(26).getSigned()]);
         }
         // 10 - 2 Register instruction
         else if (CI.getBit(30).and(CI.getBit(31).not()).getValue()){
@@ -144,7 +144,7 @@ public class Processor {
             imm.copy(CI.rightShift(19).leftShift(19));
 
             // get rs2
-            rs2 = registers[CI.rightShift(14).leftShift(26).getSigned()];
+            rs2.copy(registers[CI.rightShift(14).leftShift(26).getSigned()]);
 
             // get function
             function[0] = CI.getBit(23);
@@ -153,7 +153,7 @@ public class Processor {
             function[3] = CI.getBit(26);
 
             // get rd
-            rd = registers[CI.rightShift(5).leftShift(26).getSigned()];
+            rd.copy(registers[CI.rightShift(5).leftShift(26).getSigned()]);
         }
         // 01 - 1 Register instruction (Dest Only)
         else if ((CI.getBit(30).not()).and(CI.getBit(31)).getValue()){
@@ -193,7 +193,7 @@ public class Processor {
             function[3] = CI.getBit(26);
 
             // Rd
-            rd = registers[CI.rightShift(5).leftShift(26).getSigned()];
+            rd.copy(registers[CI.rightShift(5).leftShift(26).getSigned()]);
         }
         // 00 - No Register
         else{
@@ -230,45 +230,44 @@ public class Processor {
 
     private void execute() throws Exception{
         switch (op){
-            case BRANCH0:   // pc <- reg[1] BOP rd ? pc + imm : pc
+            case BRANCH0:   // pc <- RS2 BOP rd ? pc + imm : pc
                 break;
-            case BRANCH1:   // pc <- reg[0] BOP res[1] ? pc + imm : pc
+            case BRANCH1:   // pc <- RS1 BOP RS2 ? pc + imm : pc
                 break;
             case BRANCH2:   // JUMP: pc <- cp + imm
                 break;
             case BRANCH3:   // JUMP: pc <- imm
                 break;
-            case CALL0:     //
+            case CALL0:     // push pc; pc <- imm
                 break;
-            case CALL1:     //
+            case CALL1:     // push pc; pc <- RD + imm
                 break;
-            case CALL2:     //
+            case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + im : pc
                 break;
-            case CALL3:     //
+            case CALL3:     // pc <- RS1 BOP RS2 ? push pc; RD + imm : pc
                 break;
-            case LOAD0:     //
+            case LOAD0:     // Return (pc <- pop)
                 break;
-            case LOAD1:     //
+            case LOAD1:     // RD <- mem[RD + imm]
                 break;
-            case LOAD2:     //
+            case LOAD2:     // RD <- mem[RS2 + imm]
                 break;
-            case LOAD3:     //
+            case LOAD3:     // RD <- mem[RS1 +RS2]
                 break;
             case MATH0:     // HALT
+
                 haulted.set();
                 break;
+
             case MATH1:     // COPY: rd <- imm
-                rd.copy(imm);
                 break;
+
             case MATH2:     // rd <- rd MOP reg[1]
 
                 alu.op1 = rd;
                 alu.op2 = rs2;
 
                 alu.doOperation(function);
-
-                rd.copy(alu.result);
-
                 break;
 
             case MATH3:     // rd <- rs1 MOP rs2
@@ -277,42 +276,118 @@ public class Processor {
                 alu.op2 = rs2;
 
                 alu.doOperation(function);
-
-                rd.copy(alu.result);
-
                 break;
 
-            case POPI0:     // UNUSED
+            case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
                 break;
-            case POPI1:     //
+            case POPI1:     // POP: RD <- mem[sp++]
                 break;
-            case POPI2:     //
+            case POPI2:     // Peek: RD <- mem[sp - (RS2 + imm)]
                 break;
-            case POPI3:     //
+            case POPI3:     // PEEK RD <- mem[sp - (RS1 + RS2)]
                 break;
-            case PUSH0:     //
+            case PUSH0:     // UNUSED
                 break;
-            case PUSH1:     //
+            case PUSH1:     // mem[--sp] <- RD MOP imm
                 break;
-            case PUSH2:     //
+            case PUSH2:     // mem[--sp] <- RD MOP RS2
                 break;
-            case PUSH3:     //
+            case PUSH3:     // mem[--sp] <- RS1 MOP RS2
                 break;
             case STORE0:    // UNUSED
                 break;
-            case STORE1:    //
+            case STORE1:    // mem[RD] <- imm
                 break;
-            case STORE2:    //
+            case STORE2:    // mem[RD + imm] <- RS2
                 break;
-            case STORE3:    //
+            case STORE3:    // mem[RD + RS1] <- RS2
                 break;
             default:        // Something didn't work.
-                break;
-        
+                throw new Exception("Unrecognized OP Code: " + op.toString() + " from code : " + CI.toString());        
         }
     }
 
-    private void store(){
+    private void store() throws Exception{
+        switch (op){
+            case BRANCH0:   // pc <- RS2 BOP rd ? pc + imm : pc
+                break;
+            case BRANCH1:   // pc <- RS1 BOP RS2 ? pc + imm : pc
+                break;
+            case BRANCH2:   // JUMP: pc <- cp + imm
+                break;
+            case BRANCH3:   // JUMP: pc <- imm
+                break;
+            case CALL0:     // push pc; pc <- imm
+                break;
+            case CALL1:     // push pc; pc <- RD + imm
+                break;
+            case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + im : pc
+                break;
+            case CALL3:     // pc <- RS1 BOP RS2 ? push pc; RD + imm : pc
+                break;
+            case LOAD0:     // Return (pc <- pop)
+                break;
+            case LOAD1:     // RD <- mem[RD + imm]
+                break;
+            case LOAD2:     // RD <- mem[RS2 + imm]
+                break;
+            case LOAD3:     // RD <- mem[RS1 +RS2]
+                break;
+            case MATH0:     // HALT (Do Nothing )
+                break;
+            case MATH1:     // COPY: rd <- imm
+                registers[CI.rightShift(5).leftShift(26).getSigned()].copy(imm);
+                break;
 
+            case MATH2:     // rd <- rd MOP reg[1]
+                registers[CI.rightShift(5).leftShift(26).getSigned()].copy(alu.result);
+                break;
+
+            case MATH3:     // rd <- rs1 MOP rs2
+                registers[CI.rightShift(5).leftShift(26).getSigned()].copy(alu.result);
+                break;
+
+            case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
+                break;
+            case POPI1:     // POP: RD <- mem[sp++]
+                break;
+            case POPI2:     // Peek: RD <- mem[sp - (RS2 + imm)]
+                break;
+            case POPI3:     // PEEK RD <- mem[sp - (RS1 + RS2)]
+                break;
+            case PUSH0:     // UNUSED
+                break;
+            case PUSH1:     // mem[--sp] <- RD MOP imm
+                break;
+            case PUSH2:     // mem[--sp] <- RD MOP RS2
+                break;
+            case PUSH3:     // mem[--sp] <- RS1 MOP RS2
+                break;
+            case STORE0:    // UNUSED
+                break;
+            case STORE1:    // mem[RD] <- imm
+                break;
+            case STORE2:    // mem[RD + imm] <- RS2
+                break;
+            case STORE3:    // mem[RD + RS1] <- RS2
+                break;
+            default:        // Something didn't work.
+                throw new Exception("Unrecognized OP Code: " + op.toString() + " from code : " + CI.toString());        
+        }
+    }
+
+    /**
+     * DEBUGGING HELPER!!! Lets me see what's inside.
+     * 
+     * @return A string containing useful debugging info.
+     */
+    public String toString(){
+
+        String retString = "PC: " + PC.getSigned() + " SP: " + SP.getSigned() + " CI: " + CI.toString() + " Haulted: " + haulted.toString() +"\n";
+
+        for(int i = 0; i<registers.length; i++)
+            retString += i + "\t" + registers[i].toString() + "\n";
+
+        return retString;
     }
 }
