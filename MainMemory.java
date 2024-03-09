@@ -62,11 +62,13 @@ public class MainMemory {
 
             // Loop over word to set
             for(int j = 0; j<Word.WORD_SIZE; j++){
-
                 // Words are all F by default, so only need to set.
                 if(data[i].charAt(j) == '1'){
                     memory[i].setBit(j, true);
-                }  
+                }
+                else{
+                    memory[i].setBit(j, false);
+                }
             }
         }
     }

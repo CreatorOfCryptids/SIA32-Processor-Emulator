@@ -12,6 +12,17 @@ public class Word {
     }
 
     /**
+     * DEBUGGING HELPER. 
+     * @param value The value of the new word
+     */
+    public Word(int value){
+        for(int i =0; i<WORD_SIZE; i++)
+            bits[i] = new Bit(false);
+        
+        this.set(value);
+    }
+
+    /**
      * Returns the i'th bit in the Word.
      * 
      * @param i
@@ -289,5 +300,12 @@ public class Word {
             bits[i] = bits[i].xor(carry);
             carry = original.and(carry);
         }
+    }
+
+    /**
+     * Decrements the integer value of the word.
+     */
+    public void decrement(){
+        // TODO: Eventualy.
     }
 }

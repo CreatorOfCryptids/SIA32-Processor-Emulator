@@ -694,6 +694,58 @@ public class UnitTest {
 
     @Test
     public void CPU_1() throws Exception{
-        // TODO: Next assignment.
+        Processor process;
+
+        // Provided test
+        String[] data = new String[]{ //        Immediate         -RD3-   OP-01
+                                      // 0123456789012345678901   23456   78901
+                                        "1010000000000000000000"+"10000"+"00001",           // MATH DestOnly 5, r1
+                                      // Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+                                      // 01234567   89012   34567   8901   23456   78901
+                                        "00000000"+"10000"+"10000"+"1110"+"01000"+"00011",  // MATH ADD R1 R1 R2
+                                      //   Immediate     -RS2-   FUN    -RD3-   OP-10
+                                      // 0123456789012   34567   8901   23456   78901
+                                        "0000000000000"+"01000"+"1110"+"01000"+"00010",     // MATH ADD R2 R2
+                                      // Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+                                      // 01234567   89012   34567   8901   23456   78901
+                                        "00000000"+"10000"+"01000"+"1110"+"11000"+"00011",  // MATH ADD R2 R1 R3
+                                      //          Immediate            OP-00
+                                      // 012345678901234567890123456   78901
+                                        "000000000000000000000000000"+"00000",              // HALT
+                                    };
+        MainMemory.load(data);
+        process = new Processor();
+
+        process.run();
+        Assert.assertEquals(25, process.TESTgetRegister(3).getSigned());
+
+        // Other Math Operations Test:
+        process = new Processor();
+        data = new String[]{  //        Immediate         -RD3-   OP-01
+                              // 0123456789012345678901   23456   78901
+                                "0101100101000000000000"+"00000"+"00001",           // R0 <- 666 // SHOULDN'T WORK!
+                                "0010010110000000000000"+"10000"+"00001",           // R1 <- 420
+                                "1010001000000000000000"+"01000"+"00001",           // R2 <- 69
+                                "1010101100011100100000"+"11000"+"00001",           // R3 <- 80085
+                              // Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+                              // 01234567   89012   34567   8901   23456   78901
+                                "00000000"+"10000"+"01000"+"0111"+"00100"+"00011",  // R4 <- R1 * R2
+                              //   Immediate     -RS2-   FUN    -RD3-   OP-10
+                              // 0123456789012   34567   8901   23456   78901
+                                "0000000000000"+"11000"+"1111"+"00100"+"00010",  // R4 <- R4 - R3
+                              //          Immediate            OP-00
+                              // 012345678901234567890123456   78901
+                                "000000000000000000000000000"+"00000",  // HALT
+                            };
+        
+        MainMemory.load(data);
+        process = new Processor();
+        
+        process.run();
+        Assert.assertEquals(0, process.TESTgetRegister(0).getSigned());
+        Assert.assertEquals(420, process.TESTgetRegister(1).getSigned());
+        Assert.assertEquals(69, process.TESTgetRegister(2).getSigned());
+        Assert.assertEquals(80085, process.TESTgetRegister(3).getSigned());
+        Assert.assertEquals((420*69)-80085, process.TESTgetRegister(4).getSigned());
     }
 }

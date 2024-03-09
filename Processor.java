@@ -1,6 +1,6 @@
 public class Processor {
 
-    private final int REGISTER_COUNT = 31;
+    private final int REGISTER_COUNT = 32;
 
     private Word PC;            // Program Counter.
     private Word SP;            // Stack Pointer.
@@ -29,29 +29,41 @@ public class Processor {
         POPI2,      POPI3,      POPI1,      POPI0,
     }
 
+    /**
+     * Constructor.
+     * 
+     * @throws Exception
+     */
     Processor() throws Exception{
-        PC = new Word();
-        SP = new Word();
-        CI = new Word();
 
+        PC = new Word();
+        SP = new Word();    SP.set(1024);
+        CI = new Word();
         haulted = new Bit();
 
         registers = new Word[REGISTER_COUNT];
         for(int i = 0; i< REGISTER_COUNT; i++)
             registers[i] = new Word();
 
-        alu = new ALU();
         imm = new Word();
+        rs1 = new Word();
+        rs2 = new Word();
+        rd = new Word();
+
+        alu = new ALU();
 
         function = new Bit[4];
         for(int i = 0; i<function.length; i++){
             function[i] = new Bit();
         }
 
-        SP.set(1024);
-
+        
     }
 
+    /**
+     * Loops thru each instruction until hault is called.
+     * @throws Exception
+     */
     public void run() throws Exception{
         while(haulted.getValue() == false){
             fetch();
@@ -61,11 +73,21 @@ public class Processor {
         }
     }
 
+    /**
+     * Gets the next instruction and increments the program counter.
+     * 
+     * @throws Exception
+     */
     private void fetch() throws Exception{
         CI = MainMemory.read(PC);
         PC.increment();
     }
 
+    /**
+     * Breaks each instruction into its components for easy reading in the next two stages.
+     * 
+     * @throws Exception
+     */
     private void decode() throws Exception{
         //* if Statements version.
         // 11 - 3 Register instruction
@@ -99,19 +121,19 @@ public class Processor {
             imm.copy(CI.rightShift(26).leftShift(26));
 
             // get RS1
-            rs1.copy(registers[CI.rightShift(19).leftShift(26).getSigned()]);
+            rs1.copy(registers[CI.rightShift(19).leftShift(27).getSigned()]);
 
             // get RS2
-            rs2.copy(registers[CI.rightShift(14).leftShift(26).getSigned()]);
+            rs2.copy(registers[CI.rightShift(14).leftShift(27).getSigned()]);
 
             // get function
-            function[0] = CI.getBit(23);
-            function[1] = CI.getBit(24);
-            function[2] = CI.getBit(25);
-            function[3] = CI.getBit(26);
+            function[0] = CI.getBit(18);
+            function[1] = CI.getBit(19);
+            function[2] = CI.getBit(20);
+            function[3] = CI.getBit(21);
 
             // get RD
-            rd.copy(registers[CI.rightShift(5).leftShift(26).getSigned()]);
+            rd.copy(registers[CI.rightShift(5).leftShift(27).getSigned()]);
         }
         // 10 - 2 Register instruction
         else if (CI.getBit(30).and(CI.getBit(31).not()).getValue()){
@@ -144,16 +166,16 @@ public class Processor {
             imm.copy(CI.rightShift(19).leftShift(19));
 
             // get rs2
-            rs2.copy(registers[CI.rightShift(14).leftShift(26).getSigned()]);
+            rs2.copy(registers[CI.rightShift(14).leftShift(27).getSigned()]);
 
             // get function
-            function[0] = CI.getBit(23);
-            function[1] = CI.getBit(24);
-            function[2] = CI.getBit(25);
-            function[3] = CI.getBit(26);
+            function[0] = CI.getBit(18);
+            function[1] = CI.getBit(19);
+            function[2] = CI.getBit(20);
+            function[3] = CI.getBit(21);
 
             // get rd
-            rd.copy(registers[CI.rightShift(5).leftShift(26).getSigned()]);
+            rd.copy(registers[CI.rightShift(5).leftShift(27).getSigned()]);
         }
         // 01 - 1 Register instruction (Dest Only)
         else if ((CI.getBit(30).not()).and(CI.getBit(31)).getValue()){
@@ -187,13 +209,13 @@ public class Processor {
             imm.copy(CI.rightShift(14).leftShift(14));
 
             // Function
-            function[0] = CI.getBit(23);
-            function[1] = CI.getBit(24);
-            function[2] = CI.getBit(25);
-            function[3] = CI.getBit(26);
+            function[0] = CI.getBit(18);
+            function[1] = CI.getBit(19);
+            function[2] = CI.getBit(20);
+            function[3] = CI.getBit(21);
 
             // Rd
-            rd.copy(registers[CI.rightShift(5).leftShift(26).getSigned()]);
+            rd.copy(registers[CI.rightShift(5).leftShift(27).getSigned()]);
         }
         // 00 - No Register
         else{
@@ -228,6 +250,11 @@ public class Processor {
         }
     }
 
+    /**
+     * Does the work required by the decoded instruciton.
+     * 
+     * @throws Exception
+     */
     private void execute() throws Exception{
         switch (op){
             case BRANCH0:   // pc <- RS2 BOP rd ? pc + imm : pc
@@ -264,16 +291,16 @@ public class Processor {
 
             case MATH2:     // rd <- rd MOP reg[1]
 
-                alu.op1 = rd;
-                alu.op2 = rs2;
+                alu.op1.copy(rd);
+                alu.op2.copy(rs2);
 
                 alu.doOperation(function);
                 break;
 
             case MATH3:     // rd <- rs1 MOP rs2
 
-                alu.op1 = rs1;
-                alu.op2 = rs2;
+                alu.op1.copy(rs1);
+                alu.op2.copy(rs2);
 
                 alu.doOperation(function);
                 break;
@@ -307,6 +334,11 @@ public class Processor {
         }
     }
 
+    /**
+     * Upates the registers and main memory following each instruction.
+     * 
+     * @throws Exception
+     */
     private void store() throws Exception{
         switch (op){
             case BRANCH0:   // pc <- RS2 BOP rd ? pc + imm : pc
@@ -336,15 +368,15 @@ public class Processor {
             case MATH0:     // HALT (Do Nothing )
                 break;
             case MATH1:     // COPY: rd <- imm
-                registers[CI.rightShift(5).leftShift(26).getSigned()].copy(imm);
+                registers[CI.rightShift(5).leftShift(27).getSigned()].copy(imm);
                 break;
 
             case MATH2:     // rd <- rd MOP reg[1]
-                registers[CI.rightShift(5).leftShift(26).getSigned()].copy(alu.result);
+                registers[CI.rightShift(5).leftShift(27).getSigned()].copy(alu.result);
                 break;
 
             case MATH3:     // rd <- rs1 MOP rs2
-                registers[CI.rightShift(5).leftShift(26).getSigned()].copy(alu.result);
+                registers[CI.rightShift(5).leftShift(27).getSigned()].copy(alu.result);
                 break;
 
             case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
@@ -374,6 +406,22 @@ public class Processor {
             default:        // Something didn't work.
                 throw new Exception("Unrecognized OP Code: " + op.toString() + " from code : " + CI.toString());        
         }
+
+        // Clear R0, so that it can only ever be 0. Very lazy, but quite effective.
+        for(int i = 0; i<Word.WORD_SIZE; i++) 
+            registers[0].setBit(i, false);
+    }
+
+    // Debugging and testing:
+
+    /**
+     * Gets the specified register for easy testing and review.
+     * 
+     * @param i The index of the specified register. Must be between 0 and 31.
+     * @return The specified register.
+     */
+    public Word TESTgetRegister(int i){
+        return registers[i];
     }
 
     /**
