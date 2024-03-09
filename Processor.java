@@ -89,7 +89,6 @@ public class Processor {
      * @throws Exception
      */
     private void decode() throws Exception{
-        //* if Statements version.
         // 11 - 3 Register instruction
         if(CI.getBit(30).and(CI.getBit(31)).getValue()){
             // 000 - Math:          (27 + 28 + 29)'
