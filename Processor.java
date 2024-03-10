@@ -120,10 +120,10 @@ public class Processor {
             imm.copy(CI.rightShift(26).leftShift(26));
 
             // get RS1
-            rs1.copy(registers[CI.rightShift(19).leftShift(27).getSigned()]);
+            rs1.copy(registers[getRegisterIndex(CI, 19)]);
 
             // get RS2
-            rs2.copy(registers[CI.rightShift(14).leftShift(27).getSigned()]);
+            rs2.copy(registers[getRegisterIndex(CI, 14)]);
 
             // get function
             function[0] = CI.getBit(18);
@@ -132,7 +132,7 @@ public class Processor {
             function[3] = CI.getBit(21);
 
             // get RD
-            rd.copy(registers[CI.rightShift(5).leftShift(27).getSigned()]);
+            rd.copy(registers[getRegisterIndex(CI, 5)]);
         }
         // 10 - 2 Register instruction
         else if (CI.getBit(30).and(CI.getBit(31).not()).getValue()){
@@ -165,7 +165,7 @@ public class Processor {
             imm.copy(CI.rightShift(19).leftShift(19));
 
             // get rs2
-            rs2.copy(registers[CI.rightShift(14).leftShift(27).getSigned()]);
+            rs2.copy(registers[getRegisterIndex(CI, 14)]);
 
             // get function
             function[0] = CI.getBit(18);
@@ -214,7 +214,7 @@ public class Processor {
             function[3] = CI.getBit(21);
 
             // Rd
-            rd.copy(registers[CI.rightShift(5).leftShift(27).getSigned()]);
+            rd.copy(registers[getRegisterIndex(CI, 5)]);
         }
         // 00 - No Register
         else{
@@ -409,6 +409,30 @@ public class Processor {
         // Clear R0, so that it can only ever be 0. Very lazy, but quite effective.
         for(int i = 0; i<Word.WORD_SIZE; i++) 
             registers[0].setBit(i, false);
+    }
+
+    // Helper Methods:
+    
+    /**
+     * We're not allowed to use getSigned() to figure out which register we need to use, so this
+     * 
+     * @param regIndex
+     * @return
+     */
+    private int getRegisterIndex(Word instruction, int regStart) throws Exception{
+
+        Word regIndex = instruction.rightShift(regStart).leftShift(27);
+
+        int index = 0;
+        for(int i = 4; i>=0; i--){   // Only look at the first 5 bits because there's only 32 registers.
+
+            index *= 2;
+
+            if (regIndex.getBit(i).getValue())
+                index++;
+        }
+
+        return index;
     }
 
     // Debugging and testing:
