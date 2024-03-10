@@ -174,7 +174,7 @@ public class Processor {
             function[3] = CI.getBit(21);
 
             // get rd
-            rd.copy(registers[CI.rightShift(5).leftShift(27).getSigned()]);
+            rd.copy(registers[getRegisterIndex(CI, 5)]);
         }
         // 01 - 1 Register instruction (Dest Only)
         else if ((CI.getBit(30).not()).and(CI.getBit(31)).getValue()){
@@ -367,15 +367,15 @@ public class Processor {
             case MATH0:     // HALT (Do Nothing )
                 break;
             case MATH1:     // COPY: rd <- imm
-                registers[CI.rightShift(5).leftShift(27).getSigned()].copy(imm);
+                registers[getRegisterIndex(CI, 5)].copy(imm);
                 break;
 
             case MATH2:     // rd <- rd MOP reg[1]
-                registers[CI.rightShift(5).leftShift(27).getSigned()].copy(alu.result);
+                registers[getRegisterIndex(CI, 5)].copy(alu.result);
                 break;
 
             case MATH3:     // rd <- rs1 MOP rs2
-                registers[CI.rightShift(5).leftShift(27).getSigned()].copy(alu.result);
+                registers[getRegisterIndex(CI, 5)].copy(alu.result);
                 break;
 
             case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
@@ -414,17 +414,22 @@ public class Processor {
     // Helper Methods:
     
     /**
-     * We're not allowed to use getSigned() to figure out which register we need to use, so this
+     * We're not allowed to use getSigned() to figure out which register we need to use.
      * 
-     * @param regIndex
+     * Finds the index of the register by shifting to get the specific sequence of bits for the register speficfier.
+     * 
+     * @param instruction The instruction to be parsed.
+     * @param regStart The start of the register specifier ***FROM THE END OF THE WORD***!!!
      * @return
      */
     private int getRegisterIndex(Word instruction, int regStart) throws Exception{
 
-        Word regIndex = instruction.rightShift(regStart).leftShift(27);
+        Word regIndex = instruction.rightShift(regStart).leftShift(27); // Shift to get the bits we want.
 
         int index = 0;
-        for(int i = 4; i>=0; i--){   // Only look at the first 5 bits because there's only 32 registers.
+
+        // Only look at the first 5 bits because there's only 32 registers. Going backwards because its big-endian.
+        for(int i = 4; i>=0; i--){
 
             index *= 2;
 
