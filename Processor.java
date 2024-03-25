@@ -260,6 +260,11 @@ public class Processor {
                 break;
 
             case BRANCH1:   // JUMP: pc <- pc + imm
+                alu.op1.copy(PC);
+                alu.op2.copy(imm);
+
+                // Always add (1110)
+                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
                 break;
 
             case BRANCH2:   // pc <- RS2 BOP rd ? pc + imm : pc
@@ -280,11 +285,29 @@ public class Processor {
 
             case CALL0:     // push pc; pc <- imm
                 break;
+
             case CALL1:     // push pc; pc <- RD + imm
+                alu.op1.copy(rd);
+                alu.op2.copy(imm);
+
+                // Always add (1110)
+                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
                 break;
-            case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + im : pc
+
+            case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + imm : pc
+                alu.op1.copy(PC);
+                alu.op2.copy(imm);
+
+                // Always add (1110)
+                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
                 break;
+
             case CALL3:     // pc <- RS1 BOP RS2 ? push pc; RD + imm : pc
+                alu.op1.copy(rd);
+                alu.op2.copy(imm);
+
+                // Always add (1110)
+                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
                 break;
             case LOAD0:     // Return (pc <- pop)
                 break;
@@ -370,30 +393,31 @@ public class Processor {
                 break;
 
             case CALL0:     // push pc; pc <- imm
-                MainMemory.write(SP, PC);
+                push(PC);
                 PC.copy(imm);
                 break;
 
             case CALL1:     // push pc; pc <- RD + imm
-                MainMemory.write(SP, PC);
+                push(PC);
                 PC.copy(alu.result);
                 break;
 
             case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + imm : pc
                 if (performBOP(function, rs2, rd)){
-                    MainMemory.write(SP, PC);
+                    push(PC);
                     PC.copy(alu.result);
                 }
                 break;
 
             case CALL3:     // pc <- RS1 BOP RS2 ? push pc; RD + imm : pc
                 if (performBOP(function, rs1, rs2)){
-                    MainMemory.write(SP, PC);
+                    push(PC);
                     PC.copy(alu.result);
                 }
                 break;
 
             case LOAD0:     // Return (pc <- pop)
+                PC.copy(pop());
                 break;
             case LOAD1:     // RD <- mem[RD + imm]
                 break;
@@ -511,8 +535,29 @@ public class Processor {
             throw new Exception("Unregocnized boolean operation: " + opCode[0].toString() + opCode[1].toString() + opCode[2].toString() + opCode[3].toString());
     }
 
-    private void push(){
-        
+    /**
+     * Pushes the suplied data onto the stack.
+     * 
+     * @param data The Word to be added to the top of the stack.
+     * @throws Exception
+     */
+    private void push(Word data) throws Exception{
+        SP.decrement();
+        MainMemory.write(SP, data);
+    }
+
+    /**
+     * Pops the suplied data off the data stack.
+     * 
+     * @return The Word at the top of the stack.
+     * @throws Exception
+     */
+    private Word pop() throws Exception {
+        // Read the current top value before we move up a level.
+        Word temp = MainMemory.read(SP);
+        SP.increment();
+
+        return temp;
     }
 
     // Debugging and testing:
