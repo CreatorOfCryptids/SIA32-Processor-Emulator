@@ -345,10 +345,24 @@ public class Processor {
             case PUSH0:     // UNUSED
                 break;
             case PUSH1:     // mem[--sp] <- RD MOP imm
+                alu.op1.copy(rd);
+                alu.op2.copy(imm);
+
+                alu.doOperation(function);
                 break;
+
             case PUSH2:     // mem[--sp] <- RD MOP RS2
+                alu.op1.copy(rd);
+                alu.op2.copy(rs2);
+
+                alu.doOperation(function);
                 break;
+
             case PUSH3:     // mem[--sp] <- RS1 MOP RS2
+                alu.op1.copy(rs1);
+                alu.op2.copy(rs2);
+
+                alu.doOperation(function);
                 break;
             case STORE0:    // UNUSED
                 break;
@@ -460,10 +474,13 @@ public class Processor {
             case PUSH0:     // UNUSED
                 break;
             case PUSH1:     // mem[--sp] <- RD MOP imm
+                push(alu.result);
                 break;
             case PUSH2:     // mem[--sp] <- RD MOP RS2
+                push(alu.result);
                 break;
             case PUSH3:     // mem[--sp] <- RS1 MOP RS2
+                push(alu.result);
                 break;
             case STORE0:    // UNUSED
                 break;
