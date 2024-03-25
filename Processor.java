@@ -2,6 +2,10 @@ public class Processor {
 
     private final int REGISTER_COUNT = 32;
 
+    private final int RS1_START = 19;   // RS1's highest bit index.
+    private final int RS2_START = 14;   // RS2's highest bit index.
+    private final int RD_START = 5;     // RD's highest bit index.
+
     private Word PC;            // Program Counter.
     private Word SP;            // Stack Pointer.
     private Word CI;            // Current Instruction.
@@ -120,10 +124,10 @@ public class Processor {
             imm.copy(CI.rightShift(26).leftShift(26));
 
             // get RS1
-            rs1.copy(registers[getRegisterIndex(CI, 19)]);
+            rs1.copy(registers[getRegisterIndex(RS1_START)]);
 
             // get RS2
-            rs2.copy(registers[getRegisterIndex(CI, 14)]);
+            rs2.copy(registers[getRegisterIndex(RS2_START)]);
 
             // get function
             function[0] = CI.getBit(18);
@@ -132,7 +136,7 @@ public class Processor {
             function[3] = CI.getBit(21);
 
             // get RD
-            rd.copy(registers[getRegisterIndex(CI, 5)]);
+            rd.copy(registers[getRegisterIndex(RD_START)]);
         }
         // 10 - 2 Register instruction
         else if (CI.getBit(30).and(CI.getBit(31).not()).getValue()){
@@ -165,7 +169,7 @@ public class Processor {
             imm.copy(CI.rightShift(19).leftShift(19));
 
             // get rs2
-            rs2.copy(registers[getRegisterIndex(CI, 14)]);
+            rs2.copy(registers[getRegisterIndex(RS2_START)]);
 
             // get function
             function[0] = CI.getBit(18);
@@ -174,7 +178,7 @@ public class Processor {
             function[3] = CI.getBit(21);
 
             // get rd
-            rd.copy(registers[getRegisterIndex(CI, 5)]);
+            rd.copy(registers[getRegisterIndex(RD_START)]);
         }
         // 01 - 1 Register instruction (Dest Only)
         else if ((CI.getBit(30).not()).and(CI.getBit(31)).getValue()){
@@ -214,7 +218,7 @@ public class Processor {
             function[3] = CI.getBit(21);
 
             // Rd
-            rd.copy(registers[getRegisterIndex(CI, 5)]);
+            rd.copy(registers[getRegisterIndex(RD_START)]);
         }
         // 00 - No Register
         else{
@@ -285,17 +289,22 @@ public class Processor {
             case CALL3:     // pc <- RS1 BOP RS2 ? push pc; RD + imm : pc
                 addWords(rd, imm);
                 break;
+
             case LOAD0:     // Return (pc <- pop)
                 break;
 
             case LOAD1:     // RD <- mem[RD + imm]
                 addWords(rd, imm);
                 break;
-                
+
             case LOAD2:     // RD <- mem[RS2 + imm]
+                addWords(rs2, imm);
                 break;
+
             case LOAD3:     // RD <- mem[RS1 +RS2]
+                addWords(rs1, rs2);
                 break;
+
             case MATH0:     // HALT
                 haulted.set();
                 break;
@@ -400,7 +409,7 @@ public class Processor {
                 break;
 
             case LOAD1:     // RD <- mem[RD + imm]
-                registers[getRegisterIndex(CI, 5)].copy(MainMemory.read(alu.result));
+                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
                 break;
 
             case LOAD2:     // RD <- mem[RS2 + imm]
@@ -410,15 +419,15 @@ public class Processor {
             case MATH0:     // HALT (Do Nothing )
                 break;
             case MATH1:     // COPY: rd <- imm
-                registers[getRegisterIndex(CI, 5)].copy(imm);
+                registers[getRegisterIndex(RD_START)].copy(imm);
                 break;
 
             case MATH2:     // rd <- rd MOP reg[1]
-                registers[getRegisterIndex(CI, 5)].copy(alu.result);
+                registers[getRegisterIndex(RD_START)].copy(alu.result);
                 break;
 
             case MATH3:     // rd <- rs1 MOP rs2
-                registers[getRegisterIndex(CI, 5)].copy(alu.result);
+                registers[getRegisterIndex(RD_START)].copy(alu.result);
                 break;
 
             case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
@@ -461,13 +470,13 @@ public class Processor {
      * 
      * Finds the index of the register by shifting to get the specific sequence of bits for the register speficfier.
      * 
-     * @param instruction The instruction to be parsed.
+     * @param CI The instruction to be parsed.
      * @param regStart The start of the register specifier ***FROM THE END OF THE WORD***!!!
      * @return
      */
-    private int getRegisterIndex(Word instruction, int regStart) throws Exception{
+    private int getRegisterIndex(int regStart) throws Exception{
 
-        Word regIndex = instruction.rightShift(regStart).leftShift(27); // Shift to get the bits we want.
+        Word regIndex = CI.rightShift(regStart).leftShift(27); // Shift to get the bits we want.
 
         int index = 0;
 
