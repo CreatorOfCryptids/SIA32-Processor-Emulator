@@ -265,7 +265,7 @@ public class Word {
      * @throws Exception
      */
     public boolean equals(Word other) throws Exception{
-        for(int i = 1; i< WORD_SIZE; i++)
+        for(int i = 0; i< WORD_SIZE; i++)
             if(bits[i].getValue() != other.getBit(i).getValue())
                 return false;
         
@@ -280,7 +280,7 @@ public class Word {
      * @throws Exception
      */
     public boolean notEqual(Word other) throws Exception{
-        for(int i = 1; i< WORD_SIZE; i++)
+        for(int i = 0; i< WORD_SIZE; i++)
             if(bits[i].getValue() != other.getBit(i).getValue())
                 return true;
         

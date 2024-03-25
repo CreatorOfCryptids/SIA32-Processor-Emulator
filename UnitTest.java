@@ -320,6 +320,234 @@ public class UnitTest {
             w1.decrement();
             Assert.assertEquals(i, w1.getSigned());
         }
+
+        // Equals
+        w1.set(0);
+        w2.set(0);
+        Assert.assertTrue(w1.equals(w2));
+        Assert.assertTrue(w2.equals(w1));
+
+        w1.set(31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.equals(w2));
+        Assert.assertFalse(w2.equals(w1));
+
+        w1.set(-31415);
+        Assert.assertFalse(w1.equals(w2));
+        Assert.assertFalse(w2.equals(w1));
+
+        w1.set(31415);
+        w2.set(31414);
+        Assert.assertFalse(w1.equals(w2));
+        Assert.assertFalse(w2.equals(w1));
+
+        w1.set(-31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.equals(w2));
+        Assert.assertFalse(w2.equals(w1));
+
+        w1.set(-31415);
+        w2.set(-31415);
+        Assert.assertTrue(w1.equals(w2));
+        Assert.assertTrue(w2.equals(w1));
+
+        w1.set(7980987);
+        w2.set(7980987);
+        Assert.assertTrue(w1.equals(w2));
+        Assert.assertTrue(w2.equals(w1));
+    }
+
+    @Test
+    public void Word_Comparison() throws Exception{
+
+        Word w1 = new Word();
+        Word w2 = new Word();
+
+        // Equals
+        w1.set(0);
+        w2.set(0);
+        Assert.assertTrue(w1.equals(w2));
+        Assert.assertTrue(w2.equals(w1));
+
+        w1.set(31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.equals(w2));
+        Assert.assertFalse(w2.equals(w1));
+
+        w1.set(31415);
+        w2.set(31414);
+        Assert.assertFalse(w1.equals(w2));
+        Assert.assertFalse(w2.equals(w1));
+
+        w1.set(-31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.equals(w2));
+        Assert.assertFalse(w2.equals(w1));
+
+        w1.set(-31415);
+        w2.set(-31415);
+        Assert.assertTrue(w1.equals(w2));
+        Assert.assertTrue(w2.equals(w1));
+
+        w1.set(7980987);
+        w2.set(7980987);
+        Assert.assertTrue(w1.equals(w2));
+        Assert.assertTrue(w2.equals(w1));
+
+        // Not Equals
+        w1.set(0);
+        w2.set(0);
+        Assert.assertFalse(w1.notEqual(w2));
+        Assert.assertFalse(w2.notEqual(w1));
+
+        w1.set(31415);
+        w2.set(-31414);
+        Assert.assertTrue(w1.notEqual(w2));
+        Assert.assertTrue(w2.notEqual(w1));
+
+        w1.set(31415);
+        w2.set(31414);
+        Assert.assertTrue(w1.notEqual(w2));
+        Assert.assertTrue(w2.notEqual(w1));
+
+        w1.set(-31415);
+        w2.set(-31414);
+        Assert.assertTrue(w1.notEqual(w2));
+        Assert.assertTrue(w2.notEqual(w1));
+
+        w1.set(-31415);
+        w2.set(-31415);
+        Assert.assertFalse(w1.notEqual(w2));
+        Assert.assertFalse(w2.notEqual(w1));
+
+        w1.set(7980987);
+        w2.set(7980987);
+        Assert.assertFalse(w1.notEqual(w2));
+        Assert.assertFalse(w2.notEqual(w1));
+
+        // Less than
+        w1.set(0);
+        w2.set(0);
+        Assert.assertFalse(w1.lessThan(w2));
+        Assert.assertFalse(w2.lessThan(w1));
+
+        w1.set(31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.lessThan(w2));
+        Assert.assertTrue(w2.lessThan(w1));
+
+        w1.set(31415);
+        w2.set(31414);
+        Assert.assertFalse(w1.lessThan(w2));
+        Assert.assertTrue(w2.lessThan(w1));
+
+        w1.set(-31415);
+        w2.set(-31414);
+        Assert.assertTrue(w1.lessThan(w2));
+        Assert.assertFalse(w2.lessThan(w1));
+
+        w1.set(-31415);
+        w2.set(-31415);
+        Assert.assertFalse(w1.lessThan(w2));
+        Assert.assertFalse(w2.lessThan(w1));
+
+        w1.set(7980987);
+        w2.set(7980987);
+        Assert.assertFalse(w1.lessThan(w2));
+        Assert.assertFalse(w2.lessThan(w1));
+
+        // Less Equals
+        w1.set(0);
+        w2.set(0);
+        Assert.assertTrue(w1.lessEquals(w2));
+        Assert.assertTrue(w2.lessEquals(w1));
+
+        w1.set(31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.lessEquals(w2));
+        Assert.assertTrue(w2.lessEquals(w1));
+
+        w1.set(31415);
+        w2.set(31414);
+        Assert.assertFalse(w1.lessEquals(w2));
+        Assert.assertTrue(w2.lessEquals(w1));
+
+        w1.set(-31415);
+        w2.set(-31414);
+        Assert.assertTrue(w1.lessEquals(w2));
+        Assert.assertFalse(w2.lessEquals(w1));
+
+        w1.set(-31415);
+        w2.set(-31415);
+        Assert.assertTrue(w1.lessEquals(w2));
+        Assert.assertTrue(w2.lessEquals(w1));
+
+        w1.set(7980987);
+        w2.set(7980987);
+        Assert.assertTrue(w1.lessEquals(w2));
+        Assert.assertTrue(w2.lessEquals(w1));
+
+        // Greater than
+        w1.set(0);
+        w2.set(0);
+        Assert.assertFalse(w1.greaterThan(w2));
+        Assert.assertFalse(w2.greaterThan(w1));
+
+        w1.set(31415);
+        w2.set(-31414);
+        Assert.assertTrue(w1.greaterThan(w2));
+        Assert.assertFalse(w2.greaterThan(w1));
+
+        w1.set(31415);
+        w2.set(31414);
+        Assert.assertTrue(w1.greaterThan(w2));
+        Assert.assertFalse(w2.greaterThan(w1));
+
+        w1.set(-31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.greaterThan(w2));
+        Assert.assertTrue(w2.greaterThan(w1));
+
+        w1.set(-31415);
+        w2.set(-31415);
+        Assert.assertFalse(w1.greaterThan(w2));
+        Assert.assertFalse(w2.greaterThan(w1));
+
+        w1.set(7980987);
+        w2.set(7980987);
+        Assert.assertFalse(w1.greaterThan(w2));
+        Assert.assertFalse(w2.greaterThan(w1));
+
+        // Greater Equals
+        w1.set(0);
+        w2.set(0);
+        Assert.assertTrue(w1.greaterEquals(w2));
+        Assert.assertTrue(w2.greaterEquals(w1));
+
+        w1.set(31415);
+        w2.set(-31414);
+        Assert.assertTrue(w1.greaterEquals(w2));
+        Assert.assertFalse(w2.greaterEquals(w1));
+
+        w1.set(31415);
+        w2.set(31414);
+        Assert.assertTrue(w1.greaterEquals(w2));
+        Assert.assertFalse(w2.greaterEquals(w1));
+
+        w1.set(-31415);
+        w2.set(-31414);
+        Assert.assertFalse(w1.greaterEquals(w2));
+        Assert.assertTrue(w2.greaterEquals(w1));
+
+        w1.set(-31415);
+        w2.set(-31415);
+        Assert.assertTrue(w1.greaterEquals(w2));
+        Assert.assertTrue(w2.greaterEquals(w1));
+
+        w1.set(7980987);
+        w2.set(7980987);
+        Assert.assertTrue(w1.greaterEquals(w2));
+        Assert.assertTrue(w2.greaterEquals(w1));
     }
 
     @Test
