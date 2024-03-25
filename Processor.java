@@ -260,59 +260,38 @@ public class Processor {
                 break;
 
             case BRANCH1:   // JUMP: pc <- pc + imm
-                alu.op1.copy(PC);
-                alu.op2.copy(imm);
-
-                // Always add (1110)
-                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
+                addWords(PC, imm);
                 break;
 
             case BRANCH2:   // pc <- RS2 BOP rd ? pc + imm : pc
-                alu.op1.copy(PC);
-                alu.op2.copy(imm);
-
-                // Always add (1110)
-                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
+                addWords(PC, imm);
                 break;
 
             case BRANCH3:   // pc <- RS1 BOP RS2 ? pc + imm : pc
-                alu.op1.copy(PC);
-                alu.op2.copy(imm);
-
-                // Always add (1110)
-                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
+                addWords(PC, imm);
                 break;
 
             case CALL0:     // push pc; pc <- imm
                 break;
 
             case CALL1:     // push pc; pc <- RD + imm
-                alu.op1.copy(rd);
-                alu.op2.copy(imm);
-
-                // Always add (1110)
-                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
+                addWords(rd, imm);
                 break;
 
             case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + imm : pc
-                alu.op1.copy(PC);
-                alu.op2.copy(imm);
-
-                // Always add (1110)
-                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
+                addWords(PC, imm);
                 break;
 
             case CALL3:     // pc <- RS1 BOP RS2 ? push pc; RD + imm : pc
-                alu.op1.copy(rd);
-                alu.op2.copy(imm);
-
-                // Always add (1110)
-                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
+                addWords(rd, imm);
                 break;
             case LOAD0:     // Return (pc <- pop)
                 break;
+
             case LOAD1:     // RD <- mem[RD + imm]
+                addWords(rd, imm);
                 break;
+                
             case LOAD2:     // RD <- mem[RS2 + imm]
                 break;
             case LOAD3:     // RD <- mem[RS1 +RS2]
@@ -419,8 +398,11 @@ public class Processor {
             case LOAD0:     // Return (pc <- pop)
                 PC.copy(pop());
                 break;
+
             case LOAD1:     // RD <- mem[RD + imm]
+                registers[getRegisterIndex(CI, 5)].copy(MainMemory.read(alu.result));
                 break;
+
             case LOAD2:     // RD <- mem[RS2 + imm]
                 break;
             case LOAD3:     // RD <- mem[RS1 +RS2]
@@ -558,6 +540,18 @@ public class Processor {
         SP.increment();
 
         return temp;
+    }
+
+    /**
+     * Passes the add opCode to the ALU. I'm too lazy to copy paste it each time.
+     * 
+     * @throws Exception
+     */
+    private void addWords(Word op1, Word op2) throws Exception{
+        alu.op1 = op1;
+        alu.op2 = op2;
+
+        alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
     }
 
     // Debugging and testing:
