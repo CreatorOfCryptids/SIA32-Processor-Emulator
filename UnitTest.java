@@ -301,6 +301,25 @@ public class UnitTest {
             w1.increment();
             Assert.assertEquals(i, w1.getSigned());
         }
+
+        // Decrement
+        w1.set(0);
+        w1.decrement();
+        Assert.assertEquals(-1, w1.getSigned());
+
+        w1.set(4);
+        w1.decrement();
+        Assert.assertEquals(3, w1.getSigned());
+
+        w1.set(-7);
+        w1.decrement();
+        Assert.assertEquals(-8, w1.getSigned());
+
+        w1.set(1025);
+        for(int i = 1024; i>-1024; i--){
+            w1.decrement();
+            Assert.assertEquals(i, w1.getSigned());
+        }
     }
 
     @Test
@@ -732,19 +751,19 @@ public class UnitTest {
                                 "00000000"+"10000"+"01000"+"0111"+"00100"+"00011",  // R4 <- R1 * R2
                               //   Immediate     -RS2-   FUN    -RD3-   OP-10
                               // 0123456789012   34567   8901   23456   78901
-                                "0000000000000"+"11000"+"1111"+"00100"+"00010",  // R4 <- R4 - R3
+                                "0000000000000"+"11000"+"1111"+"00100"+"00010",     // R4 <- R4 - R3
                               //          Immediate            OP-00
                               // 012345678901234567890123456   78901
-                                "000000000000000000000000000"+"00000",  // HALT
+                                "000000000000000000000000000"+"00000",              // HALT
                             };
         
         MainMemory.load(data);
         process = new Processor();
         
         process.run();
-        Assert.assertEquals(0, process.TESTgetRegister(0).getSigned());
-        Assert.assertEquals(420, process.TESTgetRegister(1).getSigned());
-        Assert.assertEquals(69, process.TESTgetRegister(2).getSigned());
+        Assert.assertEquals(0,     process.TESTgetRegister(0).getSigned());
+        Assert.assertEquals(420,   process.TESTgetRegister(1).getSigned());
+        Assert.assertEquals(69,    process.TESTgetRegister(2).getSigned());
         Assert.assertEquals(80085, process.TESTgetRegister(3).getSigned());
         Assert.assertEquals((420*69)-80085, process.TESTgetRegister(4).getSigned());
     }

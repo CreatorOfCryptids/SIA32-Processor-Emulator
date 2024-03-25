@@ -256,14 +256,28 @@ public class Processor {
      */
     private void execute() throws Exception{
         switch (op){
-            case BRANCH0:   // pc <- RS2 BOP rd ? pc + imm : pc
+            case BRANCH0:   // JUMP: pc <- imm
                 break;
-            case BRANCH1:   // pc <- RS1 BOP RS2 ? pc + imm : pc
+
+            case BRANCH1:   // JUMP: pc <- pc + imm
                 break;
-            case BRANCH2:   // JUMP: pc <- cp + imm
+
+            case BRANCH2:   // pc <- RS2 BOP rd ? pc + imm : pc
+                alu.op1.copy(PC);
+                alu.op2.copy(imm);
+
+                // Always add (1110)
+                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
                 break;
-            case BRANCH3:   // JUMP: pc <- imm
+
+            case BRANCH3:   // pc <- RS1 BOP RS2 ? pc + imm : pc
+                alu.op1.copy(PC);
+                alu.op2.copy(imm);
+
+                // Always add (1110)
+                alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
                 break;
+
             case CALL0:     // push pc; pc <- imm
                 break;
             case CALL1:     // push pc; pc <- RD + imm
@@ -281,7 +295,6 @@ public class Processor {
             case LOAD3:     // RD <- mem[RS1 +RS2]
                 break;
             case MATH0:     // HALT
-
                 haulted.set();
                 break;
 
@@ -289,7 +302,6 @@ public class Processor {
                 break;
 
             case MATH2:     // rd <- rd MOP reg[1]
-
                 alu.op1.copy(rd);
                 alu.op2.copy(rs2);
 
@@ -297,7 +309,6 @@ public class Processor {
                 break;
 
             case MATH3:     // rd <- rs1 MOP rs2
-
                 alu.op1.copy(rs1);
                 alu.op2.copy(rs2);
 
@@ -340,22 +351,48 @@ public class Processor {
      */
     private void store() throws Exception{
         switch (op){
-            case BRANCH0:   // pc <- RS2 BOP rd ? pc + imm : pc
+            case BRANCH0:   // JUMP: pc <- imm
+                PC.copy(imm);
                 break;
-            case BRANCH1:   // pc <- RS1 BOP RS2 ? pc + imm : pc
+
+            case BRANCH1:   // JUMP: pc <- pc + imm
+                PC.copy(alu.result);
                 break;
-            case BRANCH2:   // JUMP: pc <- cp + imm
+
+            case BRANCH2:   // pc <- RS2 BOP rd ? pc + imm : pc
+                if (performBOP(function, rs2, rd))
+                    PC.copy(alu.result);
                 break;
-            case BRANCH3:   // JUMP: pc <- imm
+
+            case BRANCH3:   // pc <- RS1 BOP RS2 ? pc + imm : pc
+                if (performBOP(function, rs1, rs2))
+                    PC.copy(alu.result);
                 break;
+
             case CALL0:     // push pc; pc <- imm
+                MainMemory.write(SP, PC);
+                PC.copy(imm);
                 break;
+
             case CALL1:     // push pc; pc <- RD + imm
+                MainMemory.write(SP, PC);
+                PC.copy(alu.result);
                 break;
-            case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + im : pc
+
+            case CALL2:     // pc <- RS2 BOP RD ? push pc; pc + imm : pc
+                if (performBOP(function, rs2, rd)){
+                    MainMemory.write(SP, PC);
+                    PC.copy(alu.result);
+                }
                 break;
+
             case CALL3:     // pc <- RS1 BOP RS2 ? push pc; RD + imm : pc
+                if (performBOP(function, rs1, rs2)){
+                    MainMemory.write(SP, PC);
+                    PC.copy(alu.result);
+                }
                 break;
+
             case LOAD0:     // Return (pc <- pop)
                 break;
             case LOAD1:     // RD <- mem[RD + imm]
@@ -438,6 +475,44 @@ public class Processor {
         }
 
         return index;
+    }
+
+    /**
+     * Compares two words using the appropriate boolean operation.
+     * 
+     * @param opCode The four Bit code for the boolean operation.
+     * @param op1 The first Word to be compared.
+     * @param op2 The second Word to be compared.
+     * @return The result of the specified boolean operation.
+     * @throws Exception
+     */
+    private boolean performBOP(Bit[] opCode, Word op1, Word op2) throws Exception{
+        
+        // 0000 - Equals                    a * b * c * d
+        if (opCode[0].and(opCode[1]).and(opCode[2]).and(opCode[3]).getValue())
+            return op1.equals(op2);
+        // 0001 - Not equal             a * b * c * d'
+        else if (opCode[0].and(opCode[1]).and(opCode[2]).and(opCode[3].not()).getValue())
+            return op1.notEqual(op2);
+        // 0010 - Less than             a * b * c' * d 
+        else if (opCode[0].and(opCode[1]).and(opCode[2].not()).and(opCode[3]).getValue())
+            return op1.lessThan(op2);
+        // 0011 - Greater than or equal a * b * (c + d)'
+        else if (opCode[0].and(opCode[1]).and(opCode[2].or(opCode[3]).not()).getValue())
+            return op1.greaterEquals(op2);
+        // 0100 - Greater than          a * b' * c * d
+        else if (opCode[0].and(opCode[1].not()).and(opCode[2]).and(opCode[3]).getValue())
+            return op1.greaterThan(op2);
+        // 0101 - Less than or equal    a * b' * c * d'
+        else if (opCode[0].and(opCode[1].not()).and(opCode[2]).and(opCode[3].not()).getValue())
+            return op1.lessEquals(op2);
+        // Unregognized OpCode.
+        else 
+            throw new Exception("Unregocnized boolean operation: " + opCode[0].toString() + opCode[1].toString() + opCode[2].toString() + opCode[3].toString());
+    }
+
+    private void push(){
+        
     }
 
     // Debugging and testing:
