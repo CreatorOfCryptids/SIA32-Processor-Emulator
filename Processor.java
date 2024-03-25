@@ -344,6 +344,7 @@ public class Processor {
 
             case PUSH0:     // UNUSED
                 break;
+
             case PUSH1:     // mem[--sp] <- RD MOP imm
                 alu.op1.copy(rd);
                 alu.op2.copy(imm);
@@ -364,13 +365,19 @@ public class Processor {
 
                 alu.doOperation(function);
                 break;
+
             case STORE0:    // UNUSED
                 break;
+
             case STORE1:    // mem[RD] <- imm
                 break;
+
             case STORE2:    // mem[RD + imm] <- RS2
+                addWords(rd, imm);
                 break;
+
             case STORE3:    // mem[RD + RS1] <- RS2
+                addWords(rd, rs1);
                 break;
             default:        // Something didn't work.
                 throw new Exception("Unrecognized OP Code: " + op.toString() + " from code : " + CI.toString());        
@@ -485,11 +492,17 @@ public class Processor {
             case STORE0:    // UNUSED
                 break;
             case STORE1:    // mem[RD] <- imm
+                MainMemory.write(rd, imm);
                 break;
+
             case STORE2:    // mem[RD + imm] <- RS2
+                MainMemory.write(alu.result, rs2);
                 break;
+                
             case STORE3:    // mem[RD + RS1] <- RS2
+                MainMemory.write(alu.result, rs2);
                 break;
+
             default:        // Something didn't work.
                 throw new Exception("Unrecognized OP Code: " + op.toString() + " from code : " + CI.toString());        
         }
