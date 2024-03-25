@@ -41,7 +41,7 @@ public class Processor {
     Processor() throws Exception{
 
         PC = new Word();
-        SP = new Word();    SP.set(1024);
+        SP = new Word();    SP.set(1023);
         CI = new Word();
         haulted = new Bit();
 
@@ -328,12 +328,20 @@ public class Processor {
 
             case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
                 break;
+
             case POPI1:     // POP: RD <- mem[sp++]
                 break;
+
             case POPI2:     // Peek: RD <- mem[sp - (RS2 + imm)]
+                addWords(rs2, imm);
+                subtractWords(SP, alu.result);
                 break;
+
             case POPI3:     // PEEK RD <- mem[sp - (RS1 + RS2)]
+                addWords(rs1, rs2);
+                subtractWords(SP, alu.result);
                 break;
+
             case PUSH0:     // UNUSED
                 break;
             case PUSH1:     // mem[--sp] <- RD MOP imm
@@ -419,7 +427,7 @@ public class Processor {
             case LOAD3:     // RD <- mem[RS1 +RS2]
                 registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
                 break;
-                
+
             case MATH0:     // HALT (Do Nothing )
                 break;
             case MATH1:     // COPY: rd <- imm
@@ -435,13 +443,20 @@ public class Processor {
                 break;
 
             case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
+                // TODO: Later
                 break;
             case POPI1:     // POP: RD <- mem[sp++]
+                registers[getRegisterIndex(RD_START)].copy(pop());
                 break;
+
             case POPI2:     // Peek: RD <- mem[sp - (RS2 + imm)]
+                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
                 break;
+
             case POPI3:     // PEEK RD <- mem[sp - (RS1 + RS2)]
+                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
                 break;
+
             case PUSH0:     // UNUSED
                 break;
             case PUSH1:     // mem[--sp] <- RD MOP imm
@@ -537,8 +552,8 @@ public class Processor {
      * @throws Exception
      */
     private void push(Word data) throws Exception{
-        SP.decrement();
         MainMemory.write(SP, data);
+        SP.decrement();
     }
 
     /**
@@ -556,17 +571,35 @@ public class Processor {
     }
 
     /**
-     * Passes the add opCode to the ALU. I'm too lazy to copy paste it each time.
+     * Passes two Words and the add opCode to the ALU. I'm too lazy to copy paste it each time.
      * 
+     * @param op1 The first Word to be added.
+     * @param op2 The second Word to be added.
      * @throws Exception
      */
     private void addWords(Word op1, Word op2) throws Exception{
         alu.op1 = op1;
         alu.op2 = op2;
 
+        // 1110 - Add
         alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
     }
 
+    /**
+     * Passes two Words and the subtract opCode to the ALU.
+     * 
+     * @param op1 The first Word to be subtracted.
+     * @param op2 The second Word to be subtracted.
+     * @throws Exception
+     */
+    private void subtractWords(Word op1, Word op2) throws Exception{
+        alu.op1 = op1;
+        alu.op2 = op2;
+
+        // 1111 - Subtract
+        alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
+    }
+    
     // Debugging and testing:
 
     /**
