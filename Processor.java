@@ -413,9 +413,13 @@ public class Processor {
                 break;
 
             case LOAD2:     // RD <- mem[RS2 + imm]
+                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
                 break;
+
             case LOAD3:     // RD <- mem[RS1 +RS2]
+                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
                 break;
+                
             case MATH0:     // HALT (Do Nothing )
                 break;
             case MATH1:     // COPY: rd <- imm
