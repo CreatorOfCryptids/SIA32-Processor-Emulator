@@ -1010,16 +1010,16 @@ public class UnitTest {
         String[] instructions;
 
         /*
-            //   Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
-            //   01234567   89012   34567   8901   23456   78901
-                "00000000"+"00000"+"00000"+"0000"+"00000"+"00011",
-            //     Immediate     -RS2-   FUN    -RD3-   OP-10
-            //   0123456789012   34567   8901   23456   78901
-                "0000000000000"+"00000"+"0000"+"00000"+"00010",
-            //          Immediate         -RD3-   OP-01
-            //   0123456789012345678901   23456   78901
-                "0000000000000000000000"+"00000"+"00001",
-            //            Immediate            OP-00
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[]+reg[]+"0000"+reg[]+"00011",
+            //     Immediate    -RS1-  FUN   -RD3-  OP-10
+            //   0123456789012         8901         78901
+                "0000000000000"+reg[]+"0000"+reg[]+"00010",
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "000000000000000000"+"0000"+reg[ ]+"00001",
+            //             Immediate           OP-00
             //   012345678901234567890123456   78901
                 "000000000000000000000000000"+"00000"
         */
@@ -1096,7 +1096,7 @@ public class UnitTest {
         Assert.assertEquals(25, process.TESTgetRegister(3).getUnsigned());
         /**/
         
-        // Call
+        //* Call
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1137,8 +1137,8 @@ public class UnitTest {
             //          Immediate                OP-01
             //   0123456789012345678901          78901
                 "0010100110000000000000"+reg[5]+"00001",        // 12   R5 = 404     // Second function
-            //          Immediate             OP-00
-            //  012345678901234567890123456   78901
+            //           Immediate             OP-00
+            //   012345678901234567890123456   78901
                 "000000000000000000000000000"+"10000",          // 13   Return
             //            Immediate            OP-00
             //   012345678901234567890123456   78901
@@ -1146,8 +1146,8 @@ public class UnitTest {
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
                 "0011000000000000000000"+reg[30]+"00001",       // 15   R30 = 12    // Third function
-            //          Immediate             OP-00
-            //  012345678901234567890123456   78901
+            //           Immediate             OP-00
+            //   012345678901234567890123456   78901
                 "000000000000000000000000000"+"10000",          // 16   Return
             //            Immediate            OP-00
             //   012345678901234567890123456   78901
@@ -1155,8 +1155,8 @@ public class UnitTest {
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
                 "0010010110000000000000"+reg[29]+"00001",       // 18   R29 = 420   // Fourth function
-            //          Immediate              OP-00
-            //  012345678901234567890123456    78901
+            //           Immediate              OP-00
+            //   012345678901234567890123456    78901
                 "000000000000000000000000000"+"10000",          // 19   Return
             //            Immediate            OP-00
             //   012345678901234567890123456   78901
@@ -1177,9 +1177,58 @@ public class UnitTest {
         Assert.assertEquals(69*404, process.TESTgetRegister(31).getSigned());
         Assert.assertEquals(420, process.TESTgetRegister(29).getSigned());
         Assert.assertEquals(12, process.TESTgetRegister(30).getSigned());
+        /**/
 
+        //* Push 
+        instructions = new String[]{
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0010010110000000000000"+reg[1]+"00001",            // 1 Set R1 = 420
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1010001000000000000000"+reg[2]+"00001",            // 2 Set R2 = 69
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901 
+                "0101100101000000000000"+reg[3]+"00001",            // 3 Set R3 = 666
 
-        //Load
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "011011110000000000"+"1110"+reg[1]+"01101",         // 4 push R1 + 246      
+            //     Immediate            FUN           OP-10
+            //   0123456789012          8901          78901
+                "0000000000000"+reg[3]+"0111"+reg[2]+"01110",       // 5 push R2 * R3
+            //   Immediate                FUN           OP-11
+            //   01234567                 8901          78901
+                "00000000"+reg[1]+reg[2]+"1111"+reg[0]+"01111",      // push R1 - R2
+
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "001100000000000000"+"0111"+reg[3]+"01101",         // 7 push R3 * 12 
+            //     Immediate            FUN           OP-10
+            //   0123456789012          8901          78901
+                "0000000000000"+reg[2]+"0111"+reg[0]+"01110",       // 8 push R2 * R0
+            //   Immediate                FUN           OP-11
+            //   01234567                 8901          78901
+                "00000000"+reg[2]+reg[1]+"1110"+reg[0]+"01111",  // push R2 + R1
+
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"               // HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertEquals(420+246, MainMemory.TEST_Read(1023).getUnsigned());
+        Assert.assertEquals(69*666, MainMemory.TEST_Read(1022).getUnsigned());
+        Assert.assertEquals(420-69, MainMemory.TEST_Read(1021).getUnsigned());
+        Assert.assertEquals(666*12, MainMemory.TEST_Read(1020).getUnsigned());
+        Assert.assertEquals(0, MainMemory.TEST_Read(1019).getUnsigned());
+        Assert.assertEquals(420+69, MainMemory.TEST_Read(1018).getUnsigned());
+        /**/
+
+        // TODO: Load
         instructions = new String[]{
 
             //          Immediate            OP-00
@@ -1193,7 +1242,23 @@ public class UnitTest {
 
         Assert.assertTrue(false);
 
-        // Pop
+        // TODO: Store
+        instructions = new String[]{
+
+
+
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"               // HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertTrue(false);
+
+        // TODO: Pop
         instructions = new String[]{
             "",
             //          Immediate            OP-00
@@ -1207,53 +1272,45 @@ public class UnitTest {
 
         Assert.assertTrue(false);
 
-        // Push 
+        // TODO: Factoral
         instructions = new String[]{
-
-
-
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1010000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[11]+"00001",       // 2 set R11 = 1
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[12]+"00001",       // 3 set R12 = 2
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[1]+reg[11]+"1111"+reg[2]+"00011",// 4 set R2 = R1 - R11
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[1]+reg[2]+"0111"+reg[3]+"00011", // 5 set R3 = R1 * R2
+            //     Immediate    -RS1-   FUN   --RD3--  OP-10
+            //   0123456789012          8901           78901
+                "1100000000000"+reg[2]+"0010"+reg[12]+"00110",  // 6 if R2 >= R12 ? jump pc + 3
+            //   Immediate      --RS2--  FUN   -RD3-   OP-11
+            //   0123456789012           8901          78901
+                "0000000000000"+reg[11]+"1111"+reg[2]+"00011",  // 7 set r2 = r2 - R11
+            //   Immediate      -RS2-   FUN   -RD3-   OP-11
+            //   0123456789012          8901          78901
+                "0000000000000"+reg[2]+"0111"+reg[3]+"00011",   // 8 set R3 = R3 *R2
+            //             Immediate           OP-00
+            //   012345678901234567890123456   78901
+                "011000000000000000000000000"+"00100",          // 9 Jump 6
             //          Immediate            OP-00
-            // 012345678901234567890123456   78901
-            "000000000000000000000000000"+"00000"               // HALT
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"           // 10 HALT
         };
 
         MainMemory.load(instructions);
         process = new Processor();
         process.run();
 
-        Assert.assertTrue(false);
-
-        // Store
-        instructions = new String[]{
-
-
-
-            //          Immediate            OP-00
-            // 012345678901234567890123456   78901
-            "000000000000000000000000000"+"00000"               // HALT
-        };
-
-        MainMemory.load(instructions);
-        process = new Processor();
-        process.run();
-
-        Assert.assertTrue(false);
-
-        // Factoral
-        instructions = new String[]{
-
-
-
-            //          Immediate            OP-00
-            // 012345678901234567890123456   78901
-            "000000000000000000000000000"+"00000"               // HALT
-        };
-
-        MainMemory.load(instructions);
-        process = new Processor();
-        process.run();
-
-        Assert.assertTrue(false);
+        Assert.assertEquals(120, process.TESTgetRegister(3));
 
     }
 }

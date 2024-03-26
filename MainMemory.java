@@ -72,4 +72,14 @@ public class MainMemory {
             }
         }
     }
+
+    /**
+     * DEBUGGING HELPER!!! Returns the designated address in memory.
+     * 
+     * @param address The address of the desired memory. must be between 0-1023.
+     * @return The Word at the designated address.
+     */
+    public static Word TEST_Read(int address){
+        return memory[address];
+    }
 }
