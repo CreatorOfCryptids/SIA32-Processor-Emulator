@@ -9,9 +9,11 @@ public class Processor {
     private Word PC;            // Program Counter.
     private Word SP;            // Stack Pointer.
     private Word CI;            // Current Instruction.
+    private Word exitCode;
     private Bit haulted;        // Stores if the process is haulted.
 
     private Word[] registers;   // The 32 registers in this process.
+    int instructionCount;   // For debugging.
 
     // Instruction storage
     private Word imm;           // Immedieate value.        Specified in bits 0-#
@@ -41,8 +43,9 @@ public class Processor {
     Processor() throws Exception{
 
         PC = new Word();
-        SP = new Word();    SP.set(1023);
+        SP = new Word();    SP.set(1024);
         CI = new Word();
+        
         haulted = new Bit();
 
         registers = new Word[REGISTER_COUNT];
@@ -61,7 +64,8 @@ public class Processor {
             function[i] = new Bit();
         }
 
-        
+        exitCode =  new Word();
+        instructionCount = 0;
     }
 
     /**
@@ -74,6 +78,7 @@ public class Processor {
             decode();
             execute();
             store();
+            instructionCount++;
         }
     }
 
@@ -96,8 +101,12 @@ public class Processor {
         // 11 - 3 Register instruction
         if(CI.getBit(30).and(CI.getBit(31)).getValue()){
             // 000 - Math:          (27 + 28 + 29)'
-            if (CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29)).not().getValue()){
+            if ((CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29))).not().getValue()){
                 op = OpCode.MATH3;
+            }
+            // 001 - Branch:        27 * 28 * 29'
+            else if (CI.getBit(27).not().and(CI.getBit(28).not()).and(CI.getBit(29)).getValue()){
+                op = OpCode.BRANCH3;
             }
             // 010 - Call:          27' * 28 * 29'
             else if (CI.getBit(27).not().and(CI.getBit(28)).and(CI.getBit(29).not()).getValue()){
@@ -141,8 +150,12 @@ public class Processor {
         // 10 - 2 Register instruction
         else if (CI.getBit(30).and(CI.getBit(31).not()).getValue()){
             // 000 - Math:          (27 + 28 + 29)'
-            if (CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29)).not().getValue()){
+            if ((CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29))).not().getValue()){
                 op = OpCode.MATH2;
+            }
+            // 001 - Branch:        27 * 28 * 29'
+            else if (CI.getBit(27).not().and(CI.getBit(28).not()).and(CI.getBit(29)).getValue()){
+                op = OpCode.BRANCH2;
             }
             // 010 - Call:          27' * 28 * 29'
             else if (CI.getBit(27).not().and(CI.getBit(28)).and(CI.getBit(29).not()).getValue()){
@@ -184,8 +197,12 @@ public class Processor {
         else if ((CI.getBit(30).not()).and(CI.getBit(31)).getValue()){
 
             // 000 - Math:          (27 + 28 + 29)'
-            if (CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29)).not().getValue()){
+            if ((CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29))).not().getValue()){
                 op = OpCode.MATH1;
+            }
+            // 001 - Branch:        27 * 28 * 29'
+            else if (CI.getBit(27).not().and(CI.getBit(28).not()).and(CI.getBit(29)).getValue()){
+                op = OpCode.BRANCH1;
             }
             // 010 - Call:          27' * 28 * 29'
             else if (CI.getBit(27).not().and(CI.getBit(28)).and(CI.getBit(29).not()).getValue()){
@@ -222,10 +239,13 @@ public class Processor {
         }
         // 00 - No Register
         else{
-            
             // 000 - Math:          (27 + 28 + 29)'
-            if (CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29)).not().getValue()){
+            if ((CI.getBit(27).or(CI.getBit(28)).or(CI.getBit(29))).not().getValue()){
                 op = OpCode.MATH0;
+            }
+            // 001 - Branch:        27' * 28' * 29'
+            else if (CI.getBit(27).not().and(CI.getBit(28).not()).and(CI.getBit(29)).getValue()){
+                op = OpCode.BRANCH0;
             }
             // 010 - Call:          27' * 28 * 29'
             else if (CI.getBit(27).not().and(CI.getBit(28)).and(CI.getBit(29).not()).getValue()){
@@ -450,7 +470,9 @@ public class Processor {
                 break;
 
             case MATH0:     // HALT (Do Nothing )
+                exitCode.copy(imm);
                 break;
+
             case MATH1:     // COPY: rd <- imm
                 registers[getRegisterIndex(RD_START)].copy(imm);
                 break;
@@ -498,7 +520,7 @@ public class Processor {
             case STORE2:    // mem[RD + imm] <- RS2
                 MainMemory.write(alu.result, rs2);
                 break;
-                
+
             case STORE3:    // mem[RD + RS1] <- RS2
                 MainMemory.write(alu.result, rs2);
                 break;
@@ -552,23 +574,23 @@ public class Processor {
      */
     private boolean performBOP(Bit[] opCode, Word op1, Word op2) throws Exception{
         
-        // 0000 - Equals                    a * b * c * d
-        if (opCode[0].and(opCode[1]).and(opCode[2]).and(opCode[3]).getValue())
+        // 0000 - Equals                (a + b + c + d)
+        if ((opCode[0].or(opCode[1]).or(opCode[2]).or(opCode[3])).not().getValue())
             return op1.equals(op2);
-        // 0001 - Not equal             a * b * c * d'
-        else if (opCode[0].and(opCode[1]).and(opCode[2]).and(opCode[3].not()).getValue())
+        // 0001 - Not equal             (a + b + c)' * d
+        else if ((opCode[0].or(opCode[1]).or(opCode[2])).not().and(opCode[3]).getValue())
             return op1.notEqual(op2);
-        // 0010 - Less than             a * b * c' * d 
-        else if (opCode[0].and(opCode[1]).and(opCode[2].not()).and(opCode[3]).getValue())
+        // 0010 - Less than             a' * b' * c * d' 
+        else if (opCode[0].not().and(opCode[1].not()).and(opCode[2]).and(opCode[3].not()).getValue())
             return op1.lessThan(op2);
-        // 0011 - Greater than or equal a * b * (c + d)'
-        else if (opCode[0].and(opCode[1]).and(opCode[2].or(opCode[3]).not()).getValue())
+        // 0011 - Greater than or equal (a + b)' * c * d
+        else if ((opCode[0].or(opCode[1])).not().and(opCode[2]).and(opCode[3]).getValue())
             return op1.greaterEquals(op2);
-        // 0100 - Greater than          a * b' * c * d
-        else if (opCode[0].and(opCode[1].not()).and(opCode[2]).and(opCode[3]).getValue())
+        // 0100 - Greater than          a' * b * (c + d)'
+        else if (opCode[0].not().and(opCode[1]).and(opCode[2].or(opCode[3])).not().getValue())
             return op1.greaterThan(op2);
-        // 0101 - Less than or equal    a * b' * c * d'
-        else if (opCode[0].and(opCode[1].not()).and(opCode[2]).and(opCode[3].not()).getValue())
+        // 0101 - Less than or equal    a' * b * c' * d
+        else if (opCode[0].not().and(opCode[1]).and(opCode[2].not()).and(opCode[3]).getValue())
             return op1.lessEquals(op2);
         // Unregognized OpCode.
         else 
@@ -582,8 +604,8 @@ public class Processor {
      * @throws Exception
      */
     private void push(Word data) throws Exception{
-        MainMemory.write(SP, data);
         SP.decrement();
+        MainMemory.write(SP, data);
     }
 
     /**
@@ -655,5 +677,14 @@ public class Processor {
             retString += i + "\t" + registers[i].toString() + "\n";
 
         return retString;
+    }
+
+    /**
+     * Returns the exit code from the process.
+     * 
+     * @return The numerical value of the exit code.
+     */
+    public int getExitCode(){
+        return exitCode.getSigned();
     }
 }

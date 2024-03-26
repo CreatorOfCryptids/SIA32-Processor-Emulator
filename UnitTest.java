@@ -995,4 +995,265 @@ public class UnitTest {
         Assert.assertEquals(80085, process.TESTgetRegister(3).getSigned());
         Assert.assertEquals((420*69)-80085, process.TESTgetRegister(4).getSigned());
     }
+
+    @Test
+    public void CPU_2() throws Exception{
+
+        String[] reg = new String[]{
+            "00000","10000","01000","11000","00100","10100","01100","11100",
+            "00010","10010","01010","11010","00110","10110","01110","11110",
+            "00001","10001","01001","11001","00101","10101","01101","11101",
+            "00011","10011","01011","11011","00111","10111","01111","11111",
+        };
+
+        Processor process = new Processor();
+        String[] instructions;
+
+        /*
+            //   Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+            //   01234567   89012   34567   8901   23456   78901
+                "00000000"+"00000"+"00000"+"0000"+"00000"+"00011",
+            //     Immediate     -RS2-   FUN    -RD3-   OP-10
+            //   0123456789012   34567   8901   23456   78901
+                "0000000000000"+"00000"+"0000"+"00000"+"00010",
+            //          Immediate         -RD3-   OP-01
+            //   0123456789012345678901   23456   78901
+                "0000000000000000000000"+"00000"+"00001",
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"
+        */
+
+        //* Branch:
+        instructions = new String[]{
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1010001000000000000000"+reg[14]+"00001",           // 1 Set r14 69
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0010010110000000000000"+reg[15]+"00001",           // 2 Set r15 420
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "0101100101000000000000"+reg[31]+"00001",           // 3 Set r31 666
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "011000000000000000000000000"+"00100",              // 4 Jump to 6
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "1011001000000000000000"+reg[14]+"00001",           // 5 Set r14 77   // Skipped
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "1011010000000000000000"+reg[15]+"00001",           // 6 Set r15 45   // Skipped
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0010010110000000000000"+reg[20]+"00001",           //7 Set r20 420  // 6
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0100000000000000000000"+reg[0]+"00101",            //8 jump pc + 2      // Jump forward 2
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "0011110110000000000000"+reg[31]+"00001",           //9 Set r31 444  // Skipped
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "1011010000000000000000"+reg[20]+"00001",           //10   Set r20 45   // Skipped
+            //    Immediate              FUN            OP-10
+            //  0123456789012            8901           78901
+                "1000000000000"+reg[14]+"0000"+reg[15]+"00110",     //11   if R14 == R15 1  // Should be false
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[1]+"00001",            //12   Set R1 1
+            //   Immediate                 FUN           OP-11
+            //   01234567                  8901          78901
+                "01000000"+reg[15]+reg[0]+"0001"+reg[0]+"00111",    // 13   if R15 != R0 2  // Should be true
+            //          Immediate        -RD3-   OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[2]+"00001",            // 14 Set R2 1     // Skipped
+            //          Immediate        -RD3-   OP-01
+            //   0123456789012345678901          78901
+                "1111111111111111111111"+reg[30]+"00001",           // 15 Set R30 -1   // Skipped
+            //          Immediate        -RD3-   OP-01
+            //   0123456789012345678901          78901
+                "1001100000000000000000"+reg[3]+"00001",            // 16 Set R3 25
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"               // 17 HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+        
+
+        // Jump test 1
+        Assert.assertEquals(69, process.TESTgetRegister(14).getUnsigned());
+        Assert.assertEquals(420, process.TESTgetRegister(15).getUnsigned());
+        // Jump test 2
+        Assert.assertEquals(666, process.TESTgetRegister(31).getUnsigned());
+        Assert.assertEquals(420, process.TESTgetRegister(20).getUnsigned());
+        // If Equals 1
+        Assert.assertEquals(1, process.TESTgetRegister(1).getUnsigned());
+        // If not equal 2
+        Assert.assertEquals(25, process.TESTgetRegister(3).getUnsigned());
+        /**/
+        
+        // Call
+        instructions = new String[]{
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1010000000000000000000"+reg[1]+"00001",        // 0    Set R1 = 5
+            //          Immediate              OP-00
+            //   012345678901234567890123456   78901
+                "000100000000000000000000000"+"01000",          // 1    Call 8  // Call function that sets R2 to 4 and R3 to 69
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1001000000000000000000"+reg[4]+"00001",        // 2    Set R4 = 9
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0001000000000000000000"+reg[2]+"01001",        // 3    Call R2 + 8 // Call funciton that sets R5 to 404
+            //   Immediate                FUN            OP-11
+            //   01234567                 8901           78901
+                "00000000"+reg[5]+reg[3]+"0111"+reg[31]+"00011",// 4    Set R31 = R3 * R5
+            //   Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+            //   01234567   89012   34567  8901          78901
+                "10110000"+reg[4]+reg[30]+"0011"+reg[1]+"01011",// 5    Call R4 >= R30 ? pc <- R1 + 13 : pc // Call function that sets R29 to 420
+            //     Immediate     -RS2-   FUN    -RD3-   OP-10
+            //   0123456789012   34567   8901   23456   78901
+                "0001000000000"+reg[1]+"0011"+reg[2]+"01010",   // 6    Call R1 > R2 ? pc <- pc + 8 // Call function that sets R30 to 12
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000",          // 7    Halt 0
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0010000000000000000000"+reg[2]+"00001",        // 8    R2 = 4  // First function
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1010001000000000000000"+reg[3]+"00001",        // 9    R3 = 69
+            //          Immediate              OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"10000",          // 10   RETURN
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "100000000000000000000000000"+"00000",          // 11   Halt 1
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0010100110000000000000"+reg[5]+"00001",        // 12   R5 = 404     // Second function
+            //          Immediate             OP-00
+            //  012345678901234567890123456   78901
+                "000000000000000000000000000"+"10000",          // 13   Return
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "010000000000000000000000000"+"00000",          // 14   Halt 2
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0011000000000000000000"+reg[30]+"00001",       // 15   R30 = 12    // Third function
+            //          Immediate             OP-00
+            //  012345678901234567890123456   78901
+                "000000000000000000000000000"+"10000",          // 16   Return
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "110000000000000000000000000"+"00000",          // 17   Halt 3
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0010010110000000000000"+reg[29]+"00001",       // 18   R29 = 420   // Fourth function
+            //          Immediate              OP-00
+            //  012345678901234567890123456    78901
+                "000000000000000000000000000"+"10000",          // 19   Return
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "001000000000000000000000000"+"00000",          // 20   Halt 4
+            
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertEquals(0, process.getExitCode());
+        Assert.assertEquals(5, process.TESTgetRegister(1).getSigned());
+        Assert.assertEquals(4, process.TESTgetRegister(2).getSigned());
+        Assert.assertEquals(69, process.TESTgetRegister(3).getSigned());
+        Assert.assertEquals(9, process.TESTgetRegister(4).getSigned());
+        Assert.assertEquals(404, process.TESTgetRegister(5).getSigned());
+        Assert.assertEquals(69*404, process.TESTgetRegister(31).getSigned());
+        Assert.assertEquals(420, process.TESTgetRegister(29).getSigned());
+        Assert.assertEquals(12, process.TESTgetRegister(30).getSigned());
+
+
+        //Load
+        instructions = new String[]{
+
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"               // HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertTrue(false);
+
+        // Pop
+        instructions = new String[]{
+            "",
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"               // HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertTrue(false);
+
+        // Push 
+        instructions = new String[]{
+
+
+
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"               // HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertTrue(false);
+
+        // Store
+        instructions = new String[]{
+
+
+
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"               // HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertTrue(false);
+
+        // Factoral
+        instructions = new String[]{
+
+
+
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"               // HALT
+        };
+
+        MainMemory.load(instructions);
+        process = new Processor();
+        process.run();
+
+        Assert.assertTrue(false);
+
+    }
 }
