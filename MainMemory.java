@@ -15,7 +15,7 @@ public class MainMemory {
         int adrs = (int) address.getUnsigned();
 
         if (adrs >= MEM_SIZE || adrs < 0){
-            throw new Exception("Memory address out of bounds");
+            throw new Exception("Memory address "+adrs+" out of bounds");
         }
         
         if (memory[adrs] == null){
@@ -37,7 +37,7 @@ public class MainMemory {
         int adrs = (int) address.getUnsigned();
         
         if (adrs >= MEM_SIZE || adrs < 0){
-            throw new Exception("Memory address out of bounds");
+            throw new Exception("Memory address "+adrs+" out of bounds");
         }
 
         if (memory[adrs] == null){
@@ -62,13 +62,14 @@ public class MainMemory {
 
             // Loop over word to set
             for(int j = 0; j<Word.WORD_SIZE; j++){
-                // Words are all F by default, so only need to set.
                 if(data[i].charAt(j) == '1'){
                     memory[i].setBit(j, true);
                 }
-                else{
+                else if(data[i].charAt(j) == '0'){
                     memory[i].setBit(j, false);
                 }
+                else
+                    throw new Exception("Unexpected character \'" + data[i].charAt(j) + "\' in String " + i + " at character " + j + ".");
             }
         }
     }

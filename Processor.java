@@ -9,12 +9,11 @@ public class Processor {
     private Word PC;            // Program Counter.
     private Word SP;            // Stack Pointer.
     private Word CI;            // Current Instruction.
-    private Word exitCode;
+    
     private Bit haulted;        // Stores if the process is haulted.
 
     private Word[] registers;   // The 32 registers in this process.
-    int instructionCount;   // For debugging.
-
+    
     // Instruction storage
     private Word imm;           // Immedieate value.        Specified in bits 0-#
     private Word rs1;           // The register             specified in bits 8-12
@@ -24,6 +23,10 @@ public class Processor {
     private OpCode op;          // The current opCode,      specified in bits 27-31
 
     private ALU alu;            // Reference to the ALU.
+    
+    // DEBUGGING MEMBERS
+    int instructionCount;       // DEBUGGING MEMBER!!! Stores how many cycles have passed.
+    private Word exitCode;      // DEBUGGING MEMBER!!! Stores and exit code so I know which HAULT haulted.
 
     private enum OpCode{
         MATH2,      MATH3,      MATH1,      MATH0,
@@ -630,8 +633,8 @@ public class Processor {
      * @throws Exception
      */
     private void addWords(Word op1, Word op2) throws Exception{
-        alu.op1 = op1;
-        alu.op2 = op2;
+        alu.op1.copy(op1);
+        alu.op2.copy(op2);
 
         // 1110 - Add
         alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
@@ -687,4 +690,5 @@ public class Processor {
     public int getExitCode(){
         return exitCode.getSigned();
     }
+    /**/
 }

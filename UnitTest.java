@@ -1024,7 +1024,7 @@ public class UnitTest {
                 "000000000000000000000000000"+"00000"
         */
 
-        //* Branch:
+        //* Branch: (001)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1096,7 +1096,7 @@ public class UnitTest {
         Assert.assertEquals(25, process.TESTgetRegister(3).getUnsigned());
         /**/
         
-        //* Call
+        //* Call: (010)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1179,7 +1179,7 @@ public class UnitTest {
         Assert.assertEquals(12, process.TESTgetRegister(30).getSigned());
         /**/
 
-        //* Push 
+        //* Push: (011)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1228,7 +1228,7 @@ public class UnitTest {
         Assert.assertEquals(420+69, MainMemory.TEST_Read(1018).getUnsigned());
         /**/
 
-        //* Load
+        //* Load: (100)
         instructions = new String[]{
             //          Immediate     FUN   -RD3-   OP-01
             //   012345678901234567   8901          78901
@@ -1264,7 +1264,7 @@ public class UnitTest {
         Assert.assertEquals(1024, process.TESTgetRegister(5).getSigned());
         /**/
 
-        //* Store (101)
+        //* Store: (101)
             // mem[RD] <- imm
             // mem[RD + imm] <- RS2
             // mem[RD + RS1] <- RS2
@@ -1287,10 +1287,10 @@ public class UnitTest {
             //     Immediate    -RS1-  FUN   -RD3-  OP-10
             //   0123456789012         8901         78901
                 "1000000000000"+reg[2]+"0000"+reg[1]+"10110",   // 5 Store mem[R1+1 (1001)] = R2
-            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
-            //   01234567               8901         78901
+            //   Immediate -RS1-  -RS2-   FUN   -RD3-   OP-11
+            //   01234567                 8901          78901
                 "00000000"+reg[3]+reg[4]+"0000"+reg[1]+"10111", // 6 Store mem[R1 + R3 (1002)] = R4
-            //          Immediate            OP-00
+            //            Immediate            OP-00
             //   012345678901234567890123456   78901
                 "000000000000000000000000000"+"00000"           // 7 HALT
         };
@@ -1304,34 +1304,36 @@ public class UnitTest {
         Assert.assertEquals(666, MainMemory.TEST_Read(1002).getSigned());
         /**/
 
-        // TODO: Pop
+        //* TODO: Pop: (110)
             // POP: RD <- mem[sp++]
             // Peek: RD <- mem[sp - (RS2 + imm)]
             // PEEK RD <- mem[sp - (RS1 + RS2)]
         instructions = new String[]{
             
-            //          Immediate            OP-00
-            // 012345678901234567890123456   78901
-            "000000000000000000000000000"+"00000"               // HALT
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"   // HALT
         };
+        
 
         MainMemory.load(instructions);
         process = new Processor();
         process.run();
 
         Assert.assertTrue(false);
+        /**/
 
-        // TODO: Factoral
+        //* TODO: Factoral: Going back to line 5 after line 7. The fuck?
         instructions = new String[]{
             //          Immediate                OP-01
             //   0123456789012345678901          78901
-                "1010000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
+                "1110000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
             //          Immediate                OP-01
             //   0123456789012345678901          78901
                 "1000000000000000000000"+reg[11]+"00001",       // 2 set R11 = 1
             //          Immediate                OP-01
             //   0123456789012345678901          78901
-                "1000000000000000000000"+reg[12]+"00001",       // 3 set R12 = 2
+                "0100000000000000000000"+reg[12]+"00001",       // 3 set R12 = 2
             //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
             //   01234567               8901         78901
                 "00000000"+reg[1]+reg[11]+"1111"+reg[2]+"00011",// 4 set R2 = R1 - R11
@@ -1340,16 +1342,16 @@ public class UnitTest {
                 "00000000"+reg[1]+reg[2]+"0111"+reg[3]+"00011", // 5 set R3 = R1 * R2
             //     Immediate    -RS1-   FUN   --RD3--  OP-10
             //   0123456789012          8901           78901
-                "1100000000000"+reg[2]+"0010"+reg[12]+"00110",  // 6 if R2 >= R12 ? jump pc + 3
+                "1100000000000"+reg[2]+"0010"+reg[12]+"00110",  // 6 if R2 < R12 ? pc + 4 : pc
             //   Immediate      --RS2--  FUN   -RD3-   OP-11
             //   0123456789012           8901          78901
-                "0000000000000"+reg[11]+"1111"+reg[2]+"00011",  // 7 set r2 = r2 - R11
+                "0000000000000"+reg[11]+"1111"+reg[2]+"00010",  // 7 set r2 -= R11
             //   Immediate      -RS2-   FUN   -RD3-   OP-11
             //   0123456789012          8901          78901
-                "0000000000000"+reg[2]+"0111"+reg[3]+"00011",   // 8 set R3 = R3 *R2
+                "0000000000000"+reg[2]+"0111"+reg[3]+"00010",   // 8 set R3 *= R2
             //             Immediate           OP-00
             //   012345678901234567890123456   78901
-                "011000000000000000000000000"+"00100",          // 9 Jump 6
+                "101000000000000000000000000"+"00100",          // 9 Jump 5
             //          Immediate            OP-00
             //   012345678901234567890123456   78901
                 "000000000000000000000000000"+"00000"           // 10 HALT
@@ -1359,7 +1361,7 @@ public class UnitTest {
         process = new Processor();
         process.run();
 
-        Assert.assertEquals(120, process.TESTgetRegister(3));
-
+        Assert.assertEquals(5040, process.TESTgetRegister(3).getSigned());
+        /**/
     }
 }
