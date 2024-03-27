@@ -1228,10 +1228,7 @@ public class UnitTest {
         Assert.assertEquals(420+69, MainMemory.TEST_Read(1018).getUnsigned());
         /**/
 
-        // Load
-            // RD <- mem[RD + imm]
-            // RD <- mem[RS2 + imm]
-            // RD <- mem[RS1 +RS2]
+        //* Load
         instructions = new String[]{
             //          Immediate     FUN   -RD3-   OP-01
             //   012345678901234567   8901          78901
@@ -1265,26 +1262,54 @@ public class UnitTest {
         Assert.assertEquals("T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F,T,F", process.TESTgetRegister(3).toString());
         Assert.assertEquals(666, process.TESTgetRegister(4).getSigned());
         Assert.assertEquals(1024, process.TESTgetRegister(5).getSigned());
+        /**/
 
-        // TODO: Store
+        //* Store (101)
+            // mem[RD] <- imm
+            // mem[RD + imm] <- RS2
+            // mem[RD + RS1] <- RS2
         instructions = new String[]{
-            
-
-
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "000101111100000000"+"0000"+reg[1]+"00001",     // 0 Set R1 = 1000 // 0b1111101000
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "001001011000000000"+"0000"+reg[2]+"00001",     // 1 Set R2 = 420
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "010000000000000000"+"0000"+reg[3]+"00001",     // 2 Set R3 = 2
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "010110010100000000"+"0000"+reg[4]+"00001",     // 3 Set R4 = 666
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "101000100000000000"+"0000"+reg[1]+"10101",     // 4 Store mem[R1 (1000)] = 69
+            //     Immediate    -RS1-  FUN   -RD3-  OP-10
+            //   0123456789012         8901         78901
+                "1000000000000"+reg[2]+"0000"+reg[1]+"10110",   // 5 Store mem[R1+1 (1001)] = R2
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[3]+reg[4]+"0000"+reg[1]+"10111", // 6 Store mem[R1 + R3 (1002)] = R4
             //          Immediate            OP-00
             //   012345678901234567890123456   78901
-                "000000000000000000000000000"+"00000"               // HALT
+                "000000000000000000000000000"+"00000"           // 7 HALT
         };
 
         MainMemory.load(instructions);
         process = new Processor();
         process.run();
 
-        Assert.assertTrue(false);
+        Assert.assertEquals(69,  MainMemory.TEST_Read(1000).getSigned());
+        Assert.assertEquals(420, MainMemory.TEST_Read(1001).getSigned());
+        Assert.assertEquals(666, MainMemory.TEST_Read(1002).getSigned());
+        /**/
 
         // TODO: Pop
+            // POP: RD <- mem[sp++]
+            // Peek: RD <- mem[sp - (RS2 + imm)]
+            // PEEK RD <- mem[sp - (RS1 + RS2)]
         instructions = new String[]{
-            "",
+            
             //          Immediate            OP-00
             // 012345678901234567890123456   78901
             "000000000000000000000000000"+"00000"               // HALT
