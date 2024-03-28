@@ -1304,15 +1304,48 @@ public class UnitTest {
         Assert.assertEquals(666, MainMemory.TEST_Read(1002).getSigned());
         /**/
 
-        //* TODO: Pop: (110)
+        //* Pop: (110)
             // POP: RD <- mem[sp++]
             // Peek: RD <- mem[sp - (RS2 + imm)]
             // PEEK RD <- mem[sp - (RS1 + RS2)]
+            // Push mem[--sp] <- RD MOP imm
         instructions = new String[]{
-            
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "100000000000000000"+"0000"+reg[31]+"00001",        // 1 Set R31 = 1
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "100000000000000000"+"0000"+reg[30]+"00001",        // 2 Set R30 = 2
+
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "101000100000000000"+"1001"+reg[0]+"01101",         // 3 push R0 | 69
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "001001011000000000"+"1001"+reg[0]+"01101",         // 4 push R0 | 420
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "010110010100000000"+"1001"+reg[0]+"01101",         // 5 push R0 | 666
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "110010011001000000"+"1001"+reg[0]+"01101",         // 6 push R0 | 2451   //0b100110010011
+
+            //        Immediate       FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "000000000000000000"+"0000"+reg[1]+"11001",         // 7 Pop R1
+            //     Immediate    --RS1--  FUN   -RD3-   OP-10
+            //   0123456789012           8901          78901
+                "0000000000000"+reg[31]+"0000"+reg[2]+"11010",      // 8 Peek R2 = mem[sp - (R31 + 1)]
+            //   Immediate --RS1-- -RS2--   FUN   -RD3-   OP-11
+            //   01234567                   8901          78901
+                "00000000"+reg[30]+reg[31]+"0000"+reg[3]+"11011",   // 9 Peek R3 = mem[sp - (R31 + R30)]
+            //        Immediate       FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "000000000000000000"+"0000"+reg[4]+"11001",         // 10 Pop R4
+
             //            Immediate            OP-00
             //   012345678901234567890123456   78901
-                "000000000000000000000000000"+"00000"   // HALT
+                "000000000000000000000000000"+"00000"               // 11 HALT
         };
         
 
@@ -1320,10 +1353,13 @@ public class UnitTest {
         process = new Processor();
         process.run();
 
-        Assert.assertTrue(false);
+        Assert.assertEquals(2451, process.TESTgetRegister(1).getSigned());
+        Assert.assertEquals(420, process.TESTgetRegister(2).getSigned());
+        Assert.assertEquals(69, process.TESTgetRegister(3).getSigned());
+        Assert.assertEquals(666, process.TESTgetRegister(4).getSigned());
         /**/
 
-        //* TODO: Factoral: Going back to line 5 after line 7. The fuck?
+        //* Factoral:
         instructions = new String[]{
             //          Immediate                OP-01
             //   0123456789012345678901          78901

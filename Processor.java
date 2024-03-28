@@ -648,8 +648,8 @@ public class Processor {
      * @throws Exception
      */
     private void subtractWords(Word op1, Word op2) throws Exception{
-        alu.op1 = op1;
-        alu.op2 = op2;
+        alu.op1.copy(op1);
+        alu.op2.copy(op2);
 
         // 1111 - Subtract
         alu.doOperation(new Bit[]{new Bit(true),new Bit(true),new Bit(true),new Bit(false)});
