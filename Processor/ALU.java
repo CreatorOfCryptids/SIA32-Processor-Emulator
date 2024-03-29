@@ -1,3 +1,5 @@
+package Processor;
+
 public class ALU {
     
     public Word op1, op2, result;

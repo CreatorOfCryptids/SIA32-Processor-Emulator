@@ -1,3 +1,5 @@
+package Processor;
+
 public class Bit{
 
     private boolean value;

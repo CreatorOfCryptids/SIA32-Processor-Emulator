@@ -1,3 +1,6 @@
+package Processor;
+
+
 public class MainMemory {
     
     public static final int MEM_SIZE = 1024;

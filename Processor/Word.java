@@ -1,3 +1,6 @@
+package Processor;
+
+
 public class Word {
     
     public static final int WORD_SIZE = 32;     // I know "static" is taboo, but it makes it easier to change later if I want to. Fight me.
