@@ -1024,7 +1024,7 @@ public class UnitTest {
                 "000000000000000000000000000"+"00000"
         */
 
-        /* Branch: (001)
+        //* Branch: (001)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1096,7 +1096,7 @@ public class UnitTest {
         Assert.assertEquals(25, process.TESTgetRegister(3).getUnsigned());
         /**/
         
-        /* Call: (010)
+        //* Call: (010)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1179,7 +1179,7 @@ public class UnitTest {
         Assert.assertEquals(12, process.TESTgetRegister(30).getSigned());
         /**/
 
-        /* Push: (011)
+        //* Push: (011)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1228,7 +1228,7 @@ public class UnitTest {
         Assert.assertEquals(420+69, MainMemory.TEST_Read(1018).getUnsigned());
         /**/
 
-        /* Load: (100)
+        //* Load: (100)
         instructions = new String[]{
             //          Immediate     FUN   -RD3-   OP-01
             //   012345678901234567   8901          78901
@@ -1264,7 +1264,7 @@ public class UnitTest {
         Assert.assertEquals(1024, process.TESTgetRegister(5).getSigned());
         /**/
 
-        /* Store: (101)
+        //* Store: (101)
             // mem[RD] <- imm
             // mem[RD + imm] <- RS2
             // mem[RD + RS1] <- RS2
@@ -1304,7 +1304,7 @@ public class UnitTest {
         Assert.assertEquals(666, MainMemory.TEST_Read(1002).getSigned());
         /**/
 
-        /* Pop: (110)
+        //* Pop: (110)
             // POP: RD <- mem[sp++]
             // Peek: RD <- mem[sp - (RS2 + imm)]
             // PEEK RD <- mem[sp - (RS1 + RS2)]
