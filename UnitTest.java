@@ -5,7 +5,6 @@
  */
 
 import org.junit.*;
-import Processor.*;
 
 public class UnitTest {
     
@@ -1007,7 +1006,7 @@ public class UnitTest {
             "00011","10011","01011","11011","00111","10111","01111","11111",
         };
 
-        Processor process = new Processor();
+        Processor process;
         String[] instructions;
 
         /*
@@ -1025,7 +1024,7 @@ public class UnitTest {
                 "000000000000000000000000000"+"00000"
         */
 
-        //* Branch: (001)
+        /* Branch: (001)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1097,7 +1096,7 @@ public class UnitTest {
         Assert.assertEquals(25, process.TESTgetRegister(3).getUnsigned());
         /**/
         
-        //* Call: (010)
+        /* Call: (010)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1180,7 +1179,7 @@ public class UnitTest {
         Assert.assertEquals(12, process.TESTgetRegister(30).getSigned());
         /**/
 
-        //* Push: (011)
+        /* Push: (011)
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
@@ -1229,7 +1228,7 @@ public class UnitTest {
         Assert.assertEquals(420+69, MainMemory.TEST_Read(1018).getUnsigned());
         /**/
 
-        //* Load: (100)
+        /* Load: (100)
         instructions = new String[]{
             //          Immediate     FUN   -RD3-   OP-01
             //   012345678901234567   8901          78901
@@ -1265,7 +1264,7 @@ public class UnitTest {
         Assert.assertEquals(1024, process.TESTgetRegister(5).getSigned());
         /**/
 
-        //* Store: (101)
+        /* Store: (101)
             // mem[RD] <- imm
             // mem[RD + imm] <- RS2
             // mem[RD + RS1] <- RS2
@@ -1305,7 +1304,7 @@ public class UnitTest {
         Assert.assertEquals(666, MainMemory.TEST_Read(1002).getSigned());
         /**/
 
-        //* Pop: (110)
+        /* Pop: (110)
             // POP: RD <- mem[sp++]
             // Peek: RD <- mem[sp - (RS2 + imm)]
             // PEEK RD <- mem[sp - (RS1 + RS2)]
@@ -1364,7 +1363,7 @@ public class UnitTest {
         instructions = new String[]{
             //          Immediate                OP-01
             //   0123456789012345678901          78901
-                "1110000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
+                "1010000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
             //          Immediate                OP-01
             //   0123456789012345678901          78901
                 "1000000000000000000000"+reg[11]+"00001",       // 2 set R11 = 1
@@ -1379,7 +1378,7 @@ public class UnitTest {
                 "00000000"+reg[1]+reg[2]+"0111"+reg[3]+"00011", // 5 set R3 = R1 * R2
             //     Immediate    -RS1-   FUN   --RD3--  OP-10
             //   0123456789012          8901           78901
-                "1100000000000"+reg[2]+"0010"+reg[12]+"00110",  // 6 if R2 < R12 ? pc + 4 : pc
+                "1100000000000"+reg[2]+"0010"+reg[12]+"01010",  // 6 call R2 < R12 ? pc + 4 : pc
             //   Immediate      --RS2--  FUN   -RD3-   OP-11
             //   0123456789012           8901          78901
                 "0000000000000"+reg[11]+"1111"+reg[2]+"00010",  // 7 set r2 -= R11
@@ -1388,7 +1387,7 @@ public class UnitTest {
                 "0000000000000"+reg[2]+"0111"+reg[3]+"00010",   // 8 set R3 *= R2
             //             Immediate           OP-00
             //   012345678901234567890123456   78901
-                "101000000000000000000000000"+"00100",          // 9 Jump 5
+                "101000000000000000000000000"+"10000",          // 9 Return
             //          Immediate            OP-00
             //   012345678901234567890123456   78901
                 "000000000000000000000000000"+"00000"           // 10 HALT
@@ -1398,7 +1397,7 @@ public class UnitTest {
         process = new Processor();
         process.run();
 
-        Assert.assertEquals(5040, process.TESTgetRegister(3).getSigned());
+        Assert.assertEquals(120, process.TESTgetRegister(3).getSigned());
         /**/
     }
 }
