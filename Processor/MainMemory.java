@@ -1,8 +1,6 @@
-
-
+package Processor;
 
 public class MainMemory {
-    
     public static final int MEM_SIZE = 1024;
     private static Word[] memory = new Word[MEM_SIZE];
 

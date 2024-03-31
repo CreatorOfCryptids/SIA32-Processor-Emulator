@@ -1,5 +1,4 @@
-
-
+package Processor;
 
 public class Processor {
 
@@ -46,7 +45,7 @@ public class Processor {
      * 
      * @throws Exception
      */
-    Processor() throws Exception{
+    public Processor() throws Exception{
 
         PC = new Word();
         SP = new Word();    SP.set(1024);

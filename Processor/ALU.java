@@ -1,7 +1,6 @@
-
+package Processor;
 
 public class ALU {
-    
     public Word op1, op2, result;
     
     private enum OP{
@@ -21,7 +20,7 @@ public class ALU {
      * 
      * @throws Exception
      */
-    ALU() throws Exception{
+    public ALU() throws Exception{
         op1 = new Word();
         op2 = new Word();
         result = new Word();
@@ -185,7 +184,6 @@ public class ALU {
         Word temp = new Word();
 
         for(int i=0; i<Word.WORD_SIZE; i++){
-            // TODO: Add
             byte bitSum = 0;
 
             if (op1.getBit(i).getValue() == true)

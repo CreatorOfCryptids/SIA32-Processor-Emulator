@@ -1,5 +1,10 @@
 *
+<<<<<<< HEAD
 !Compiler
 !Processor
+=======
+!Processor
+!Compiler
+>>>>>>> ee349f4 (Take 2: Still getting the weird compiler error.)
 !*.java
 !.gitignore

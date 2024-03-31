@@ -6,6 +6,9 @@
 
 import org.junit.*;
 
+import Compiler.*;
+import Processor.*;
+
 public class UnitTest {
     
     @Test
@@ -1006,7 +1009,7 @@ public class UnitTest {
             "00011","10011","01011","11011","00111","10111","01111","11111",
         };
 
-        Processor process;
+        Processor process = new Processor();
         String[] instructions;
 
         /*
@@ -1028,43 +1031,43 @@ public class UnitTest {
         instructions = new String[]{
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
-                "1010001000000000000000"+reg[14]+"00001",           // 1  Set R14 69
+                "1010001000000000000000"+reg[14]+"00001",           // 1 Set R14 69
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
-                "0010010110000000000000"+reg[15]+"00001",           // 2  Set R15 420
+                "0010010110000000000000"+reg[15]+"00001",           // 2 Set R15 420
             //          Immediate                 OP-01
             //   0123456789012345678901           78901 
-                "0101100101000000000000"+reg[31]+"00001",           // 3  Set R31 666
+                "0101100101000000000000"+reg[31]+"00001",           // 3 Set R31 666
             //            Immediate            OP-00
             //   012345678901234567890123456   78901
-                "011000000000000000000000000"+"00100",              // 4  Jump to 6
+                "011000000000000000000000000"+"00100",              // 4 Jump to 6
             //          Immediate                 OP-01
             //   0123456789012345678901           78901 
-                "1011001000000000000000"+reg[14]+"00001",           // 5  Set R14 = 77   // Skipped
+                "1011001000000000000000"+reg[14]+"00001",           // 5 Set R14 = 77   // Skipped
             //          Immediate                 OP-01
             //   0123456789012345678901           78901 
-                "1011010000000000000000"+reg[15]+"00001",           // 6  Set R15 = 45   // Skipped
+                "1011010000000000000000"+reg[15]+"00001",           // 6 Set R15 = 45   // Skipped
             //          Immediate                 OP-01
             //   0123456789012345678901           78901
-                "0010010110000000000000"+reg[20]+"00001",           // 7  Set R20 420  // 6
+                "0010010110000000000000"+reg[20]+"00001",           //7 Set R20 420  // 6
             //          Immediate                OP-01
             //   0123456789012345678901          78901
-                "0100000000000000000000"+reg[0]+"00101",            // 8  jump pc + 2      // Jump forward 2
+                "0100000000000000000000"+reg[0]+"00101",            //8 jump pc + 2      // Jump forward 2
             //          Immediate                 OP-01
             //   0123456789012345678901           78901 
-                "0011110110000000000000"+reg[31]+"00001",           // 9  Set R31 = 444  // Skipped
+                "0011110110000000000000"+reg[31]+"00001",           //9 Set R31 = 444  // Skipped
             //          Immediate                 OP-01
             //   0123456789012345678901           78901 
-                "1011010000000000000000"+reg[20]+"00001",           // 10 Set R20 45   // Skipped
+                "1011010000000000000000"+reg[20]+"00001",           //10   Set R20 45   // Skipped
             //    Immediate              FUN            OP-10
             //  0123456789012            8901           78901
-                "1000000000000"+reg[14]+"0000"+reg[15]+"00110",     // 11 if R14 == R15 1  // Should be false
+                "1000000000000"+reg[14]+"0000"+reg[15]+"00110",     //11   if R14 == R15 1  // Should be false
             //          Immediate                OP-01
             //   0123456789012345678901          78901
-                "1000000000000000000000"+reg[1]+"00001",            // 12 Set R1 = 1
+                "1000000000000000000000"+reg[1]+"00001",            //12   Set R1 = 1
             //   Immediate                 FUN           OP-11
             //   01234567                  8901          78901
-                "01000000"+reg[15]+reg[0]+"0001"+reg[0]+"00111",    // 13 if R15 != R0 2  // Should be true
+                "01000000"+reg[15]+reg[0]+"0001"+reg[0]+"00111",    // 13   if R15 != R0 2  // Should be true
             //          Immediate        -RD3-   OP-01
             //   0123456789012345678901          78901
                 "1000000000000000000000"+reg[2]+"00001",            // 14 Set R2 1     // Skipped
@@ -1363,7 +1366,7 @@ public class UnitTest {
         instructions = new String[]{
             //          Immediate                OP-01
             //   0123456789012345678901          78901
-                "1010000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
+                "1110000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
             //          Immediate                OP-01
             //   0123456789012345678901          78901
                 "1000000000000000000000"+reg[11]+"00001",       // 2 set R11 = 1
@@ -1378,7 +1381,7 @@ public class UnitTest {
                 "00000000"+reg[1]+reg[2]+"0111"+reg[3]+"00011", // 5 set R3 = R1 * R2
             //     Immediate    -RS1-   FUN   --RD3--  OP-10
             //   0123456789012          8901           78901
-                "1100000000000"+reg[2]+"0010"+reg[12]+"01010",  // 6 call R2 < R12 ? pc + 4 : pc
+                "1100000000000"+reg[2]+"0010"+reg[12]+"00110",  // 6 if R2 < R12 ? pc + 4 : pc
             //   Immediate      --RS2--  FUN   -RD3-   OP-11
             //   0123456789012           8901          78901
                 "0000000000000"+reg[11]+"1111"+reg[2]+"00010",  // 7 set r2 -= R11
@@ -1387,7 +1390,7 @@ public class UnitTest {
                 "0000000000000"+reg[2]+"0111"+reg[3]+"00010",   // 8 set R3 *= R2
             //             Immediate           OP-00
             //   012345678901234567890123456   78901
-                "101000000000000000000000000"+"10000",          // 9 Return
+                "101000000000000000000000000"+"00100",          // 9 Jump 5
             //          Immediate            OP-00
             //   012345678901234567890123456   78901
                 "000000000000000000000000000"+"00000"           // 10 HALT
@@ -1397,7 +1400,92 @@ public class UnitTest {
         process = new Processor();
         process.run();
 
-        Assert.assertEquals(120, process.TESTgetRegister(3).getSigned());
+        Assert.assertEquals(5040, process.TESTgetRegister(3).getSigned());
         /**/
+    }
+
+    // Compiler Tests:
+
+    @Test
+    public void InputHandler() throws Exception{
+        String[] input = new String[]{
+            "OneWord",
+            "Two words",
+            "A whole bunch of words??? and Symbols ? ! ? !?",
+            "W0rds w1th num83rs R42069",
+            "Testing a blank line next.",
+            "",
+            "Testing end file."
+        };
+
+        InputHandler ih = new InputHandler(input);
+
+        Assert.assertTrue(ih.isLineDone());
+        Assert.assertTrue(ih.hasMoreLines());
+        Assert.assertEquals("OneWord", ih.peek().get());
+        Assert.assertTrue(ih.hasMoreLines());
+        Assert.assertEquals("OneWord", ih.getWord().get());
+        Assert.assertFalse(ih.isLineDone());
+        Assert.assertTrue(ih.hasMoreLines());
+
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertEquals(0, ih.getInLineIndex());
+        Assert.assertEquals("Two", ih.peek().get());
+        Assert.assertEquals("words", ih.peek(1).get());
+        Assert.assertTrue(ih.isLineDone());
+        Assert.assertTrue(ih.hasMoreLines());
+
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertEquals("A", ih.getWord().get());
+        Assert.assertEquals("whole", ih.getWord().get());
+        Assert.assertEquals("bunch", ih.getWord().get());
+        Assert.assertEquals("of", ih.getWord().get());
+        Assert.assertEquals("words???", ih.getWord().get());
+        Assert.assertEquals("and", ih.getWord().get());
+        Assert.assertEquals("Symbols", ih.getWord().get());
+        Assert.assertEquals("?", ih.getWord().get());
+        Assert.assertEquals("!", ih.getWord().get());
+        Assert.assertEquals("?", ih.getWord().get());
+        Assert.assertEquals("!?", ih.getWord().get());
+        Assert.assertFalse(ih.isLineDone());
+        Assert.assertFalse(ih.getWord().isPresent());
+        Assert.assertFalse(ih.isLineDone());
+        Assert.assertTrue(ih.hasMoreLines());
+
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertEquals("W0rds", ih.getWord().get());
+        Assert.assertEquals("w1th", ih.getWord().get());
+        Assert.assertEquals("num83rs", ih.getWord().get());
+        Assert.assertEquals("R42069", ih.getWord().get());
+        Assert.assertTrue(ih.hasMoreLines());
+
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertTrue(ih.hasMoreLines());
+
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertEquals(0, ih.getInLineIndex());
+        Assert.assertFalse(ih.isLineDone());
+        Assert.assertTrue(ih.hasMoreLines());
+
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertFalse(ih.hasMoreLines());
+        Assert.assertFalse(ih.nextLine());
+        
+    }
+
+    @Test
+    public void Lexer() throws Exception {
+        String[] input = new String[]{
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            
+        };
     }
 }

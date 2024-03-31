@@ -1,7 +1,7 @@
+package Processor;
 
-
-public class Bit{
-
+public class Bit {
+    
     private boolean value;
 
     /**
