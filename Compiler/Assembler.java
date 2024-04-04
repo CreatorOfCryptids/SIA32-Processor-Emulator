@@ -1,5 +1,6 @@
 package Compiler;
 
+<<<<<<< HEAD
 import java.util.LinkedList;
 
 public class Assembler {
@@ -15,4 +16,8 @@ public class Assembler {
     public LinkedList<Instruction> assemble(){
         return null;
     }
+=======
+public class Assembler {
+    
+>>>>>>> 5308431 (Started on the compiler.)
 }

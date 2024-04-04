@@ -1,7 +1,10 @@
 package Compiler;
 
+<<<<<<< HEAD
 import java.util.HashMap;
 
+=======
+>>>>>>> 5308431 (Started on the compiler.)
 public abstract class Instruction {
 
     public enum OpCode{
@@ -13,6 +16,7 @@ public abstract class Instruction {
         STORE,
         POP
     }
+<<<<<<< HEAD
 
     public final String[] opToString = new String[]{
         "000", // Math
@@ -71,6 +75,8 @@ public abstract class Instruction {
     
     protected String op;
     protected String imm;
+=======
+>>>>>>> 5308431 (Started on the compiler.)
     
     /**
      * Returns the binary of the instruction.
@@ -78,6 +84,7 @@ public abstract class Instruction {
      * @return A string containing the binary of this instruction.
      */
     public abstract String toInstruction();
+<<<<<<< HEAD
 
     /**
      * Returns the imm as a string of bits.
@@ -105,4 +112,6 @@ public abstract class Instruction {
 
         return retVal;
     }
+=======
+>>>>>>> 5308431 (Started on the compiler.)
 }
