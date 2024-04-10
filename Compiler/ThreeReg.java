@@ -5,10 +5,14 @@ public class ThreeReg extends Instruction{
     protected static int IMM_SIZE = 8;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 94b3465 (Fixed visibility in ThreeReg)
     private String rd;
     private String func;
     private String rs2;
     private String rs1;
+<<<<<<< HEAD
 
     public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1, int imm){
 =======
@@ -19,6 +23,10 @@ public class ThreeReg extends Instruction{
 
     ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1, int imm){
 >>>>>>> d35383a (Created the three instruction class.)
+=======
+
+    public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1, int imm){
+>>>>>>> 94b3465 (Fixed visibility in ThreeReg)
         this.op = opToString[code.ordinal()] + "11";
         this.rd = regMap[rd];
         this.func = funcToString[func.ordinal()];
@@ -28,10 +36,14 @@ public class ThreeReg extends Instruction{
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1){
 =======
     ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1){
 >>>>>>> d35383a (Created the three instruction class.)
+=======
+    public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1){
+>>>>>>> 94b3465 (Fixed visibility in ThreeReg)
         this.op = opToString[code.ordinal()] + "11";
         this.rd = regMap[rd];
         this.func = funcToString[func.ordinal()];
