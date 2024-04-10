@@ -1,6 +1,5 @@
 package Compiler;
 
-<<<<<<< HEAD
 import java.util.LinkedList;
 import java.util.HashMap;
 
@@ -112,14 +111,4 @@ public class Lexer {
     private void lexException(String message) throws Exception{
         throw new Exception("LEX ERROR: " + message + " at line: " + ih.getLineCount() + " index: " + ih.getInLineIndex() + '.');
     }
-=======
-public class Lexer {
-    
-    InputHandler ih;
-
-    public Lexer(String[] input){
-        
-    }
-
->>>>>>> 5308431 (Started on the compiler.)
 }

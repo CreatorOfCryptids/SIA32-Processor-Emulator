@@ -1,6 +1,5 @@
 package Compiler;
 
-<<<<<<< HEAD
 import java.util.Optional;
 
 public class InputHandler {
@@ -111,102 +110,4 @@ public class InputHandler {
     public int getLineCount(){
         return lineCount;
     }
-=======
-public class InputHandler {
-
-    private String fileData;
-    private int currentIndex;
-
-    /**
-     * Constructor
-     * @param file The sting containing the information in the file.
-     */
-    InputHandler(String file){
-        this.fileData = file;
-    }
-
-    /**
-    * Looks “i” characters ahead and returns that character; doesn’t move the index.
-    * 
-    * @param i How far ahead the method looks.
-    * @return The char i characters ahead of the index.
-    */
-    public char peek(int i){
-        // Make sure the index is not beond the end of the string.
-        if((currentIndex+i < fileData.length()))
-            return fileData.charAt(currentIndex+i);
-        else
-            return ' ';
-    }
-
-    /**
-     * The peek() overloaded method.
-     * Yes, I am not ashamed to admit that I made a whole extra method to get out of typing one single extra letter. Judge me all you want, but it works.
-     * @return The next character
-     */
-    public char peek(){
-        // Make sure the index is not beond the end of the string.
-        if((currentIndex < fileData.length()))
-            return fileData.charAt(currentIndex);
-        else
-            return ' ';
-    }
-
-    /**
-    * The peekString() method. 
-    * @param i How far ahead the method will look.
-    * @return A string of the next “i” characters but doesn’t move the index
-    */
-    public String peekString(int i){
-        return fileData.substring(currentIndex, currentIndex+i);
-    }
-
-    /**
-     * The getChar() method.
-     * @return The next character and moves the index
-     */
-    public char getChar(){
-        char output = fileData.charAt(currentIndex++);
-        return output;
-    }
-
-    /**
-     * Moves the index ahead “i” positions
-     * 
-     * @param i How far the index moves
-     */
-    public void swallow(int i) throws Exception{
-        if (i >=0)
-            currentIndex += i;
-        else 
-            throw new Exception("The inputed index " + i + " is not a valid index.");
-    }
-
-    /**
-     * Returns flase while there is still more information
-     * 
-     * @return True if the index is at the end of the document. False if not.
-     */
-    public boolean isDone(){
-        return (fileData.length() <= currentIndex);
-    }
-
-    /**
-     * Returns the remainder of the string.
-     * 
-     * @return The rest of the input file as a single string.
-     */
-    public String remainder() {
-        return fileData.substring(currentIndex);
-    }
-
-    /**
-     * Shhhhh! This is just for testing pourposes. 
-     * The getCurrentIndex() method.
-     * @return The current index of the finger.
-     *
-    public int getCurrentIndex(){
-        return currentIndex;
-    }/**/
->>>>>>> 5308431 (Started on the compiler.)
 }

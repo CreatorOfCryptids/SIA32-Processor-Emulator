@@ -24,39 +24,22 @@ public class Compiler {
     }
 
     public Compiler(String inputFileName) throws Exception{
-<<<<<<< HEAD
-=======
-
->>>>>>> 5308431 (Started on the compiler.)
         Path myPath = Paths.get(inputFileName);
         input = ((String[])Files.readAllLines(myPath).toArray());
 
     }
 
-<<<<<<< HEAD
     public String[] compile() throws Exception{
-=======
-    public String[] compile(){
->>>>>>> 5308431 (Started on the compiler.)
         Lexer lexer = new Lexer(input);
 
         Assembler asb = new Assembler(lexer.lex());
 
-<<<<<<< HEAD
         LinkedList<Instruction> instructionList = asb.assemble();
 
         String[] retval = new String[instructionList.size()];
 
         for(int i = 0; i< input.length; i++)
             retval[i] = instructionList.get(i).toInstruction();
-=======
-        Instruction[] instructionList = asb.assemble();
-
-        String[] retval = new String[input.length];
-
-        for(int i = 0; i< input.length; i++)
-            retval[i] = instructionList[i].toInstruction();
->>>>>>> 5308431 (Started on the compiler.)
 
         return retval;
     }

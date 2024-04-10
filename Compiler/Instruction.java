@@ -1,15 +1,7 @@
 package Compiler;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 import java.util.HashMap;
 
-=======
->>>>>>> 5308431 (Started on the compiler.)
-=======
-import java.util.HashMap;
-
->>>>>>> d35383a (Created the three instruction class.)
 public abstract class Instruction {
 
     public enum OpCode{
@@ -21,10 +13,6 @@ public abstract class Instruction {
         STORE,
         POP
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d35383a (Created the three instruction class.)
 
     public final String[] opToString = new String[]{
         "000", // Math
@@ -83,11 +71,6 @@ public abstract class Instruction {
     
     protected String op;
     protected String imm;
-<<<<<<< HEAD
-=======
->>>>>>> 5308431 (Started on the compiler.)
-=======
->>>>>>> d35383a (Created the three instruction class.)
     
     /**
      * Returns the binary of the instruction.
@@ -95,10 +78,6 @@ public abstract class Instruction {
      * @return A string containing the binary of this instruction.
      */
     public abstract String toInstruction();
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d35383a (Created the three instruction class.)
 
     /**
      * Returns the imm as a string of bits.
@@ -126,9 +105,4 @@ public abstract class Instruction {
 
         return retVal;
     }
-<<<<<<< HEAD
-=======
->>>>>>> 5308431 (Started on the compiler.)
-=======
->>>>>>> d35383a (Created the three instruction class.)
 }
