@@ -21,6 +21,7 @@ public class Token {
 
     public Token(Type type){
         this.type = type;
+        this.value = Optional.empty();
     }
 
     public Type getType(){
@@ -32,6 +33,6 @@ public class Token {
     }
 
     public String toString(){
-        return type.toString() + (value.isPresent() ? "<" + value.get() + ">" : "");
+        return type.toString() + "" + (value.isPresent() ? "<" + value.get() + ">" : "");
     }
 }

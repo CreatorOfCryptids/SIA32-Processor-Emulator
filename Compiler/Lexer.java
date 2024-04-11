@@ -61,7 +61,7 @@ public class Lexer {
 
         while(ih.hasMoreLines()){
 
-            while(ih.isLineDone() == false){
+            while(ih.moreWords()){
 
                 String nextWord = ih.getWord().get().toUpperCase();
 
