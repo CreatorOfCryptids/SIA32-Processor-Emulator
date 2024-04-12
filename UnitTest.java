@@ -1520,12 +1520,12 @@ public class UnitTest {
             "Copy R11 1",
             "cOPY R12 2",
             "Math Sub R2 R1 R11",
-            "MATH Mult R3 R1 R2",
+            "MATH Mult R3 R1 R2 // test comments",
             "Branch LT R12 R2 3",
             "math Sub R2 R11",
             "math mult R3 r2",
             "Jump 5",
-            "Hault"
+            "Hault // But do comments work at the end too???"
         };
 
         Lexer lex = new Lexer(input);
@@ -1543,7 +1543,7 @@ public class UnitTest {
             "Math add R5 R4",
             "Copy R2 365",
             "",
-            "",
+            "// Only comment",
             "Hault"
         };
 
@@ -1553,6 +1553,10 @@ public class UnitTest {
 
         // [MATH, ADD, REGISTER<5>, REGISTER<4>, COPY, REGISTER<2>, IMMEDIATE<365>, NEW_LINE, NEW_LINE, NEW_LINE, HAULT, NEW_LINE]"
         Assert.assertEquals("[MATH, ADD, REGISTER<5>, REGISTER<4>, NEW_LINE, COPY, REGISTER<2>, IMMEDIATE<365>, NEW_LINE, NEW_LINE, NEW_LINE, HAULT, NEW_LINE]", output.toString());
+    }
+
+    @Test
+    public void Assembler() throws Exception {
 
     }
 }

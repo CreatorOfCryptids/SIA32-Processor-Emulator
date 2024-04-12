@@ -91,6 +91,10 @@ public class Lexer {
                         lexException("Unexpected register index \"" + currentWord.substring(1) + "\"");
                     }
                 }
+                // Check if it's a comment
+                else if(currentWord.equals("//")){
+                    break;
+                }
                 else{
                     lexException("Unexpected phrase: \"" + currentWord +"\"");
                 }
