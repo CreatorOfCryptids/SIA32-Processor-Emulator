@@ -73,7 +73,6 @@ public class Lexer {
                 else if (currentWord.charAt(0) == 'R'){
                     // Make sure the reg index parses to an int.
                     try{
-                        String temp = currentWord.substring(1);
                         int registerIndex = Integer.parseInt(currentWord.substring(1));
                         tokenList.add(new Token(Token.Type.REGISTER, registerIndex));
                     }
