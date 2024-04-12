@@ -59,45 +59,45 @@ public class Lexer {
      */
     public LinkedList<Token> lex() throws Exception{
 
-        while(ih.hasMoreLines()){
+        do{
 
             while(ih.moreWords()){
 
-                String nextWord = ih.getWord().get().toUpperCase();
+                String currentWord = ih.getWord().get().toUpperCase();
 
                 // Check if it's in the map.
-                if(keyWordMap.containsKey(nextWord)){
-                    tokenList.add(new Token(keyWordMap.get(nextWord)));
+                if(keyWordMap.containsKey(currentWord)){
+                    tokenList.add(new Token(keyWordMap.get(currentWord)));
                 }
                 // Check if it's a register.
-                else if (nextWord.charAt(0) == 'R'){
+                else if (currentWord.charAt(0) == 'R'){
                     // Make sure the reg index parses to an int.
                     try{
-                        int registerIndex = Integer.parseInt(nextWord.substring(1));
+                        String temp = currentWord.substring(1);
+                        int registerIndex = Integer.parseInt(currentWord.substring(1));
                         tokenList.add(new Token(Token.Type.REGISTER, registerIndex));
                     }
                     catch (NumberFormatException e){
-                        lexException("Unexpected register index \"" + nextWord.substring(1) + "\"");
+                        lexException("Unexpected register index \"" + currentWord.substring(1) + "\"");
                     }
                 }
                 // Check if it's a number.
-                else if (Character.isDigit(nextWord.charAt(0))){
+                else if (Character.isDigit(currentWord.charAt(0))){
                     // Make sure it parses to an int.
                     try{
-                        int number = Integer.parseInt(nextWord.substring(1));
+                        int number = Integer.parseInt(currentWord);
                         tokenList.add(new Token(Token.Type.IMMEDIATE, number));
                     }
                     catch (NumberFormatException e){
-                        lexException("Unexpected register index \"" + nextWord.substring(1) + "\"");
+                        lexException("Unexpected register index \"" + currentWord.substring(1) + "\"");
                     }
                 }
                 else{
-                    lexException("Unexpected phrase: \"" + nextWord +"\"");
+                    lexException("Unexpected phrase: \"" + currentWord +"\"");
                 }
             }
-            ih.nextLine();
             tokenList.add(new Token(Token.Type.NEW_LINE));
-        }
+        } while(ih.nextLine());
 
         return tokenList;
     }
