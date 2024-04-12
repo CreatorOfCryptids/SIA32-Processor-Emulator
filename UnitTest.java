@@ -50,7 +50,7 @@ public class UnitTest {
         b.toggle();
         Assert.assertEquals("T", b.toString());
     }
-
+    
     @Test
     public void Bit_logic() throws Exception{
 
@@ -81,7 +81,7 @@ public class UnitTest {
         Assert.assertTrue(f1.not().getValue());
         Assert.assertFalse(t1.not().getValue());
     }
-
+    
     @Test 
     public void Word_init() throws Exception{
         // Constructor
@@ -1516,6 +1516,30 @@ public class UnitTest {
     @Test
     public void Lexer() throws Exception {
         String[] input = new String[]{
+            "Copy R1 5",
+            "Copy R11 1",
+            "cOPY R12 2",
+            "Math Sub R2 R1 R11",
+            "MATH Mult R3 R1 R2",
+            "Branch LT R12 R2 3",
+            "math Sub R2 R11",
+            "math mult R3 r2",
+            "Jump 5",
+            "Hault"
+        };
+
+        Lexer lex = new Lexer(input);
+
+        LinkedList<Token> output = lex.lex();
+        
+        Assert.assertEquals(
+            "[COPY, REGISTER<1>, IMMEDIATE<5>, NEW_LINE, COPY, REGISTER<11>, IMMEDIATE<1>, NEW_LINE, COPY, "+
+            "REGISTER<12>, IMMEDIATE<2>, NEW_LINE, MATH, SUBTRACT, REGISTER<2>, REGISTER<1>, REGISTER<11>, "+
+            "NEW_LINE, MATH, MULTIPLY, REGISTER<3>, REGISTER<1>, REGISTER<2>, NEW_LINE, BRANCH, LT, REGISTER<12>, "+
+            "REGISTER<2>, IMMEDIATE<3>, NEW_LINE, MATH, SUBTRACT, REGISTER<2>, REGISTER<11>, NEW_LINE, MATH, "+
+            "MULTIPLY, REGISTER<3>, REGISTER<2>, NEW_LINE, JUMP, IMMEDIATE<5>, NEW_LINE, HAULT, NEW_LINE]", output.toString());
+
+        input = new String[]{
             "Math add R5 R4",
             "Copy R2 365",
             "",
@@ -1523,16 +1547,12 @@ public class UnitTest {
             "Hault"
         };
 
-        Lexer lex = new Lexer(input);
+        lex = new Lexer(input);
+        output.clear();
+        output = lex.lex();
 
-        LinkedList<Token> output = lex.lex();
+        // [MATH, ADD, REGISTER<5>, REGISTER<4>, COPY, REGISTER<2>, IMMEDIATE<365>, NEW_LINE, NEW_LINE, NEW_LINE, HAULT, NEW_LINE]"
+        Assert.assertEquals("[MATH, ADD, REGISTER<5>, REGISTER<4>, NEW_LINE, COPY, REGISTER<2>, IMMEDIATE<365>, NEW_LINE, NEW_LINE, NEW_LINE, HAULT, NEW_LINE]", output.toString());
 
-        Assert.assertEquals("MATH", new Token(Token.Type.MATH).toString());
-        Assert.assertEquals("IMMEDIATE<508>", new Token(Token.Type.IMMEDIATE, 508).toString());
-        
-        Assert.assertEquals(
-            "[MATH, ADD, REGISTER<5>, REGISTER<4>, NEW_LINE, COPY, REGISTER<2>, "+
-            "IMMEDIATE<65>, NEW_LINE, NEW_LINE, NEW_LINE, NEW_LINE, NEW_LINE, "+
-            "NEW_LINE, NEW_LINE, NEW_LINE, HAULT]", output.toString());
     }
 }
