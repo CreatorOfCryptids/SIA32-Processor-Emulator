@@ -16,9 +16,9 @@ public class InputHandler {
      */
     public InputHandler(String[] file){
         this.fileData = file;
-        inLineIndex = 0;
-        lineCount = 0;
-        currentLine = fileData[lineCount++].split(" ");
+        this.inLineIndex = 0;
+        this.lineCount = 0;
+        this.currentLine = fileData[lineCount++].split(" ");
     }
 
     /**
