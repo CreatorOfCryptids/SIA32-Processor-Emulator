@@ -27,7 +27,7 @@ public class InputHandler {
     * @return An Optional containing the next word in the current line.
     */
     public Optional<String> peek(){
-        if(inLineIndex < currentLine.length)
+        if(inLineIndex < currentLine.length && !currentLine[inLineIndex].equals(""))
             return Optional.of(currentLine[inLineIndex]);
         else
             return Optional.empty();
@@ -53,7 +53,7 @@ public class InputHandler {
      * @return An Optional containing the next word in the current line.
      */
     public Optional<String> getWord(){
-        if(inLineIndex < currentLine.length)
+        if(inLineIndex < currentLine.length && !currentLine[inLineIndex].equals(""))
             return Optional.of(currentLine[inLineIndex++]);
         else
             return Optional.empty();
@@ -79,9 +79,12 @@ public class InputHandler {
      * 
      * @return True if there are more words in this line. False otherwize.
      */
-    public boolean isLineDone(){
+    public boolean moreWords(){
         // Make sure to still return false when spit returns {""} on an empty line.
-        return (inLineIndex < currentLine.length && !currentLine[0].equals(""));
+        return (
+            inLineIndex<currentLine.length && 
+            !currentLine[0].equals("")
+        );
     }
 
     /**

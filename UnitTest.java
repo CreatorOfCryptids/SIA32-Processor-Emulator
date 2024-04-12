@@ -4,10 +4,12 @@
  * @author Danny Peck (dpeck@albany.edu)
  */
 
-import org.junit.*;
-
 import Compiler.*;
 import Processor.*;
+import java.util.LinkedList;
+import org.junit.*;
+
+
 
 public class UnitTest {
     
@@ -1415,26 +1417,30 @@ public class UnitTest {
             "W0rds w1th num83rs R42069",
             "Testing a blank line next.",
             "",
+            "",
             "Testing end file."
         };
 
         InputHandler ih = new InputHandler(input);
 
-        Assert.assertTrue(ih.isLineDone());
+        // "OneWord"
+        Assert.assertTrue(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
         Assert.assertEquals("OneWord", ih.peek().get());
         Assert.assertTrue(ih.hasMoreLines());
         Assert.assertEquals("OneWord", ih.getWord().get());
-        Assert.assertFalse(ih.isLineDone());
+        Assert.assertFalse(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
 
+        // "Two words"
         Assert.assertTrue(ih.nextLine());
         Assert.assertEquals(0, ih.getInLineIndex());
         Assert.assertEquals("Two", ih.peek().get());
         Assert.assertEquals("words", ih.peek(1).get());
-        Assert.assertTrue(ih.isLineDone());
+        Assert.assertTrue(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
 
+        // "A whole bunch of words??? and Symbols ? ! ? !?"
         Assert.assertTrue(ih.nextLine());
         Assert.assertEquals("A", ih.getWord().get());
         Assert.assertEquals("whole", ih.getWord().get());
@@ -1447,45 +1453,86 @@ public class UnitTest {
         Assert.assertEquals("!", ih.getWord().get());
         Assert.assertEquals("?", ih.getWord().get());
         Assert.assertEquals("!?", ih.getWord().get());
-        Assert.assertFalse(ih.isLineDone());
+        Assert.assertFalse(ih.moreWords());
         Assert.assertFalse(ih.getWord().isPresent());
-        Assert.assertFalse(ih.isLineDone());
+        Assert.assertFalse(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
-
+        
+        // "W0rds w1th num83rs R42069"
         Assert.assertTrue(ih.nextLine());
+        Assert.assertTrue(ih.moreWords());
         Assert.assertEquals("W0rds", ih.getWord().get());
+        Assert.assertTrue(ih.moreWords());
         Assert.assertEquals("w1th", ih.getWord().get());
+        Assert.assertTrue(ih.moreWords());
         Assert.assertEquals("num83rs", ih.getWord().get());
+        Assert.assertTrue(ih.moreWords());
         Assert.assertEquals("R42069", ih.getWord().get());
+        Assert.assertFalse(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
 
+        // "Testing a blank line next."
         Assert.assertTrue(ih.nextLine());
         Assert.assertTrue(ih.hasMoreLines());
 
+        // ""
         Assert.assertTrue(ih.nextLine());
         Assert.assertEquals(0, ih.getInLineIndex());
-        Assert.assertFalse(ih.isLineDone());
+        Assert.assertFalse(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
 
+        // ""
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertEquals(0, ih.getInLineIndex());
+        Assert.assertFalse(ih.moreWords());
+        Assert.assertTrue(ih.hasMoreLines());
+
+        // "Testing end file."
         Assert.assertTrue(ih.nextLine());
         Assert.assertFalse(ih.hasMoreLines());
         Assert.assertFalse(ih.nextLine());
         
+        input = new String[]{
+            //"Math add R5 R4",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            //"Hault"
+        };
+
+        ih = new InputHandler(input);
+        
+        while(ih.hasMoreLines() == true){
+            Assert.assertFalse(ih.moreWords());
+            ih.nextLine();
+        }
     }
 
     @Test
     public void Lexer() throws Exception {
         String[] input = new String[]{
+            "Math add R5 R4",
+            "Copy R2 365",
             "",
             "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            
+            "Hault"
         };
+
+        Lexer lex = new Lexer(input);
+
+        LinkedList<Token> output = lex.lex();
+
+        Assert.assertEquals("MATH", new Token(Token.Type.MATH).toString());
+        Assert.assertEquals("IMMEDIATE<508>", new Token(Token.Type.IMMEDIATE, 508).toString());
+        
+        Assert.assertEquals(
+            "[MATH, ADD, REGISTER<5>, REGISTER<4>, NEW_LINE, COPY, REGISTER<2>, "+
+            "IMMEDIATE<65>, NEW_LINE, NEW_LINE, NEW_LINE, NEW_LINE, NEW_LINE, "+
+            "NEW_LINE, NEW_LINE, NEW_LINE, HAULT]", output.toString());
     }
 }
