@@ -5,16 +5,21 @@ public class NoReg extends Instruction{
     protected static final int IMM_SIZE = 27;
 
     public NoReg(Instruction.OpCode code, int imm){
-        this.op = opToString[code.ordinal()];
-        this.imm = immToString(imm, IMM_SIZE);
+        this.op = code;
+        this.imm = imm;
     }
 
     public NoReg(Instruction.OpCode code){
-        this.op = opToString[code.ordinal()];
-        this.imm = immToString(0, IMM_SIZE);
+        this.op = code;
+        this.imm = 0;
+    }
+
+    public NoReg(NoReg instruction){
+        this.op = instruction.op;
+        this.imm = instruction.imm;
     }
 
     public String toInstruction() {
-        return imm + op + "00";
+        return immToString(imm, IMM_SIZE) + opToString[op.ordinal()] + "00";
     }
 }
