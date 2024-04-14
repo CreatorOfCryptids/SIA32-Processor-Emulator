@@ -77,7 +77,7 @@ public class TokenHandler {
      * 
      * @return True if there is at least one seperator, false otherwize.
      */
-    public boolean acceptSeperators(){
+    public boolean acceptNewLines(){
         boolean foundSeperators = matchAndRemove(Token.Type.NEW_LINE).isPresent();
         while(matchAndRemove(Token.Type.NEW_LINE).isPresent());
         return foundSeperators;
