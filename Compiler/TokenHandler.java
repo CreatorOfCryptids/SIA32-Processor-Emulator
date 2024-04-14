@@ -84,8 +84,8 @@ public class TokenHandler {
     }
 
     /**
-     * The getLastLineNumber() function.
-     * This is a function of my own making to allow for easier debuging for future users of this compiler :)
+     * Returns a string containing position information to allow for easier debuging for future users of this compiler :)
+     * 
      * @return A string containing the line and index of the last processed token.
      */
     String getErrorPosition(){
