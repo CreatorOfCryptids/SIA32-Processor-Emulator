@@ -1,27 +1,27 @@
 package Compiler;
 
-public class OneReg extends Instruction{
+public class OneReg extends NoReg{
 
     protected static final int IMM_SIZE = 18;
 
-    private String func;
-    private String rd;
+    protected String func;
+    protected String rd;
 
     public OneReg(Instruction.OpCode code, int rd, Instruction.Function func, int imm){
-        this.op = opToString[code.ordinal()] + "01";
+        super(code, imm);
         this.rd = regMap[rd];
         this.func = funcToString[func.ordinal()];
-        this.imm = immToString(imm, IMM_SIZE);
     }
 
     public OneReg(Instruction.OpCode code, int rd, Instruction.Function func){
-        this.op = opToString[code.ordinal()] + "01";
+        super(code);
+        this.op = opToString[code.ordinal()];
         this.rd = regMap[rd];
         this.func = funcToString[func.ordinal()];
         this.imm = "000000000000000000";
     }
 
     public String toInstruction() {
-        return imm + func + rd + op;
+        return imm + func + rd + op  + "01";
     }    
 }

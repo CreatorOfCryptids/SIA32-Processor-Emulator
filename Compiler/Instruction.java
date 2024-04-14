@@ -1,7 +1,5 @@
 package Compiler;
 
-import java.util.HashMap;
-
 public abstract class Instruction {
 
     public enum OpCode{
@@ -57,11 +55,9 @@ public abstract class Instruction {
         "0010", // LT
         "0100", // GE
         "0100", // GT
-        "0101"  // Le
+        "0101"  // LE
     };
 
-    public static HashMap<OpCode, String> opMap;
-    public static HashMap<Function, String> funcMap;
     public static final String[] regMap = new String[]{
         "00000","10000","01000","11000","00100","10100","01100","11100",
         "00010","10010","01010","11010","00110","10110","01110","11110",
@@ -104,5 +100,23 @@ public abstract class Instruction {
         }
 
         return retVal;
+    }
+
+    /**
+     * Gets the immediate value from the instruction.
+     * 
+     * @return A String with the ones and zeros of the immidate value.
+     */
+    public String getImm(){
+        return imm;
+    }
+
+    /**
+     * Gets the OpCode value from the instruction.
+     * 
+     * @return A String with the ones and zeros of the OpCode.
+     */
+    public String getOp(){
+        return op;
     }
 }

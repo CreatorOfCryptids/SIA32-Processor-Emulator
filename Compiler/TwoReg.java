@@ -1,30 +1,24 @@
 package Compiler;
 
-public class TwoReg extends Instruction{
+public class TwoReg extends OneReg{
 
     protected static final int IMM_SIZE = 10;
 
-    private String func;
-    private String rd;
-    private String rs2;
+    protected String rs2;
 
     public TwoReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int imm){
-        this.op = opToString[code.ordinal()] + "10";
-        this.rd = regMap[rd];
-        this.func = funcToString[func.ordinal()];
+        super(code, rd, func, imm);
         this.rs2 = regMap[rs2];
-        this.imm = immToString(imm, IMM_SIZE);
+        this.imm = immToString(imm, IMM_SIZE);  // Redo, to make sure it's the right size.
     }
 
     public TwoReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2){
-        this.op = opToString[code.ordinal()] + "10";
-        this.rd = regMap[rd];
-        this.func = funcToString[func.ordinal()];
+        super(code, rd, func);
         this.rs2 = regMap[rs2];
         this.imm = "0000000000";
     }
 
     public String toInstruction() {
-        return imm + rs2 + func + rd + op;
+        return imm + rs2 + func + rd + op + "10";
     }
 }
