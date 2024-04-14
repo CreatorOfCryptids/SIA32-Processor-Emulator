@@ -65,8 +65,8 @@ public abstract class Instruction {
         "00011","10011","01011","11011","00111","10111","01111","11111",
     };
     
-    protected String op;
-    protected String imm;
+    protected Instruction.OpCode op;
+    protected int imm;
     
     /**
      * Returns the binary of the instruction.
@@ -107,8 +107,17 @@ public abstract class Instruction {
      * 
      * @return A String with the ones and zeros of the immidate value.
      */
-    public String getImm(){
+    protected int getImm(){
         return imm;
+    }
+
+    /**
+     * Imm mutator.
+     * 
+     * @param imm The new value for imm. Must be positive.
+     */
+    protected void setImm(int imm){
+        this.imm = imm;
     }
 
     /**
@@ -116,7 +125,7 @@ public abstract class Instruction {
      * 
      * @return A String with the ones and zeros of the OpCode.
      */
-    public String getOp(){
+    protected Instruction.OpCode getOp(){
         return op;
     }
 }
