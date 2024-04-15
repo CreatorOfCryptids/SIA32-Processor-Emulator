@@ -19,9 +19,9 @@ public class Assembler {
     }
 
     /**
+     * Assembles the tokens into instructions.
      * 
-     * 
-     * @return
+     * @return A LinkedList of Instructions.
      * @throws Exception
      */
     public LinkedList<Instruction> assemble() throws Exception{
@@ -37,14 +37,15 @@ public class Assembler {
     }
 
     /**
+     * Parses an Instruction after a new line.
      * 
-     * 
-     * @return
+     * @return An Instruction containting the 
      * @throws Exception
      */
     private Instruction parseInstruction() throws Exception{
 
         Instruction retInst;
+        // Swallow to make sure it's not still hanging around.
         Token.Type type = th.swallow().get().getType();
 
 
@@ -60,6 +61,7 @@ public class Assembler {
         else if (type == Token.Type.COPY){
             retInst = parseOneReg(Instruction.OpCode.MATH).get();
 
+            // Copy can only have one reg, but also requires an imm.
             Optional<Integer> imm = parseImmediate();
 
             if (imm.isPresent())
@@ -69,7 +71,7 @@ public class Assembler {
         }
         else if (type == Token.Type.HAULT){
             retInst = new NoReg(Instruction.OpCode.MATH);
-            // Adding an exit value is a feature I added and now this is here for backwards compatibilibty.
+            // Adding an exit value is a debugging feature I added and now this is here optionally for backwards compatibilibty.
             Optional<Integer> imm = parseImmediate();
 
             if (imm.isPresent())
@@ -81,6 +83,7 @@ public class Assembler {
         else if (type == Token.Type.JUMP){
 
             retInst = parseOneReg(Instruction.OpCode.BRANCH).get();
+            // Jump can have up to one reg, but requires an imm.
             Optional<Integer> imm = parseImmediate();
 
             if (imm.isPresent())
@@ -97,14 +100,14 @@ public class Assembler {
         else if (type == Token.Type.MATH){
             retInst = parseFormat(Instruction.OpCode.MATH).get();
 
-            if (!(retInst instanceof TwoReg || retInst instanceof ThreeReg)){  // Hierarchical inheritance. Catches anything with registerCount >= 2
+            if (!(retInst instanceof TwoReg || retInst instanceof ThreeReg)){  // Math is only valid in TwoReg and ThreeReg formats.
                 throw new Exception("Expected two or more registers near " + th.getErrorPosition());
             }
         }
         else if (type == Token.Type.PEEK){
             retInst = parseFormat(Instruction.OpCode.POP).get();
 
-            if (!(retInst instanceof TwoReg)){  // Hierarchical inheritance. Catches anything with registerCount <2
+            if (!(retInst instanceof TwoReg)){  // Peek is only valid in OneReg and NoReg formats.
                 throw new Exception("Expected one or less registers near " + th.getErrorPosition());
             }
         }
@@ -137,10 +140,10 @@ public class Assembler {
     }
 
     /**
+     * Parses the registers and immediates.
      * 
-     * 
-     * @param op
-     * @return
+     * @param op The OpCode of the instruction.
+     * @return An instruction containing the parsed Registers and immediates.
      * @throws Exception
      */
     private Optional<Instruction> parseFormat(Instruction.OpCode op) throws Exception{
@@ -156,10 +159,10 @@ public class Assembler {
     }
 
     /**
+     * Parses up to three registers.
      * 
-     * 
-     * @param op
-     * @return
+     * @param op The OpCode of the instruction.
+     * @return An instruction containing up to three parsed registers.
      * @throws Exception
      */
     private Optional<Instruction> parseThreeReg(Instruction.OpCode op)throws Exception{
@@ -173,6 +176,13 @@ public class Assembler {
             return retInst;
     }
 
+    /**
+     * Parses up to two registers.
+     * 
+     * @param op The OpCode of the instruction.
+     * @return An instruction containing up to two parsed registers.
+     * @throws Exception
+     */
     private Optional<Instruction> parseTwoReg(Instruction.OpCode op) throws Exception{
 
         Optional<Instruction> retInst = parseOneReg(op);
@@ -184,6 +194,13 @@ public class Assembler {
             return retInst;
     }
 
+    /**
+     * Parses a regitster and function, if it exists.
+     * 
+     * @param op The OpCode of the instruction.
+     * @return An instruction containing up a parsed registers and function if applicable..
+     * @throws Exception
+     */
     private Optional<Instruction> parseOneReg(Instruction.OpCode op) throws Exception{
         
         Optional<Instruction.Function> func = parseFunc();
@@ -193,13 +210,18 @@ public class Assembler {
             if (func.isPresent())
                 return Optional.of(new OneReg(op, rd.get(), func.get()));
             else
-                return Optional.of(new OneReg(op, rd.get(), Instruction.Function.EQ));
-            //throw new Exception("Expected Register near " + th.getErrorPosition() + ". Instead was: " + th.peek().get().toString());
+                return Optional.of(new OneReg(op, rd.get(), Instruction.Function.EQ)); // If no register is provided, just use "0000" (EQ).
         }
         else
             return Optional.of(new NoReg(op));
     }
 
+    /**
+     * Checks if the next token is a function are returns the function value.
+     * 
+     * @return An Optional containing the parsed function.
+     * @throws Exception
+     */
     private Optional<Instruction.Function> parseFunc() throws Exception{
         Token maybeFunc = th.peek().get();
 
@@ -220,19 +242,29 @@ public class Assembler {
         }
     }
 
+    /**
+     * Parses a register.
+     * 
+     * @return An Optional<Integer> containing the register number of the parsed register.
+     * @throws Exception
+     */
     private Optional<Integer> parseRegister() throws Exception{
         if (th.peek().get().getType() == Token.Type.REGISTER)
             return Optional.of(th.matchAndRemove(Token.Type.REGISTER).get().getValue().get());
         else
             return Optional.empty();
-            //throw new Exception("Expected Register token near " + th.getErrorPosition());
     }
 
+    /**
+     * Parses an immediate value.
+     * 
+     * @return An Optional<Integer> containing the value of the parsed immediate.
+     * @throws Exception
+     */
     private Optional<Integer> parseImmediate() throws Exception {
         if (th.peek().get().getType() == Token.Type.IMMEDIATE)
             return Optional.of(th.matchAndRemove(Token.Type.IMMEDIATE).get().getValue().get());
         else 
             return Optional.empty();
-            //throw new Exception("Expected Immediate token near " + th.getErrorPosition() + " was " + th.peek().get().toString());
     }
 }
