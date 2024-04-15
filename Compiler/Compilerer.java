@@ -1,11 +1,12 @@
 package Compiler;
 
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 
-public class Compiler {
+public class Compilerer {
 
     private String[] input;
 
@@ -17,10 +18,10 @@ public class Compiler {
      */
     public static void main(String[] args) throws Exception{
 
-        Compiler comp;
+        Compilerer comp;
 
         if (args.length == 1)
-            comp = new Compiler(args[0]);
+            comp = new Compilerer(args[0]);
         else
             throw new Exception("INCORRECT ARGS: Missing inputFileName.");
         
@@ -34,9 +35,12 @@ public class Compiler {
      * @param inputFileName The name of the file that contains the assembly source code.
      * @throws Exception
      */
-    public Compiler(String inputFileName) throws Exception{
+    public Compilerer(String inputFileName) throws Exception{
         Path myPath = Paths.get(inputFileName);
-        input = ((String[])Files.readAllLines(myPath).toArray());
+        String wholeInput =  new String(Files.readAllBytes(myPath));
+        input = wholeInput.split("\n");
+
+        //System.out.println("Input is " + input.length + " Lines long.");
     }
 
     /**
