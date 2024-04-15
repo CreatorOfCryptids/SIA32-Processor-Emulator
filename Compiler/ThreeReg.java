@@ -9,13 +9,13 @@ public class ThreeReg extends TwoReg{
     public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1, int imm){
         super(code, rd, func, rs2);
         this.rs1 = rs1;
-        this.imm = imm;  // Redo to make sure it's the right size.
+        this.imm = imm;
     }
 
     public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1){
         super(code, rd, func, rs2);
         this.rs1 = rs1;
-        this.imm = 0;                  // Redo to make sure its the right size
+        this.imm = 0;
     }
 
     public ThreeReg(TwoReg instruction, int rs1){

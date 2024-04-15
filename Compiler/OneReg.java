@@ -30,6 +30,8 @@ public class OneReg extends NoReg{
 
     public OneReg(OneReg instruction){
         super(instruction.op, instruction.imm);
+        this.func = instruction.func;
+        this.rd = instruction.rd;
     }
 
     public String toInstruction() {
