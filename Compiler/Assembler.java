@@ -45,7 +45,8 @@ public class Assembler {
     private Instruction parseInstruction() throws Exception{
 
         Instruction retInst;
-        Token.Type type = th.peek().get().getType();
+        Token.Type type = th.swallow().get().getType();
+
 
         if (type == Token.Type.BRANCH){
             retInst = parseFormat(Instruction.OpCode.BRANCH).get();
@@ -55,6 +56,13 @@ public class Assembler {
         }
         else if (type == Token.Type.COPY){
             retInst = parseOneReg(Instruction.OpCode.MATH).get();
+
+            Optional<Integer> imm = parseImmediate();
+
+            if (imm.isPresent())
+                retInst.setImm(imm.get());
+            else
+                throw new Exception("Expected an immediate at " + th.getErrorPosition() + ", but was " + th.peek().get().toString() + '.');
         }
         else if (type == Token.Type.HAULT){
             retInst = new NoReg(Instruction.OpCode.MATH);
@@ -81,7 +89,7 @@ public class Assembler {
         else if (type == Token.Type.MATH){
             retInst = parseFormat(Instruction.OpCode.MATH).get();
 
-            if (!(retInst instanceof TwoReg)){  // Hierarchical inheritance. Catches anything with registerCount < 2
+            if (!(retInst instanceof TwoReg || retInst instanceof ThreeReg)){  // Hierarchical inheritance. Catches anything with registerCount >= 2
                 throw new Exception("Expected two or more registers near " + th.getErrorPosition());
             }
         }
@@ -89,7 +97,7 @@ public class Assembler {
             retInst = parseFormat(Instruction.OpCode.POP).get();
 
             if (!(retInst instanceof TwoReg)){  // Hierarchical inheritance. Catches anything with registerCount <2
-
+                throw new Exception("Expected one or less registers near " + th.getErrorPosition());
             }
         }
         else if (type == Token.Type.POP){
@@ -103,7 +111,7 @@ public class Assembler {
             }
         }
         else if (type == Token.Type.RETURN){
-            instructionList.add(new NoReg(Instruction.OpCode.CALL));
+            retInst = new NoReg(Instruction.OpCode.CALL);
         }
         else if (type == Token.Type.STORE){
             retInst = parseFormat(Instruction.OpCode.STORE).get();
@@ -116,9 +124,17 @@ public class Assembler {
             throw new Exception("Unexpected token " + th.peek().get().toString() + " at " + th.getErrorPosition());
         }
 
-        return null;
+        return retInst;
+
     }
 
+    /**
+     * 
+     * 
+     * @param op
+     * @return
+     * @throws Exception
+     */
     private Optional<Instruction> parseFormat(Instruction.OpCode op) throws Exception{
         Optional<Instruction> retInst = parseThreeReg(op);
         Optional<Integer> imm = parseImmediate();
@@ -131,6 +147,14 @@ public class Assembler {
             return retInst;
         
     }
+
+    /**
+     * 
+     * 
+     * @param op
+     * @return
+     * @throws Exception
+     */
     private Optional<Instruction> parseThreeReg(Instruction.OpCode op)throws Exception{
         // parseTwoReg() to get Rd, and Rs1
         Optional<Instruction> retInst = parseTwoReg(op);
@@ -158,21 +182,19 @@ public class Assembler {
         Optional<Instruction.Function> func = parseFunc();
         Optional<Integer> rd = parseRegister();
 
-        if (func.isPresent()){
-            if(rd.isPresent())
+        if (rd.isPresent()){
+            if (func.isPresent())
                 return Optional.of(new OneReg(op, rd.get(), func.get()));
             else
-                throw new Exception("Expected Register near " + th.getErrorPosition() + ". Instead was: " + th.peek().get().toString());
-        }
-        else if (rd.isPresent()){
-            return Optional.of(new OneReg(op, rd.get(), func.get()));
+                return Optional.of(new OneReg(op, rd.get(), Instruction.Function.EQ));
+            //throw new Exception("Expected Register near " + th.getErrorPosition() + ". Instead was: " + th.peek().get().toString());
         }
         else
             return Optional.of(new NoReg(op));
     }
 
     private Optional<Instruction.Function> parseFunc() throws Exception{
-        Token maybeFunc = th.peek().get();
+        Token maybeFunc = th.swallow().get();
 
         // Check if it's ordinal is in the right range.
         if (maybeFunc.getType().ordinal() > 12 && maybeFunc.getType().ordinal() < 26){
@@ -185,7 +207,8 @@ public class Assembler {
             return Optional.of(Instruction.Function.values()[maybeFunc.getType().ordinal() - 12]);
         }
         else {
-            throw new Exception("Unexpected token " + th.peek().get().toString() + " at " + th.getErrorPosition());
+            return Optional.empty();
+            //throw new Exception("Unexpected token " + th.peek().get().toString() + " at " + th.getErrorPosition());
         }
     }
 
