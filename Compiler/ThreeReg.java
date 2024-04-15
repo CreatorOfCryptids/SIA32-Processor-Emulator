@@ -6,18 +6,43 @@ public class ThreeReg extends TwoReg{
 
     private int rs1;
 
+    /**
+     * Constructor.
+     * 
+     * @param code The OpCode of the new Instruction.
+     * @param rd The assigment register of the new Instruction.
+     * @param func The function of the new Instruction.
+     * @param rs2 The secondary register of the new Instruction.
+     * @param rs1 The third register of the new Instruction.
+     * @param imm The immediate value of the new Instruction.
+     */
     public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1, int imm){
         super(code, rd, func, rs2);
         this.rs1 = rs1;
         this.imm = imm;
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param code The OpCode of the new Instruction.
+     * @param rd The assigment register of the new Instruction.
+     * @param func The function of the new Instruction.
+     * @param rs2 The secondary register of the new Instruction.
+     * @param rs1 The third register of the new Instruction.
+     */
     public ThreeReg(Instruction.OpCode code, int rd, Instruction.Function func, int rs2, int rs1){
         super(code, rd, func, rs2);
         this.rs1 = rs1;
         this.imm = 0;
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param instruction The old instruction to be copied.
+     * @param rs1 The third register of the new Instruction.
+     */
     public ThreeReg(TwoReg instruction, int rs1){
         super(instruction);
         this.rs1 = rs1;

@@ -7,6 +7,14 @@ public class OneReg extends NoReg{
     protected Instruction.Function func;
     protected int rd;
 
+    /**
+     * Constructor.
+     * 
+     * @param code The OpCode of the new Instruction.
+     * @param rd The assigment register of the new Instruction.
+     * @param func The function of the new Instruction.
+     * @param imm The assigment register of the new Instruction.
+     */
     public OneReg(Instruction.OpCode code, int rd, Instruction.Function func, int imm){
         super(code, imm);
         this.rd = rd;
@@ -14,6 +22,14 @@ public class OneReg extends NoReg{
         this.imm = imm;
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param code The OpCode of the new Instruction.
+     * @param rd The assigment register of the new Instruction.
+     * @param func The function of the new Instruction.
+     * @param imm The assigment register of the new Instruction.
+     */
     public OneReg(Instruction.OpCode code, int rd, Instruction.Function func){
         super(code);
         this.rd = rd;
@@ -21,6 +37,13 @@ public class OneReg extends NoReg{
         this.imm = 0;
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param instruction The old instruction to be copied.
+     * @param func The function of the new Instruction.
+     * @param imm The assigment register of the new Instruction.
+     */
     public OneReg(NoReg instruction, int rd, Instruction.Function func){
         super(instruction);
         this.rd = rd;
@@ -28,6 +51,11 @@ public class OneReg extends NoReg{
         this.imm = 0;
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param instruction The old instruction to be copied.
+     */
     public OneReg(OneReg instruction){
         super(instruction.op, instruction.imm);
         this.func = instruction.func;
