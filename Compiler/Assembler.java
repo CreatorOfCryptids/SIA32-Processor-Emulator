@@ -52,7 +52,10 @@ public class Assembler {
             retInst = parseFormat(Instruction.OpCode.BRANCH).get();
         }
         else if (type == Token.Type.CALL){
-            retInst = parseFormat(Instruction.OpCode.CALL).get();
+            if (th.peek().get().getType() == Token.Type.IMMEDIATE)
+                retInst = new NoReg(Instruction.OpCode.CALL, th.matchAndRemove(Token.Type.IMMEDIATE).get().getValue().get());
+            else 
+                retInst = parseFormat(Instruction.OpCode.CALL).get();
         }
         else if (type == Token.Type.COPY){
             retInst = parseOneReg(Instruction.OpCode.MATH).get();
@@ -66,6 +69,11 @@ public class Assembler {
         }
         else if (type == Token.Type.HAULT){
             retInst = new NoReg(Instruction.OpCode.MATH);
+            // Adding an exit value is a feature I added and now this is here for backwards compatibilibty.
+            Optional<Integer> imm = parseImmediate();
+
+            if (imm.isPresent())
+                retInst.setImm(imm.get());
         }
         else if (type == Token.Type.INTERRUPT){
             retInst = new NoReg(Instruction.OpCode.POP);
@@ -111,7 +119,7 @@ public class Assembler {
             }
         }
         else if (type == Token.Type.RETURN){
-            retInst = new NoReg(Instruction.OpCode.CALL);
+            retInst = new NoReg(Instruction.OpCode.LOAD);
         }
         else if (type == Token.Type.STORE){
             retInst = parseFormat(Instruction.OpCode.STORE).get();
@@ -145,7 +153,6 @@ public class Assembler {
         }
         else
             return retInst;
-        
     }
 
     /**
@@ -156,7 +163,7 @@ public class Assembler {
      * @throws Exception
      */
     private Optional<Instruction> parseThreeReg(Instruction.OpCode op)throws Exception{
-        // parseTwoReg() to get Rd, and Rs1
+
         Optional<Instruction> retInst = parseTwoReg(op);
         Optional<Integer> rs1 = parseRegister();
 
@@ -167,8 +174,7 @@ public class Assembler {
     }
 
     private Optional<Instruction> parseTwoReg(Instruction.OpCode op) throws Exception{
-        
-        // Get Rs2 then try to parseThreeReg()
+
         Optional<Instruction> retInst = parseOneReg(op);
         Optional<Integer> rs2 = parseRegister();
 
@@ -179,6 +185,7 @@ public class Assembler {
     }
 
     private Optional<Instruction> parseOneReg(Instruction.OpCode op) throws Exception{
+        
         Optional<Instruction.Function> func = parseFunc();
         Optional<Integer> rd = parseRegister();
 
@@ -194,17 +201,18 @@ public class Assembler {
     }
 
     private Optional<Instruction.Function> parseFunc() throws Exception{
-        Token maybeFunc = th.swallow().get();
+        Token maybeFunc = th.peek().get();
 
         // Check if it's ordinal is in the right range.
-        if (maybeFunc.getType().ordinal() > 12 && maybeFunc.getType().ordinal() < 26){
+        if (maybeFunc.getType().ordinal() > 12 && maybeFunc.getType().ordinal() <= 26){
+            th.swallow();
             /*
              * The Instruction.Function enums and Token.Type function enums are in the same order. 
              * This means you can map them to each other by subtracting to the number of Token 
              * enums before the function enumbs and use that ordinal to map to the right enum in 
              * Instruction.Function
              */
-            return Optional.of(Instruction.Function.values()[maybeFunc.getType().ordinal() - 12]);
+            return Optional.of(Instruction.Function.values()[maybeFunc.getType().ordinal() - 13]);
         }
         else {
             return Optional.empty();

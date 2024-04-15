@@ -1001,15 +1001,17 @@ public class UnitTest {
         Assert.assertEquals((420*69)-80085, process.TESTgetRegister(4).getSigned());
     }
 
-    @Test
-    public void CPU_2() throws Exception{
-
-        String[] reg = new String[]{
+    private String[] reg = new String[]{
             "00000","10000","01000","11000","00100","10100","01100","11100",
             "00010","10010","01010","11010","00110","10110","01110","11110",
             "00001","10001","01001","11001","00101","10101","01101","11101",
             "00011","10011","01011","11011","00111","10111","01111","11111",
-        };
+    };
+
+    @Test
+    public void CPU_2() throws Exception{
+
+        
 
         Processor process = new Processor();
         String[] instructions;
@@ -1518,13 +1520,13 @@ public class UnitTest {
         String[] input = new String[]{
             "Copy R1 5",
             "Copy R11 1",
-            "cOPY R12 2",
+            "cOPY R12 2 Call",
             "Math Sub R2 R1 R11",
             "MATH Mult R3 R1 R2 // test comments",
             "Branch LT R12 R2 3",
             "math Sub R2 R11",
             "math mult R3 r2",
-            "Jump 5",
+            "Jump 5 Push",
             "Hault // But do comments work at the end too???"
         };
 
@@ -1534,10 +1536,10 @@ public class UnitTest {
         
         Assert.assertEquals(
             "[COPY, REGISTER<1>, IMMEDIATE<5>, NEW_LINE, COPY, REGISTER<11>, IMMEDIATE<1>, NEW_LINE, COPY, "+
-            "REGISTER<12>, IMMEDIATE<2>, NEW_LINE, MATH, SUBTRACT, REGISTER<2>, REGISTER<1>, REGISTER<11>, "+
+            "REGISTER<12>, IMMEDIATE<2>, CALL, NEW_LINE, MATH, SUBTRACT, REGISTER<2>, REGISTER<1>, REGISTER<11>, "+
             "NEW_LINE, MATH, MULTIPLY, REGISTER<3>, REGISTER<1>, REGISTER<2>, NEW_LINE, BRANCH, LT, REGISTER<12>, "+
             "REGISTER<2>, IMMEDIATE<3>, NEW_LINE, MATH, SUBTRACT, REGISTER<2>, REGISTER<11>, NEW_LINE, MATH, "+
-            "MULTIPLY, REGISTER<3>, REGISTER<2>, NEW_LINE, JUMP, IMMEDIATE<5>, NEW_LINE, HAULT, NEW_LINE]", output.toString());
+            "MULTIPLY, REGISTER<3>, REGISTER<2>, NEW_LINE, JUMP, IMMEDIATE<5>, PUSH, NEW_LINE, HAULT, NEW_LINE]", output.toString());
 
         input = new String[]{
             "Math add R5 R4",
@@ -1564,10 +1566,11 @@ public class UnitTest {
         LinkedList<Instruction> instructionOutput;
         LinkedList<String> output = new LinkedList<String>();
 
+        // Math 1
         output.clear();
         input = new String[]{
             "Copy r1 5",
-            "Math Add R2 R1 R1",
+            "Math add R2 R1 R1",
             "Math add R2 R2",
             "Math add R3 R2 R1",
             "hault"
@@ -1595,10 +1598,557 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++){
-            output.add(instructionOutput.get(i).toInstruction());
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
         }
 
-        Assert.assertEquals(expectedOutput.toString(), output.toString());
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Math 2
+        output.clear();
+        input = new String[]{
+            "Copy R0 666",
+            "Copy R1 420",
+            "Copy R2 69",
+            "Copy R3 80085",
+            "Math mult R4 R2 R1",
+            "Math sub R4 R3",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //        Immediate         -RD3-   OP-01
+            // 0123456789012345678901   23456   78901
+              "0101100101000000000000"+"00000"+"00001",           // R0 <- 666 // SHOULDN'T WORK!
+              "0010010110000000000000"+"10000"+"00001",           // R1 <- 420
+              "1010001000000000000000"+"01000"+"00001",           // R2 <- 69
+              "1010101100011100100000"+"11000"+"00001",           // R3 <- 80085
+            // Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+            // 01234567   89012   34567   8901   23456   78901
+              "00000000"+"10000"+"01000"+"0111"+"00100"+"00011",  // R4 = R1 * R2
+            //   Immediate     -RS2-   FUN    -RD3-   OP-10
+            // 0123456789012   34567   8901   23456   78901
+              "0000000000000"+"11000"+"1111"+"00100"+"00010",     // R4 -=  R3
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+              "000000000000000000000000000"+"00000",              // HALT
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Branch
+        output.clear();
+        input = new String[]{
+            "Copy R14 69",
+            "Copy R15 420",
+            "Copy R31 666",
+            "Jump 6",
+            "Copy r14 77",
+            "copy r15 45",
+            "copy r20 420",
+            "jump r0 2",
+            "copy r31 444",
+            "copy r20 45",
+            "branch eq r15 r14 1",
+            "copy r1 1",
+            "branch ne r0 r0 r15 2",
+            "copy r2 1",
+            "copy r30 1",
+            "copy r3 25",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1010001000000000000000"+reg[14]+"00001",           // 1 Set R14 69
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0010010110000000000000"+reg[15]+"00001",           // 2 Set R15 420
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "0101100101000000000000"+reg[31]+"00001",           // 3 Set R31 666
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "011000000000000000000000000"+"00100",              // 4 Jump to 6
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "1011001000000000000000"+reg[14]+"00001",           // 5 Set R14 = 77   // Skipped
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "1011010000000000000000"+reg[15]+"00001",           // 6 Set R15 = 45   // Skipped
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0010010110000000000000"+reg[20]+"00001",           //7 Set R20 420  // 6
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0100000000000000000000"+reg[0]+"00101",            //8 jump pc + 2      // Jump forward 2
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "0011110110000000000000"+reg[31]+"00001",           //9 Set R31 = 444  // Skipped
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901 
+                "1011010000000000000000"+reg[20]+"00001",           //10   Set R20 45   // Skipped
+            //    Immediate              FUN            OP-10
+            //  0123456789012            8901           78901
+                "1000000000000"+reg[14]+"0000"+reg[15]+"00110",     //11   if R14 == R15 1  // Should be false
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[1]+"00001",            //12   Set R1 = 1
+            //   Immediate                 FUN           OP-11
+            //   01234567                  8901          78901
+                "01000000"+reg[15]+reg[0]+"0001"+reg[0]+"00111",    // 13   if R15 != R0 2  // Should be true
+            //          Immediate        -RD3-   OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[2]+"00001",            // 14 Set R2 1     // Skipped
+            //          Immediate        -RD3-   OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[30]+"00001",           // 15 Set R30 = -1   // Skipped
+            //          Immediate        -RD3-   OP-01
+            //   0123456789012345678901          78901
+                "1001100000000000000000"+reg[3]+"00001",            // 16 Set R3 = 25
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"               // 17 HALT
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Call
+        output.clear();
+        input = new String[]{
+            "Copy r1 5",
+            "Call 8 // Call function that sets R2 to 4 and R3 to 69",
+            "Copy R4 9",
+            "Call R2 8",
+            "math mult r31 r3 r5",
+            "Call GE R1 R30 R4 13",
+            "Call GT R2 r1 8",
+            "Hault",
+            "Copy R2 4",
+            "Copy R3 69",
+            "Return",
+            "Hault 1",
+            "Copy R5 404",
+            "Return",
+            "Hault 2",
+            "Copy R30 12",
+            "Return",
+            "Hault 3",
+            "Copy r29 420",
+            "return",
+            "hault 4"
+        };
+        
+        expectedOutput = new String[]{
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1010000000000000000000"+reg[1]+"00001",        // 0    Set R1 = 5
+            //          Immediate              OP-00
+            //   012345678901234567890123456   78901
+                "000100000000000000000000000"+"01000",          // 1    Call 8  // Call function that sets R2 to 4 and R3 to 69
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1001000000000000000000"+reg[4]+"00001",        // 2    Set R4 = 9
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0001000000000000000000"+reg[2]+"01001",        // 3    Call R2 + 8 // Call funciton that sets R5 to 404
+            //   Immediate                FUN            OP-11
+            //   01234567                 8901           78901
+                "00000000"+reg[5]+reg[3]+"0111"+reg[31]+"00011",// 4    Set R31 = R3 * R5
+            //   Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+            //   01234567   89012   34567  8901          78901
+                "10110000"+reg[4]+reg[30]+"0011"+reg[1]+"01011",// 5    Call R4 >= R30 ? pc <- R1 + 13 : pc // Call function that sets R29 to 420
+            //     Immediate     -RS2-   FUN    -RD3-   OP-10
+            //   0123456789012   34567   8901   23456   78901
+                "0001000000000"+reg[1]+"0100"+reg[2]+"01010",   // 6    Call R1 > R2 ? pc <- pc + 8 // Call function that sets R30 to 12
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000",          // 7    Halt 0
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0010000000000000000000"+reg[2]+"00001",        // 8    R2 = 4  // First function
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "1010001000000000000000"+reg[3]+"00001",        // 9    R3 = 69
+            //          Immediate              OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"10000",          // 10   RETURN
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "100000000000000000000000000"+"00000",          // 11   Halt 1
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0010100110000000000000"+reg[5]+"00001",        // 12   R5 = 404     // Second function
+            //           Immediate             OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"10000",          // 13   Return
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "010000000000000000000000000"+"00000",          // 14   Halt 2
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0011000000000000000000"+reg[30]+"00001",       // 15   R30 = 12    // Third function
+            //           Immediate             OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"10000",          // 16   Return
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "110000000000000000000000000"+"00000",          // 17   Halt 3
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+                "0010010110000000000000"+reg[29]+"00001",       // 18   R29 = 420   // Fourth function
+            //           Immediate              OP-00
+            //   012345678901234567890123456    78901
+                "000000000000000000000000000"+"10000",          // 19   Return
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "001000000000000000000000000"+"00000",          // 20   Halt 4
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Push
+        output.clear();
+        input = new String[]{
+            "Copy r1 420",
+            "Copy r2 69",
+            "Copy r3 666",
+            "Push ADD r1 246",
+            "Push MULT R2 R3",
+            "Push sub R0 R2 R1",
+            "push mult r3 12",
+            "Push mult r0 r2",
+            "push add r0 r1 r2",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //          Immediate                 OP-01
+            //   0123456789012345678901           78901
+            "0010010110000000000000"+reg[1]+"00001",            // 1 Set R1 = 420
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1010001000000000000000"+reg[2]+"00001",            // 2 Set R2 = 69
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901 
+                "0101100101000000000000"+reg[3]+"00001",            // 3 Set R3 = 666
+
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "011011110000000000"+"1110"+reg[1]+"01101",         // 4 push R1 + 246      
+            //     Immediate            FUN           OP-10
+            //   0123456789012          8901          78901
+                "0000000000000"+reg[3]+"0111"+reg[2]+"01110",       // 5 push R2 * R3
+            //   Immediate                FUN           OP-11
+            //   01234567                 8901          78901
+                "00000000"+reg[1]+reg[2]+"1111"+reg[0]+"01111",     // 6 push R1 - R2
+
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "001100000000000000"+"0111"+reg[3]+"01101",         // 7 push R3 * 12 
+            //     Immediate            FUN           OP-10
+            //   0123456789012          8901          78901
+                "0000000000000"+reg[2]+"0111"+reg[0]+"01110",       // 8 push R2 * R0
+            //   Immediate                FUN           OP-11
+            //   01234567                 8901          78901
+                "00000000"+reg[2]+reg[1]+"1110"+reg[0]+"01111",     // 9 push R2 + R1
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+            "000000000000000000000000000"+"00000"                   // HALT
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Load
+        output.clear();
+        input = new String[]{
+            "Copy r1 5",
+            "Copy r2 3",
+            "Load r3 6",
+            "load R4 R0 7",
+            "load r5 r2 r1",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "101000000000000000"+"0000"+reg[1]+"00001",     // 0 Set R1 = 5
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "110000000000000000"+"0000"+reg[2]+"00001",     // 1 Set R2 = 3
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901   
+                "011000000000000000"+"0000"+reg[3]+"10001",     // 2 Load R3 = mem[r1 + 1 (6)] 
+            //     Immediate    -RS1-  FUN   -RD3-  OP-10
+            //   0123456789012         8901         78901
+                "1110000000000"+reg[0]+"0000"+reg[4]+"10010",   // 3 Load R4 = mem[R0 + 7 (7)]
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[1]+reg[2]+"0000"+reg[5]+"10011", // 4 Load R5 = mem[R1 + R2 (5+3=8)]
+            //          Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000",          // 5 HALT
+                // "10101010101010101010101010101010",             // 6 22369621?
+                // "01011001010000000000000000000000",             // 7 666
+                // "00000000001000000000000000000000"              // 8 1024
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Store
+        output.clear();
+        input = new String[]{
+            "Copy r1 1000",
+            "Copy r2 420",
+            "Copy r3 2",
+            "Copy r4 666",
+            "Store R1 69",
+            "Store R1 R2 1",
+            "Store R1 R4 R3",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "000101111100000000"+"0000"+reg[1]+"00001",     // 0 Set R1 = 1000 // 0b1111101000
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "001001011000000000"+"0000"+reg[2]+"00001",     // 1 Set R2 = 420
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "010000000000000000"+"0000"+reg[3]+"00001",     // 2 Set R3 = 2
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "010110010100000000"+"0000"+reg[4]+"00001",     // 3 Set R4 = 666
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "101000100000000000"+"0000"+reg[1]+"10101",     // 4 Store mem[R1 (1000)] = 69
+            //     Immediate    -RS1-  FUN   -RD3-  OP-10
+            //   0123456789012         8901         78901
+                "1000000000000"+reg[2]+"0000"+reg[1]+"10110",   // 5 Store mem[R1+1 (1001)] = R2
+            //   Immediate -RS1-  -RS2-   FUN   -RD3-   OP-11
+            //   01234567                 8901          78901
+                "00000000"+reg[3]+reg[4]+"0000"+reg[1]+"10111", // 6 Store mem[R1 + R3 (1002)] = R4
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"           // 7 HALT
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Peek/Pop
+        output.clear();
+        input = new String[]{
+            "Copy r31 1",
+            "Copy r30 2",
+            "",
+            "Push OR R0 69",
+            "Push OR R0 420",
+            "Push OR R0 666",
+            "Push Or r0 2451",
+            "",
+            "Pop R1",
+            "Peek R2 R31",
+            "Peek R3 R31 R30",
+            "Pop R4",
+            "",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "100000000000000000"+"0000"+reg[31]+"00001",        // 1 Set R31 = 1
+            //          Immediate     FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "010000000000000000"+"0000"+reg[30]+"00001",        // 2 Set R30 = 2
+
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "101000100000000000"+"1001"+reg[0]+"01101",         // 3 push R0 | 69
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "001001011000000000"+"1001"+reg[0]+"01101",         // 4 push R0 | 420
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "010110010100000000"+"1001"+reg[0]+"01101",         // 5 push R0 | 666
+            //        Immediate       FUN           OP-01
+            //   012345678901234567   8901          78901
+                "110010011001000000"+"1001"+reg[0]+"01101",         // 6 push R0 | 2451   //0b100110010011
+
+            //        Immediate       FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "000000000000000000"+"0000"+reg[1]+"11001",         // 7 Pop R1
+            //     Immediate    --RS1--  FUN   -RD3-   OP-10
+            //   0123456789012           8901          78901
+                "0000000000000"+reg[31]+"0000"+reg[2]+"11010",      // 8 Peek R2 = mem[sp - (R31 + 1)]
+            //   Immediate --RS1-- -RS2--   FUN   -RD3-   OP-11
+            //   01234567                   8901          78901
+                "00000000"+reg[30]+reg[31]+"0000"+reg[3]+"11011",   // 9 Peek R3 = mem[sp - (R31 + R30)]
+            //        Immediate       FUN   -RD3-   OP-01
+            //   012345678901234567   8901          78901
+                "000000000000000000"+"0000"+reg[4]+"11001",         // 10 Pop R4
+
+            //            Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"               // 11 HALT
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+
+        // Factorial
+        output.clear();
+        input = new String[]{
+            "Copy R1 5",
+            "Copy R11 1",
+            "Copy R12 2",
+            "Math SUB R2 R11 R1",
+            "MATH MULT R3 R2 R1",
+            "BRANCH LT R12 R2 3",
+            "MATH SUB R2 R11",
+            "MATH MULT R3 R2",
+            "JUMP 5",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1010000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[11]+"00001",       // 2 set R11 = 1
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0100000000000000000000"+reg[12]+"00001",       // 3 set R12 = 2
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[1]+reg[11]+"1111"+reg[2]+"00011",// 4 set R2 = R1 - R11
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[1]+reg[2]+"0111"+reg[3]+"00011", // 5 set R3 = R1 * R2
+            //     Immediate    -RS1-   FUN   --RD3--  OP-10
+            //   0123456789012          8901           78901
+                "1100000000000"+reg[2]+"0010"+reg[12]+"00110",  // 6 if R2 < R12 ? pc + 4 : pc
+            //   Immediate      --RS2--  FUN   -RD3-   OP-11
+            //   0123456789012           8901          78901
+                "0000000000000"+reg[11]+"1111"+reg[2]+"00010",  // 7 set r2 -= R11
+            //   Immediate      -RS2-   FUN   -RD3-   OP-11
+            //   0123456789012          8901          78901
+                "0000000000000"+reg[2]+"0111"+reg[3]+"00010",   // 8 set R3 *= R2
+            //             Immediate           OP-00
+            //   012345678901234567890123456   78901
+                "101000000000000000000000000"+"00100",          // 9 Jump 5
+            //          Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"           // 10 HALT
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++)
+        {
+            Instruction inst = instructionOutput.get(i);
+            String out = inst.toInstruction();
+            output.add(out);
+        }
+
+        Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+    }
+
+    private String arrayToString(String[] input){
+        String retval = "[";
+        for(int i = 0; i<input.length-1; i++){
+            retval += input[i] + ", ";
+        }
+
+        retval += input[input.length-1] + "]";
+
+        return retval;
     }
 }
