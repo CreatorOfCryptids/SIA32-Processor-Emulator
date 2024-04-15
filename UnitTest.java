@@ -4,12 +4,11 @@
  * @author Danny Peck (dpeck@albany.edu)
  */
 
-import Compiler.*;
 import Processor.*;
+import Compiler.*;
+import Compiler.Compilerer;
 import java.util.LinkedList;
 import org.junit.*;
-
-
 
 public class UnitTest {
     
@@ -1608,8 +1607,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -1651,8 +1649,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -1740,8 +1737,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -1845,8 +1841,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -1908,8 +1903,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -1956,8 +1950,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -2009,8 +2002,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -2080,8 +2072,7 @@ public class UnitTest {
         ass = new Assembler(lex.lex());
 
         instructionOutput = ass.assemble();
-        for(int i=0; i<instructionOutput.size(); i++)
-        {
+        for(int i=0; i<instructionOutput.size(); i++){
             Instruction inst = instructionOutput.get(i);
             String out = inst.toInstruction();
             output.add(out);
@@ -2149,6 +2140,50 @@ public class UnitTest {
         }
 
         Assert.assertEquals(arrayToString(expectedOutput), output.toString());
+    }
+
+    @Test
+    public void Compiler() throws Exception {
+        String fileName = "./TestCompile.sia32";
+        Compilerer com = new Compilerer(fileName);
+
+        String[] expectedOut = new String[]{
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1010000000000000000000"+reg[1]+"00001",        // 1 set R1 = 5
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "1000000000000000000000"+reg[11]+"00001",       // 2 set R11 = 1
+            //          Immediate                OP-01
+            //   0123456789012345678901          78901
+                "0100000000000000000000"+reg[12]+"00001",       // 3 set R12 = 2
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[1]+reg[11]+"1111"+reg[2]+"00011",// 4 set R2 = R1 - R11
+            //   Immediate -RS1- -RS2-  FUN   -RD3-  OP-11
+            //   01234567               8901         78901
+                "00000000"+reg[1]+reg[2]+"0111"+reg[3]+"00011", // 5 set R3 = R1 * R2
+            //     Immediate    -RS1-   FUN   --RD3--  OP-10
+            //   0123456789012          8901           78901
+                "1100000000000"+reg[2]+"0010"+reg[12]+"00110",  // 6 if R2 < R12 ? pc + 4 : pc
+            //   Immediate      --RS2--  FUN   -RD3-   OP-11
+            //   0123456789012           8901          78901
+                "0000000000000"+reg[11]+"1111"+reg[2]+"00010",  // 7 set r2 -= R11
+            //   Immediate      -RS2-   FUN   -RD3-   OP-11
+            //   0123456789012          8901          78901
+                "0000000000000"+reg[2]+"0111"+reg[3]+"00010",   // 8 set R3 *= R2
+            //             Immediate           OP-00
+            //   012345678901234567890123456   78901
+                "101000000000000000000000000"+"00100",          // 9 Jump 5
+            //          Immediate            OP-00
+            //   012345678901234567890123456   78901
+                "000000000000000000000000000"+"00000"           // 10 HALT
+        };
+        String[] output = com.compile();
+
+        for(int i=0; i<output.length; i++){
+            Assert.assertEquals(expectedOut[i], output[i]);
+        }
     }
 
     private String arrayToString(String[] input){
