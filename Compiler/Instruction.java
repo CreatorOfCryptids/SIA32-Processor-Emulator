@@ -53,7 +53,7 @@ public abstract class Instruction {
         "0000", // Eq
         "0001", // Ne
         "0010", // LT
-        "0100", // GE
+        "0011", // GE
         "0100", // GT
         "0101"  // LE
     };
