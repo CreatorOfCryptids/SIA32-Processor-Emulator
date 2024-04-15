@@ -2,7 +2,7 @@ package Compiler;
 
 public class TwoReg extends OneReg{
 
-    protected static final int IMM_SIZE = 10;
+    protected static final int IMM_SIZE = 13;
 
     protected int rs2;
 
@@ -29,6 +29,6 @@ public class TwoReg extends OneReg{
     }
 
     public String toInstruction() {
-        return immToString(imm, IMM_SIZE) + regMap[rs2] + func + regMap[rd] + opToString[op.ordinal()] + "10";
+        return immToString(imm, IMM_SIZE) + regMap[rs2] + funcToString[func.ordinal()] + regMap[rd] + opToString[op.ordinal()] + "10";
     }
 }
