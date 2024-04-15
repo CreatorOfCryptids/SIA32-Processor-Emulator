@@ -12,7 +12,7 @@ public abstract class Instruction {
         POP
     }
 
-    public final String[] opToString = new String[]{
+    public static final String[] opToString = new String[]{
         "000", // Math
         "001", // Branch
         "010", // Call
@@ -40,7 +40,7 @@ public abstract class Instruction {
         LE
     }
 
-    public final String[] funcToString = new String[]{
+    public static final String[] funcToString = new String[]{
         "1000", // AND
         "1001", // OR
         "1010", // XOR
