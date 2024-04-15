@@ -86,7 +86,7 @@ public abstract class Instruction {
 
         String retVal = "";
 
-        for(int i=immSize-1; i>=0; i++){
+        for(int i=immSize-1; i>=0; i--){
             /**
              * Conversion decimal -> binary can be done by finding dec % 2 (1 or 0) and storing 
              * that as the least significant digit. Then divide the number and repeat
