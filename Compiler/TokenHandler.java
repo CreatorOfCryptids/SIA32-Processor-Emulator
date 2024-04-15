@@ -84,6 +84,18 @@ public class TokenHandler {
     }
 
     /**
+     * Removes and returns the next token.
+     * 
+     * @return An Optional with the top token in the list.
+     */
+    public Optional<Token> swallow(){
+        if (tokens.size() > 0)
+            return Optional.of(tokens.pop());
+        else 
+            return Optional.empty();
+    }
+
+    /**
      * Returns a string containing position information to allow for easier debuging for future users of this compiler :)
      * 
      * @return A string containing the line and index of the last processed token.
