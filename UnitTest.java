@@ -1558,5 +1558,47 @@ public class UnitTest {
     @Test
     public void Assembler() throws Exception {
 
+        String[] input, expectedOutput;
+        Lexer lex;
+        Assembler ass;
+        LinkedList<Instruction> instructionOutput;
+        LinkedList<String> output = new LinkedList<String>();
+
+        output.clear();
+        input = new String[]{
+            "Copy r1 5",
+            "Math Add R2 R1 R1",
+            "Math add R2 R2",
+            "Math add R3 R2 R1",
+            "hault"
+        };
+        
+        expectedOutput = new String[]{
+            //        Immediate         -RD3-   OP-01
+            // 0123456789012345678901   23456   78901
+              "1010000000000000000000"+"10000"+"00001",           // MATH DestOnly 5, r1
+            // Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+            // 01234567   89012   34567   8901   23456   78901
+              "00000000"+"10000"+"10000"+"1110"+"01000"+"00011",  // MATH ADD R1 R1 R2
+            //   Immediate     -RS2-   FUN    -RD3-   OP-10
+            // 0123456789012   34567   8901   23456   78901
+              "0000000000000"+"01000"+"1110"+"01000"+"00010",     // MATH ADD R2 R2
+            // Immediate  -RS1-   -RS2-   FUN    -RD3-   OP-11
+            // 01234567   89012   34567   8901   23456   78901
+              "00000000"+"10000"+"01000"+"1110"+"11000"+"00011",  // MATH ADD R2 R1 R3
+            //          Immediate            OP-00
+            // 012345678901234567890123456   78901
+              "000000000000000000000000000"+"00000",              // HALT
+        };
+
+        lex = new Lexer(input);
+        ass = new Assembler(lex.lex());
+
+        instructionOutput = ass.assemble();
+        for(int i=0; i<instructionOutput.size(); i++){
+            output.add(instructionOutput.get(i).toInstruction());
+        }
+
+        Assert.assertEquals(expectedOutput.toString(), output.toString());
     }
 }
