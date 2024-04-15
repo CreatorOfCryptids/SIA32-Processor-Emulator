@@ -25,7 +25,8 @@ public class Lexer {
         keyWordMap.put("HAULT", Token.Type.HAULT);
         keyWordMap.put("COPY", Token.Type.COPY);
         keyWordMap.put("JUMP", Token.Type.JUMP);
-        keyWordMap.put("CALL", Token.Type.PUSH);
+        keyWordMap.put("CALL", Token.Type.CALL);
+        keyWordMap.put("PUSH", Token.Type.PUSH);
         keyWordMap.put("POP", Token.Type.POP);
         keyWordMap.put("LOAD", Token.Type.LOAD);
         keyWordMap.put("STORE", Token.Type.STORE);
