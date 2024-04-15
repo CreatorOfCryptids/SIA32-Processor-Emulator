@@ -18,7 +18,7 @@ public class InputHandler {
         this.fileData = file;
         this.inLineIndex = 0;
         this.lineCount = 0;
-        this.currentLine = fileData[lineCount++].split(" ");
+        nextLine();
     }
 
     /**
@@ -48,15 +48,25 @@ public class InputHandler {
     }
 
     /**
-     * Returns the next word in the current line and increments to the next word. 
+     * Returns the next word in the current line if it isn't blank, and increments to the next word. 
      * 
-     * @return An Optional containing the next word in the current line.
+     * @return An Optional containing the next word in the current line, or empty if the line has ended..
      */
     public Optional<String> getWord(){
-        if(inLineIndex < currentLine.length && currentLine[inLineIndex].length() != 0)
-            return Optional.of(currentLine[inLineIndex++]);
-        else
+        // Check that we won't go out of bounds
+        if (inLineIndex < currentLine.length){
+            // If it's not an empty string return it.
+            if (currentLine[inLineIndex].length() != 0)
+                return Optional.of(currentLine[inLineIndex++]);
+            // Otherwize call recursivly until either the end of the line, or a valid retval.
+            else{
+                inLineIndex++;
+                return getWord();
+            }        
+        }
+        else{
             return Optional.empty();
+        }
     }
 
     /**
@@ -66,8 +76,14 @@ public class InputHandler {
      */
     public boolean nextLine(){
         if (lineCount < fileData.length){
+
             currentLine = fileData[lineCount++].split(" ");
             inLineIndex = 0;
+
+            // Remove any empty entries.
+            while(currentLine[inLineIndex].length() == 0 && ++inLineIndex < currentLine.length);
+                //inLineIndex++;
+
             return true;
         }
         else 
@@ -81,7 +97,7 @@ public class InputHandler {
      */
     public boolean moreWords(){
         // Make sure to still return false when spit returns {""} on an empty line.
-        return (inLineIndex<currentLine.length && currentLine[inLineIndex].length() != 0);
+        return (inLineIndex<currentLine.length);
     }
 
     /**

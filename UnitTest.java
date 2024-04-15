@@ -1417,6 +1417,7 @@ public class UnitTest {
             "Two words",
             "A whole bunch of words??? and Symbols ? ! ? !?",
             "W0rds w1th num83rs R42069",
+            " TestingBegginningSpace  AND_DOUBLE_SPACE! ",
             "Testing a blank line next.",
             "",
             "",
@@ -1473,19 +1474,28 @@ public class UnitTest {
         Assert.assertFalse(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
 
+        //" TestingBegginningSpace  AND_DOUBLE_SPACE! ",
+        Assert.assertTrue(ih.nextLine());
+        Assert.assertTrue(ih.moreWords());
+        Assert.assertEquals("TestingBegginningSpace", ih.getWord().get());
+        Assert.assertTrue(ih.moreWords());
+        Assert.assertEquals("AND_DOUBLE_SPACE!", ih.getWord().get());
+        Assert.assertFalse(ih.moreWords());
+        Assert.assertTrue(ih.hasMoreLines());
+
         // "Testing a blank line next."
         Assert.assertTrue(ih.nextLine());
         Assert.assertTrue(ih.hasMoreLines());
 
         // ""
         Assert.assertTrue(ih.nextLine());
-        Assert.assertEquals(0, ih.getInLineIndex());
+        Assert.assertEquals(1, ih.getInLineIndex());
         Assert.assertFalse(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
 
         // ""
         Assert.assertTrue(ih.nextLine());
-        Assert.assertEquals(0, ih.getInLineIndex());
+        Assert.assertEquals(1, ih.getInLineIndex());
         Assert.assertFalse(ih.moreWords());
         Assert.assertTrue(ih.hasMoreLines());
 
