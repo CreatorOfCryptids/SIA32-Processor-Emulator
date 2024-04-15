@@ -78,7 +78,7 @@ public class Lexer {
                         tokenList.add(new Token(Token.Type.REGISTER, registerIndex));
                     }
                     catch (NumberFormatException e){
-                        lexException("Unexpected register index \"" + currentWord.substring(1) + "\"");
+                        throw new Exception("LEX ERROR: Unexpected register index \"" + currentWord.substring(1) + "\" at line: " + ih.getLineCount() + " index: " + ih.getInLineIndex() + '.');
                     }
                 }
                 // Check if it's a number.
@@ -89,7 +89,7 @@ public class Lexer {
                         tokenList.add(new Token(Token.Type.IMMEDIATE, number));
                     }
                     catch (NumberFormatException e){
-                        lexException("Unexpected register index \"" + currentWord.substring(1) + "\"");
+                        throw new Exception("LEX ERROR: Unexpected register index \"" + currentWord.substring(1) + "\" at line: " + ih.getLineCount() + " index: " + ih.getInLineIndex() + '.');
                     }
                 }
                 // Check if it's a comment
@@ -97,22 +97,12 @@ public class Lexer {
                     break;
                 }
                 else{
-                    lexException("Unexpected phrase: \"" + currentWord +"\"");
+                    throw new Exception("LEX ERROR: Unexpected phrase: \"" + currentWord +"\" at line: " + ih.getLineCount() + " index: " + ih.getInLineIndex() + '.');
                 }
             }
             tokenList.add(new Token(Token.Type.NEW_LINE));
         } while(ih.nextLine());
 
         return tokenList;
-    }
-
-    /**
-     * Throws a formatted exception specifying where the error occured in the passed input.
-     * 
-     * @param message Useful debugging information.
-     * @throws Exception
-     */
-    private void lexException(String message) throws Exception{
-        throw new Exception("LEX ERROR: " + message + " at line: " + ih.getLineCount() + " index: " + ih.getInLineIndex() + '.');
     }
 }
