@@ -62,9 +62,13 @@ public class TokenHandler {
     Optional<Token> matchAndRemove(Token.Type type){
         if (tokens.size() > 0 && tokens.get(0).getType() == type){
             // move lineNumber and index along for better debugging.
-            if(tokens.get(0).getType() == Token.Type.NEW_LINE)
+            if(tokens.get(0).getType() == Token.Type.NEW_LINE){
                 lineNumber++;
-            index++;
+                index = 0;
+            }
+            else
+                index++;
+            
             return Optional.of(tokens.pop());
         }
         else{
@@ -89,8 +93,11 @@ public class TokenHandler {
      * @return An Optional with the top token in the list.
      */
     public Optional<Token> swallow(){
-        if (tokens.size() > 0)
+        if (tokens.size() > 0){
+            index++;
             return Optional.of(tokens.pop());
+        }
+            
         else 
             return Optional.empty();
     }
