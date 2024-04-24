@@ -76,6 +76,42 @@ public class Processor {
     }
 
     /**
+     * Instruction Constructor. Inserts the passed instruction set to MainMemory, as well as initializing the processor.
+     * 
+     * @param code A String[] with the SIA32 assembly code in '0's and '1's. 
+     * @throws Exception
+     */
+    public Processor(String[] code) throws Exception{
+
+        MainMemory.load(code);
+
+        PC = new Word();
+        SP = new Word();    SP.set(1024);
+        CI = new Word();
+        
+        haulted = new Bit();
+
+        registers = new Word[REGISTER_COUNT];
+        for(int i = 0; i< REGISTER_COUNT; i++)
+            registers[i] = new Word();
+
+        imm = new Word();
+        rs1 = new Word();
+        rs2 = new Word();
+        rd = new Word();
+
+        alu = new ALU();
+
+        function = new Bit[4];
+        for(int i = 0; i<function.length; i++){
+            function[i] = new Bit();
+        }
+
+        exitCode =  new Word();
+        instructionCount = 0;
+    }
+
+    /**
      * Loops thru each instruction until hault is called.
      * @throws Exception
      */
@@ -493,7 +529,7 @@ public class Processor {
                 break;
 
             case POPI0:     // INTERRUPT: Push pc; pc <- intvec[imm]
-                // TODO: Later
+                // Beond the scope of this assignment.
                 break;
             case POPI1:     // POP: RD <- mem[sp++]
                 registers[getRegisterIndex(RD_START)].copy(pop());
