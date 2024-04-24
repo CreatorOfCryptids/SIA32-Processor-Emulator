@@ -1010,8 +1010,6 @@ public class UnitTest {
     @Test
     public void CPU_2() throws Exception{
 
-        
-
         Processor process = new Processor();
         String[] instructions;
 
@@ -2186,6 +2184,12 @@ public class UnitTest {
         }
     }
 
+    /**
+     * TESTING HELPER!!! Makes testing with toString() easier.
+     * 
+     * @param input
+     * @return
+     */
     private String arrayToString(String[] input){
         String retval = "[";
         for(int i = 0; i<input.length-1; i++){
