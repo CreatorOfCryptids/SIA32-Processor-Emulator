@@ -44,6 +44,15 @@ public class Compilerer {
     }
 
     /**
+     * Constructor. 
+     * 
+     * @param input The source code of the SIA32 assembly code.
+     */
+    public Compilerer(String[] input){
+        this.input = input;
+    }
+
+    /**
      * Compiles the input data into SIA32 binary instructions.
      * 
      * @return An array of String containing the compiled SIA32 bits in '0's and '1's
