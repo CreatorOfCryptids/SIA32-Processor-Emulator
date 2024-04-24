@@ -8,6 +8,8 @@ public class Processor {
     private final int RS2_START = 14;   // RS2's highest bit index.
     private final int RD_START = 5;     // RD's highest bit index.
 
+    public static int clockCycles = 0;
+
     private Word PC;            // Program Counter.
     private Word SP;            // Stack Pointer.
     private Word CI;            // Current Instruction.

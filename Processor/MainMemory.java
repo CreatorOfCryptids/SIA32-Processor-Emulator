@@ -13,6 +13,8 @@ public class MainMemory {
      */
     public static Word read(Word address) throws Exception{
 
+        Processor.clockCycles += 300;
+
         int adrs = (int) address.getUnsigned();
 
         if (adrs >= MEM_SIZE || adrs < 0){
@@ -36,6 +38,8 @@ public class MainMemory {
     public static void write(Word address, Word value) throws Exception{
 
         int adrs = (int) address.getUnsigned();
+
+        Processor.clockCycles += 300;
         
         if (adrs >= MEM_SIZE || adrs < 0){
             throw new Exception("Memory address "+adrs+" out of bounds");

@@ -41,7 +41,6 @@ public class ALU {
         third = operation[2];
         fourth = operation[3];
 
-
         if(first.and(second.not()).and(third.not()).and(fourth.not()).getValue())   // 1000
             return OP.AND;
         else if (first.and(second.not()).and(third.not()).and(fourth).getValue())   // 1001
@@ -73,6 +72,8 @@ public class ALU {
      */
     public void doOperation(Bit[] operation) throws Exception{
         int shift;
+
+        Processor.clockCycles +=2;
 
         switch(interpretOperation(operation)){
             case AND:
@@ -114,10 +115,12 @@ public class ALU {
                 break;
 
             case SUBTRACT:
+                
                 subtract();
                 break;
 
             case MULTIPLY:
+                Processor.clockCycles += 8;
                 multiply();
                 break;
             
