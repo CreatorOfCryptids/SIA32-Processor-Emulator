@@ -90,7 +90,7 @@ public class ClockCycleTest {
             "Copy R31 50",
             "Hault"
         };        
-        runTest(sum20IntLinkedList, "IntArray");
+        runTest(sum20IntLinkedList, "IntList");
 
         String[] sum20IntReverse = new String[]{
             "Copy R7 700",
@@ -146,7 +146,7 @@ public class ClockCycleTest {
             "Jump 44",                  // 49 continue;
             "Hault"                     // 50 Hault
         };
-        runTest(sum20IntReverse, "IntArray");
+        runTest(sum20IntReverse, "ReverseIntArray");
     }
 
     /**
