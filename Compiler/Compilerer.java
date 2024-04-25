@@ -67,7 +67,7 @@ public class Compilerer {
 
         String[] retval = new String[instructionList.size()];
 
-        for(int i = 0; i< input.length; i++)
+        for(int i = 0; i< retval.length; i++)
             retval[i] = instructionList.get(i).toInstruction();
 
         return retval;
