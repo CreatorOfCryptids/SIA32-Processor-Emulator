@@ -26,7 +26,7 @@ public class ClockCycleTest {
             System.out.println(randoms[i]);
         }
 
-        System.out.println("Generated sum: " + sum + "\n");
+        System.out.println("Generated sum: " + sum);
 
         String[] sum20IntArray = new String[]{
 
@@ -87,7 +87,94 @@ public class ClockCycleTest {
         runTest(sum20IntArray, "IntArray");
         
         String[] sum20IntLinkedList = new String[]{
-            "Copy R31 50",
+
+            "Copy R7 700",              // List start.
+            "Copy R1 1",                // increment.
+            "Copy R8 705",              // Next pointer.
+            "Copy R2 5",
+            // Store in memory.
+            "Store R7 " + randoms[0],   
+            "Store R7 R8 R1",
+            "Math Add R7 R2",
+            "Math Add R8 R2",
+            "Store R7 " + randoms[1],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[2],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[3],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[4],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[5],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[6],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[7],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[8],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[9],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[10],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[11],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[12],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[13],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[14],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[15],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[16],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[17],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[18],
+            "Store R7 R8 R1",
+            "Math ADD R7 R2",
+            "MATH ADD R8 R2",
+            "Store R7 " + randoms[19],
+            "Store R7 R0 R1",
+
+            // Sum
+            "",
+
             "Hault"
         };        
         runTest(sum20IntLinkedList, "IntList");
@@ -158,7 +245,7 @@ public class ClockCycleTest {
      * @throws Exception
      */
     private static void runTest(String[] input, String testName) throws Exception{
-        System.out.println("Testing "+ testName+"...\n");
+        System.out.println("\nTesting "+ testName+"...\n");
 
         Compilerer comp = new Compilerer(input);
         Processor p = new Processor(comp.compile());
@@ -172,7 +259,7 @@ public class ClockCycleTest {
         else
             System.out.println("Failure :(");
 
-        System.out.println("Clock cycles: " + Processor.clockCycles + '\n');
+        System.out.println("Clock cycles: " + Processor.clockCycles);
         Processor.clockCycles = 0;
     }
 }
