@@ -28,7 +28,7 @@ public class ClockCycleTest {
 
         System.out.println("Generated sum: " + sum);
 
-        String[] sum20IntArray = new String[]{
+        String[] sum20IntArray = new String[]{  // 18638 Init
 
             "Copy R7 700",              // 1
             "Copy R1 1",
@@ -86,7 +86,7 @@ public class ClockCycleTest {
 
         runTest(sum20IntArray, "IntArray");
         
-        String[] sum20IntLinkedList = new String[]{
+        String[] sum20IntLinkedList = new String[]{ // 37016 Init
 
             "Copy R7 700",              // 1 List start.
             "Copy R1 1",                // 2 increment 1.
@@ -184,7 +184,7 @@ public class ClockCycleTest {
         };        
         runTest(sum20IntLinkedList, "IntList");
 
-        String[] sum20IntReverse = new String[]{
+        String[] sum20IntReverse = new String[]{    // 18638 init
             "Copy R7 700",
             "Copy R1 1",
             // Store in memory.
