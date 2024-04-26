@@ -30,47 +30,47 @@ public class ClockCycleTest {
 
         String[] sum20IntArray = new String[]{
 
-            "Copy R7 700",
+            "Copy R7 700",              // 1
             "Copy R1 1",
             // Store in memory.
             "Store R7 " + randoms[0],
             "Math ADD R7 R1",
-            "Store R7 " + randoms[1],
+            "Store R7 " + randoms[1],   // 5
             "Math ADD R7 R1",
             "Store R7 " + randoms[2],
             "Math ADD R7 R1",
             "Store R7 " + randoms[3],
-            "Math ADD R7 R1",
+            "Math ADD R7 R1",           // 10
             "Store R7 " + randoms[4],
             "Math ADD R7 R1",
             "Store R7 " + randoms[5],
             "Math ADD R7 R1",
-            "Store R7 " + randoms[6],
+            "Store R7 " + randoms[6],   // 15
             "Math ADD R7 R1",
             "Store R7 " + randoms[7],
             "Math ADD R7 R1",
             "Store R7 " + randoms[8],
-            "Math ADD R7 R1",
+            "Math ADD R7 R1",           // 20
             "Store R7 " + randoms[9],
             "Math ADD R7 R1",
             "Store R7 " + randoms[10],
             "Math ADD R7 R1",
-            "Store R7 " + randoms[11],
+            "Store R7 " + randoms[11],  // 25
             "Math ADD R7 R1",
             "Store R7 " + randoms[12],
             "Math ADD R7 R1",
             "Store R7 " + randoms[13],
-            "Math ADD R7 R1",
+            "Math ADD R7 R1",           // 30
             "Store R7 " + randoms[14],
             "Math ADD R7 R1",
             "Store R7 " + randoms[15],
             "Math ADD R7 R1",
-            "Store R7 " + randoms[16],
+            "Store R7 " + randoms[16],  //35
             "Math ADD R7 R1",
             "Store R7 " + randoms[17],
             "Math ADD R7 R1",
             "Store R7 " + randoms[18],
-            "Math ADD R7 R1",
+            "Math ADD R7 R1",           // 40
             "Store R7 " + randoms[19],  // 41
             // Loop.
             "Copy R7 700",              // 42 Reset the start address.
@@ -88,94 +88,99 @@ public class ClockCycleTest {
         
         String[] sum20IntLinkedList = new String[]{
 
-            "Copy R7 700",              // List start.
-            "Copy R1 1",                // increment.
-            "Copy R8 705",              // Next pointer.
-            "Copy R2 5",
+            "Copy R7 700",              // 1 List start.
+            "Copy R1 1",                // 2 increment 1.
+            "Copy R8 705",              // 3 Next pointer.
+            "Copy R2 5",                // 4 increment 5.
             // Store in memory.
-            "Store R7 " + randoms[0],   
+            "Store R7 " + randoms[0],   // 5
             "Store R7 R8 R1",
             "Math Add R7 R2",
             "Math Add R8 R2",
             "Store R7 " + randoms[1],
-            "Store R7 R8 R1",
+            "Store R7 R8 R1",           // 10
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
             "Store R7 " + randoms[2],
             "Store R7 R8 R1",
-            "Math ADD R7 R2",
+            "Math ADD R7 R2",           // 15
             "MATH ADD R8 R2",
             "Store R7 " + randoms[3],
             "Store R7 R8 R1",
             "Math ADD R7 R2",
-            "MATH ADD R8 R2",
+            "MATH ADD R8 R2",           // 20
             "Store R7 " + randoms[4],
             "Store R7 R8 R1",
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
-            "Store R7 " + randoms[5],
+            "Store R7 " + randoms[5],   // 25
             "Store R7 R8 R1",
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
             "Store R7 " + randoms[6],
-            "Store R7 R8 R1",
+            "Store R7 R8 R1",           // 30
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
             "Store R7 " + randoms[7],
             "Store R7 R8 R1",
-            "Math ADD R7 R2",
+            "Math ADD R7 R2",           // 35
             "MATH ADD R8 R2",
             "Store R7 " + randoms[8],
             "Store R7 R8 R1",
             "Math ADD R7 R2",
-            "MATH ADD R8 R2",
+            "MATH ADD R8 R2",           //40
             "Store R7 " + randoms[9],
             "Store R7 R8 R1",
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
-            "Store R7 " + randoms[10],
+            "Store R7 " + randoms[10],  // 45
             "Store R7 R8 R1",
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
             "Store R7 " + randoms[11],
-            "Store R7 R8 R1",
+            "Store R7 R8 R1",           // 50
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
             "Store R7 " + randoms[12],
             "Store R7 R8 R1",
-            "Math ADD R7 R2",
+            "Math ADD R7 R2",           // 55
             "MATH ADD R8 R2",
             "Store R7 " + randoms[13],
             "Store R7 R8 R1",
             "Math ADD R7 R2",
-            "MATH ADD R8 R2",
+            "MATH ADD R8 R2",           // 60
             "Store R7 " + randoms[14],
             "Store R7 R8 R1",
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
-            "Store R7 " + randoms[15],
+            "Store R7 " + randoms[15],  // 65
             "Store R7 R8 R1",
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
-            "Store R7 " + randoms[16],
-            "Store R7 R8 R1",
+            "Store R7 " + randoms[16],  // 69
+            "Store R7 R8 R1",           // 70
             "Math ADD R7 R2",
             "MATH ADD R8 R2",
             "Store R7 " + randoms[17],
             "Store R7 R8 R1",
-            "Math ADD R7 R2",
+            "Math ADD R7 R2",           // 75
             "MATH ADD R8 R2",
             "Store R7 " + randoms[18],
             "Store R7 R8 R1",
             "Math ADD R7 R2",
-            "MATH ADD R8 R2",
+            "MATH ADD R8 R2",           // 80
             "Store R7 " + randoms[19],
             "Store R7 R0 R1",
 
-            // Sum
-            "",
+            // Read and sum.
+            "Copy R7 700",          // 83 Start of List
+            "Branch EQ R7 R0 4",    // 84 Loop untill null pointer.
+            "Load R30 R7",          // 85 Get Value
+            "Math Add R31 R30",     // 86 Add to sum
+            "Load R7 R7 1",         // 87 Load next pointer
+            "Jump 83",              // 88 Jump to the begginning of the loop.
 
-            "Hault"
+            "Hault"                 // 89
         };        
         runTest(sum20IntLinkedList, "IntList");
 
