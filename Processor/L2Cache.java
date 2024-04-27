@@ -42,7 +42,7 @@ public class L2Cache {
         return read(addressWord);
     }
 
-    public static void Write(Word addressWord, Word value) throws Exception{
+    public static void write(Word addressWord, Word value) throws Exception{
         // Cancel out memory cost so that it only costs 50 to write.
         Processor.clockCycles -=250; 
         MainMemory.write(addressWord, value);
