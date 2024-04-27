@@ -7,6 +7,8 @@ public class MainMemory {
     /**
      * Reads the memory at the given address. 
      * 
+     * Costs 300 clock cycles per access.
+     * 
      * @param address The address of the desired memory.
      * @return The data in the memory address.
      * @throws Exception
@@ -30,6 +32,8 @@ public class MainMemory {
 
     /**
      * Writes the given word to memory.
+     * 
+     * Costs 300 clock cycles per access.
      * 
      * @param address The address of memory to be writen to
      * @param value The new data for the address.
