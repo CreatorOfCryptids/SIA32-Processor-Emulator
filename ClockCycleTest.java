@@ -1,15 +1,15 @@
 import Compiler.*;
-//import Processor.*;
+import Processor.*;
 import java.util.Random;
 
 public class ClockCycleTest {
 
-    private static int sum = 0;
+    private static int sum = 0;     // Not the best OOP practice to make static, but whatev. It works, and I don't have to build off of this.
 
     /**
-     * Runs three tests to see the difference in clock cycles.
+     * Runs three assebly programs to test the difference in clock cycles.
      * 
-     * @param args
+     * @param args N/A
      * @throws Exception
      */
     public static void main(String args[]) throws Exception{
@@ -28,7 +28,7 @@ public class ClockCycleTest {
 
         System.out.println("Generated sum: " + sum);
 
-        String[] sum20IntArray = new String[]{  // 18638 Init
+        String[] sum20IntArray = new String[]{      // 18638 Cycles to Init
 
             "Copy R7 700",              // 1
             "Copy R1 1",
@@ -83,10 +83,9 @@ public class ClockCycleTest {
             "Jump 44",                  // 49 continue;
             "Hault"                     // 50 Hault
         };
-
         runTest(sum20IntArray, "IntArray");
         
-        String[] sum20IntLinkedList = new String[]{ // 37016 Init
+        String[] sum20IntLinkedList = new String[]{ // 37016 Cycles to Init
 
             "Copy R7 700",              // 1 List start.
             "Copy R1 1",                // 2 increment 1.
@@ -184,7 +183,7 @@ public class ClockCycleTest {
         };        
         runTest(sum20IntLinkedList, "IntList");
 
-        String[] sum20IntReverse = new String[]{    // 18638 init
+        String[] sum20IntReverse = new String[]{    // 18638 Cycles to init
             "Copy R7 700",
             "Copy R1 1",
             // Store in memory.
@@ -246,12 +245,13 @@ public class ClockCycleTest {
      * 
      * @param input The program file.
      * @param testName The title of the program.
-     * @param sum 
      * @throws Exception
      */
     private static void runTest(String[] input, String testName) throws Exception{
+
         System.out.println("\nTesting "+ testName+"...\n");
 
+        // Compile and run program
         Compilerer comp = new Compilerer(input);
         Processor p = new Processor(comp.compile());
         p.run();
