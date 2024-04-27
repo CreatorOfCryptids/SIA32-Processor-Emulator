@@ -13,7 +13,7 @@ public class L2Cache {
 
         int index = -1;
         for(int i = 0; i<GROUP_COUNT; i++){
-            if (address <= groupAddresses[i] && address < groupAddresses[i] + 8){
+            if (address >= groupAddresses[i] && address < groupAddresses[i] + 8){
                 index = i;
                 break;
             }
@@ -22,12 +22,13 @@ public class L2Cache {
         // The desired Word is not in L2.
         if (index == -1){
             Processor.clockCycles += 350;   // Fetching from Memory always costs 350.
-            int nextGroup = nextCacheGroup++ % GROUP_COUNT; // Cycle thru each cache.
-            groupAddresses[nextGroup] = address;
+            index = nextCacheGroup++ % GROUP_COUNT; // Cycle thru each cache.
+            groupAddresses[index] = address;
 
             for(int i = 0; i<GROUP_SIZE; i++){
                 Processor.clockCycles -= 300;   // Cancel out read cost of MainMemory.
-                cache[nextGroup][i] = MainMemory.read(new Word(address + 1));
+                // TODO: What if read to end of memory???
+                cache[index][i] = MainMemory.read(new Word(address + i));
             }
         }
         
@@ -52,7 +53,7 @@ public class L2Cache {
 
         int index = -1;
         for(int i = 0; i<GROUP_COUNT; i++){
-            if (address <= groupAddresses[i] && address < groupAddresses[i] + 8){
+            if (address >= groupAddresses[i] && address < groupAddresses[i] + 8){
                 index = i;
                 break;
             }
