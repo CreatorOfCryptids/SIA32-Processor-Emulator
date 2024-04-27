@@ -501,15 +501,15 @@ public class Processor {
                 break;
 
             case LOAD1:     // RD <- mem[RD + imm]
-                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
+                registers[getRegisterIndex(RD_START)].copy(L2Cache.read(alu.result));
                 break;
 
             case LOAD2:     // RD <- mem[RS2 + imm]
-                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
+                registers[getRegisterIndex(RD_START)].copy(L2Cache.read(alu.result));
                 break;
 
             case LOAD3:     // RD <- mem[RS1 +RS2]
-                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
+                registers[getRegisterIndex(RD_START)].copy(L2Cache.read(alu.result));
                 break;
 
             case MATH0:     // HALT (Do Nothing )
@@ -536,11 +536,11 @@ public class Processor {
                 break;
 
             case POPI2:     // Peek: RD <- mem[sp - (RS2 + imm)]
-                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
+                registers[getRegisterIndex(RD_START)].copy(L2Cache.read(alu.result));
                 break;
 
             case POPI3:     // PEEK RD <- mem[sp - (RS1 + RS2)]
-                registers[getRegisterIndex(RD_START)].copy(MainMemory.read(alu.result));
+                registers[getRegisterIndex(RD_START)].copy(L2Cache.read(alu.result));
                 break;
 
             case PUSH0:     // UNUSED
@@ -557,15 +557,15 @@ public class Processor {
             case STORE0:    // UNUSED
                 break;
             case STORE1:    // mem[RD] <- imm
-                MainMemory.write(rd, imm);
+                L2Cache.write(rd, imm);
                 break;
 
             case STORE2:    // mem[RD + imm] <- RS2
-                MainMemory.write(alu.result, rs2);
+                L2Cache.write(alu.result, rs2);
                 break;
 
             case STORE3:    // mem[RD + RS1] <- RS2
-                MainMemory.write(alu.result, rs2);
+                L2Cache.write(alu.result, rs2);
                 break;
 
             default:        // Something didn't work.
@@ -648,7 +648,7 @@ public class Processor {
      */
     private void push(Word data) throws Exception{
         SP.decrement();
-        MainMemory.write(SP, data);
+        L2Cache.write(SP, data);
     }
 
     /**
@@ -659,7 +659,7 @@ public class Processor {
      */
     private Word pop() throws Exception {
         // Read the current top value before we move up a level.
-        Word temp = MainMemory.read(SP);
+        Word temp = L2Cache.read(SP);
         SP.increment();
 
         return temp;
