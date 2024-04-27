@@ -20,21 +20,17 @@ public class InstructionCache {
 
         // If address is not in cache...
         if (address < startAddress || address >= startAddress + CACHE_SIZE){
-            
-            Processor.clockCycles += 350;
-
             startAddress = address;
 
             // Load new instructions into cache
             for(int i = 0; i<CACHE_SIZE; i++){
-                cache[i] = MainMemory.read(new Word(address + i));
+                cache[i] = L2Cache.readInstruction(new Word(address + i));
                 Processor.clockCycles -= 300;   // Undo the normal read cost of 300 cycles.
             }
+        }
 
-        }
-        else{
-            Processor.clockCycles += 10;
-        }
+        // L2Cache acounts for the extra costs of reading from InstructionCache, so it's always a cost of 10.
+        Processor.clockCycles += 10;    
 
         return cache[address-startAddress];
     }
