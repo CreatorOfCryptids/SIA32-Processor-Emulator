@@ -1,5 +1,6 @@
 import Compiler.*;
-import Processor.*;
+import Processor.Processor;
+
 import java.util.Random;
 
 public class ClockCycleTest {
@@ -72,7 +73,7 @@ public class ClockCycleTest {
             "Store R7 " + randoms[18],
             "Math ADD R7 R1",           // 40
             "Store R7 " + randoms[19],  // 41
-            // Loop.
+            //* Loop.
             "Copy R7 700",              // 42 Reset the start address.
             "Copy r10 20",              // 43 Store the arrayLength.
             "Copy R2 0",                // 44 Store the current array index.
@@ -81,6 +82,7 @@ public class ClockCycleTest {
             "Math Add R31 R30",         // 47 sum += temp
             "Math add R2 R1",           // 48 index++
             "Jump 44",                  // 49 continue;
+            /**/
             "Hault"                     // 50 Hault
         };
         runTest(sum20IntArray, "IntArray");
@@ -170,15 +172,14 @@ public class ClockCycleTest {
             "MATH ADD R8 R2",           // 80
             "Store R7 " + randoms[19],
             "Store R7 R0 R1",
-
-            // Read and sum.
+            //* Read and sum.
             "Copy R7 700",          // 83 Start of List
             "Branch EQ R7 R0 4",    // 84 Loop untill null pointer.
             "Load R30 R7",          // 85 Get Value
             "Math Add R31 R30",     // 86 Add to sum
             "Load R7 R7 1",         // 87 Load next pointer
             "Jump 83",              // 88 Jump to the begginning of the loop.
-
+            /**/
             "Hault"                 // 89
         };        
         runTest(sum20IntLinkedList, "IntList");
