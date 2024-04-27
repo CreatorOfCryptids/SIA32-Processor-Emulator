@@ -41,4 +41,26 @@ public class L2Cache {
         Processor.clockCycles += 20;    
         return read(addressWord);
     }
+
+    public static void Write(Word addressWord, Word value) throws Exception{
+        // Cancel out memory cost so that it only costs 50 to write.
+        Processor.clockCycles -=250; 
+        MainMemory.write(addressWord, value);
+
+        // Check if it exists in the cache.
+        int address = addressWord.getSigned();
+
+        int index = -1;
+        for(int i = 0; i<GROUP_COUNT; i++){
+            if (address <= groupAddresses[i] && address < groupAddresses[i] + 8){
+                index = i;
+                break;
+            }
+        }
+
+        // If it does exist, update it.
+        if (index != -1){
+            cache[index][address - groupAddresses[index]] = value;
+        }
+    }
 }
