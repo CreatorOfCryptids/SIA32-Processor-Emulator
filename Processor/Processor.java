@@ -131,7 +131,7 @@ public class Processor {
      * @throws Exception
      */
     private void fetch() throws Exception{
-        CI = MainMemory.read(PC);
+        CI = InstructionCache.readInstruction(PC);
         PC.increment();
     }
 
