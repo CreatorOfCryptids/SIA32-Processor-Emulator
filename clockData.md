@@ -44,3 +44,25 @@ Great success!!! :D
 Clock cycles: 16380         // 8498 init cycles.
 ```
 
+After adding L2Cache:
+```
+Generated sum: 12632
+
+Testing IntArray...
+
+Sum: 12632
+Great success!!! :D
+Clock cycles: 8450          // 3798 init cycles.
+
+Testing IntList...
+
+Sum: 12632
+Great success!!! :D
+Clock cycles: 12908         // 7236 init cycles.
+
+Testing ReverseIntArray...
+
+Sum: 12632
+Great success!!! :D
+Clock cycles: 12940         // 3798 init cycles.
+```

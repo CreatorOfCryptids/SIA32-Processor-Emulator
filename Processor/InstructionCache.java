@@ -18,6 +18,8 @@ public class InstructionCache {
     public static Word readInstruction(Word addressWord) throws Exception{
         int address = addressWord.getSigned();
 
+        Processor.clockCycles += 10;
+
         // If address is not in cache...
         if (address < startAddress || address >= startAddress + CACHE_SIZE){
             
@@ -31,9 +33,6 @@ public class InstructionCache {
 
             startAddress = tuple.address;
 
-        }
-        else{
-            Processor.clockCycles += 10;
         }
 
         return cache[address-startAddress];

@@ -11,12 +11,15 @@ public class L2Cache{
 
         int addr = address.getSigned();
 
+        Processor.clockCycles += 20;
+
         int index = searchAddresses(addr);
 
         if (index == -1){
 
-            index = nextCache++ % CACHE_COUNT;
+            Processor.clockCycles += 330;
 
+            index = nextCache++ % CACHE_COUNT;
             addresses[index] = addr;
 
             for(int i = 0; i<CACHE_SIZE && addr + i < MainMemory.MEM_SIZE; i++){
@@ -28,6 +31,9 @@ public class L2Cache{
     }
 
     public static void write(Word address, Word value) throws Exception{
+
+        Processor.clockCycles += 50;
+
         int addr = address.getSigned();
 
         int index = searchAddresses(addr);
@@ -43,9 +49,13 @@ public class L2Cache{
     public static Tuple getInstructions(Word address) throws Exception{
         int addr = address.getSigned();
 
+        Processor.clockCycles += 40;
+
         int index = searchAddresses(addr);
 
         if (index == -1){
+            Processor.clockCycles += 350;
+
             index = nextCache++ % CACHE_COUNT;
 
             addresses[index] = addr;
