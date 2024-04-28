@@ -5,9 +5,7 @@ public class MainMemory {
     private static Word[] memory = new Word[MEM_SIZE];
 
     /**
-     * Reads the memory at the given address. 
-     * 
-     * Costs 300 clock cycles per access.
+     * Reads the memory at the given address.
      * 
      * @param address The address of the desired memory.
      * @return The data in the memory address.
@@ -15,26 +13,20 @@ public class MainMemory {
      */
     public static Word read(Word address) throws Exception{
 
-        Processor.clockCycles += 300;
-
         int adrs = (int) address.getUnsigned();
 
-        if (adrs >= MEM_SIZE || adrs < 0){
+        if (adrs >= MEM_SIZE || adrs < 0)
             throw new Exception("Memory address "+adrs+" out of bounds");
-        }
         
-        if (memory[adrs] == null){
+        if (memory[adrs] == null)
             memory[adrs] = new Word();
-        }
 
         return memory[adrs];
     }
 
     /**
      * Writes the given word to memory.
-     * 
-     * Costs 300 clock cycles per access.
-     * 
+     *  
      * @param address The address of memory to be writen to
      * @param value The new data for the address.
      * @throws Exception
@@ -43,15 +35,13 @@ public class MainMemory {
 
         int adrs = (int) address.getUnsigned();
 
-        Processor.clockCycles += 300;
+        // Word[] memememory = memory; // Revealing to the debugger.
         
-        if (adrs >= MEM_SIZE || adrs < 0){
+        if (adrs >= MEM_SIZE || adrs < 0)
             throw new Exception("Memory address "+adrs+" out of bounds");
-        }
 
-        if (memory[adrs] == null){
+        if (memory[adrs] == null)
             memory[adrs] = new Word();
-        }
 
         memory[adrs].copy(value);
     }
