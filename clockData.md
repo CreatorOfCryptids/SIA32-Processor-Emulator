@@ -1,3 +1,13 @@
+Clock cycle data:
+| Test | No cache | Instruction Cache | Instruction and L2 Caches |
+| :--- | :---: | :---: | :---: |
+| Forward Array | 56000 | 16380 | 8450 |
+| Forward Array init | 18638 | 8498 | 3798 |
+| LinkedList | 79778 | 30208 | 12908 |
+| LinkedList init | 37016 | 16686 | 7236 |
+| Reverse Array | 56000 | 16380 | 12940 |
+| Reverse Array init | 18638 | 8498 | 3798 |
+
 Before Caches:
 ```
 Generated sum: 10340
