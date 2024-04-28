@@ -228,8 +228,8 @@ public class ClockCycleTest {
             "Store R7 " + randoms[19],
             // Loop.
             "Copy R7 699",              // 42 Reset the start address.
-            "Copy r10 0",              // 43 Store the arrayLength.
-            "Copy R2 20",                // 44 Store the current array index.
+            "Copy r10 0",               // 43 Store the arrayLength.
+            "Copy R2 20",               // 44 Store the current array index.
             "Branch EQ R2 R10 4",       // 45 If index > length, jump NUM Spots
             "Load R30 R7 R2",           // 46 Load temp <- mem[address + index]
             "Math Add R31 R30",         // 47 sum += temp

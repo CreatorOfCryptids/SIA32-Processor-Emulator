@@ -15,6 +15,8 @@ public class MainMemory {
 
         int adrs = (int) address.getUnsigned();
 
+        Word[] memememory = memory; // Revealing to the debugger.
+
         if (adrs >= MEM_SIZE || adrs < 0)
             throw new Exception("Memory address "+adrs+" out of bounds");
         
@@ -35,7 +37,7 @@ public class MainMemory {
 
         int adrs = (int) address.getUnsigned();
 
-        // Word[] memememory = memory; // Revealing to the debugger.
+        Word[] memememory = memory; // Revealing to the debugger.
         
         if (adrs >= MEM_SIZE || adrs < 0)
             throw new Exception("Memory address "+adrs+" out of bounds");

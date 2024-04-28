@@ -18,33 +18,30 @@ public class InstructionCache {
     public static Word readInstruction(Word addressWord) throws Exception{
         int address = addressWord.getSigned();
 
-        Word[] cachee = cache;  // So the debugger will show me the cache.
-        int startAddressssss = startAddress;
-
         // If address is not in cache...
         if (address < startAddress || address >= startAddress + CACHE_SIZE){
+            
             startAddress = address;
 
             // Load new instructions into cache
-            for(int i = 0; i<CACHE_SIZE; i++){
-                cache[i] = L2Cache.readInstruction(new Word(address + i));
-                //Processor.clockCycles -= 300;   // Undo the normal read cost of 300 cycles.
-            }
-        }
+            L2Cache.Tuple tuple = L2Cache.getInstructions(new Word(address));
 
-        // L2Cache acounts for the extra costs of reading from InstructionCache, so it's always a cost of 10.
-        Processor.clockCycles += 10;    
+            for(int i=0; i< CACHE_SIZE; i++)
+                cache[i].copy(tuple.words[i]);
+
+            startAddress = tuple.address;
+
+        }
+        else{
+            Processor.clockCycles += 10;
+        }
 
         return cache[address-startAddress];
     }
 
-    /**
-     * Clears the cache to prevent seperate processes from bleeding into eachother.
-     */
-    public static void clear() {
-        startAddress = -10;
-
-        for(int i = 0; i< CACHE_SIZE; i++)
+    public static void clear(){
+        for(int i=0; i< CACHE_SIZE; i++){
             cache[i] = new Word();
+        }
     }
 }

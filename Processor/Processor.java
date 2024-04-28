@@ -66,9 +66,6 @@ public class Processor {
 
         alu = new ALU();
 
-        InstructionCache.clear();
-        L2Cache.clear();
-
         function = new Bit[4];
         for(int i = 0; i<function.length; i++){
             function[i] = new Bit();
@@ -104,9 +101,6 @@ public class Processor {
         rd = new Word();
 
         alu = new ALU();
-
-        InstructionCache.clear();
-        L2Cache.clear();
 
         function = new Bit[4];
         for(int i = 0; i<function.length; i++){
@@ -471,7 +465,6 @@ public class Processor {
                 break;
 
             case BRANCH2:   // pc <- RS2 BOP rd ? pc + imm : pc
-                //System.out.println("Current sum: " + registers[31].getUnsigned());
                 if (performBOP(function, rs2, rd))
                     PC.copy(alu.result);
                 break;
@@ -514,12 +507,10 @@ public class Processor {
                 break;
 
             case LOAD2:     // RD <- mem[RS2 + imm]
-                //System.out.println(L2Cache.read(alu.result).getSigned());
                 registers[getRegisterIndex(RD_START)].copy(L2Cache.read(alu.result));
                 break;
 
             case LOAD3:     // RD <- mem[RS1 +RS2]
-                System.out.println(L2Cache.read(alu.result).getSigned());
                 registers[getRegisterIndex(RD_START)].copy(L2Cache.read(alu.result));
                 break;
 
