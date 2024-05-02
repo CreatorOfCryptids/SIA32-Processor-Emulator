@@ -1,4 +1,4 @@
-package Compiler;
+package compiler;
 
 public class ThreeReg extends TwoReg{
 

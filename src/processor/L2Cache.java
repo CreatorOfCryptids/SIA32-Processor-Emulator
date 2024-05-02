@@ -1,4 +1,4 @@
-package Processor;
+package processor;
 
 public class L2Cache{
     public static int CACHE_COUNT = 4;  // The amount of caches.

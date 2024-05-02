@@ -1,5 +1,4 @@
-package Compiler;
-
+package compiler;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -4,9 +4,8 @@
  * @author Danny Peck (dpeck@albany.edu)
  */
 
-import Processor.*;
-import Compiler.*;
-import Compiler.Compilerer;
+import processor.*;
+import compiler.*;
 import java.util.LinkedList;
 import org.junit.*;
 

@@ -1,5 +1,5 @@
-import Compiler.Compilerer;
-import Processor.Processor;
+import compiler.Compilerer;
+import processor.Processor;
 import java.util.Random;
 
 public class ClockCycleTest {

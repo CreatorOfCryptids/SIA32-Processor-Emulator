@@ -1,9 +1,9 @@
 *
-!Compiler
-!Processor
-!*.java
+!src/
+!src/*.java
+!src/compiler
+!src/compiler/*.java
+!src/processor
+!src/processor/*.java
 !.gitignore
-!makefile
-!TestCompile.out
-!TestCompile.sia32
-!*.md
+!README.md

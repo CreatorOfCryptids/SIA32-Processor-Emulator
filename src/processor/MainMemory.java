@@ -1,4 +1,4 @@
-package Processor;
+package processor;
 
 public class MainMemory {
     public static final int MEM_SIZE = 1024;

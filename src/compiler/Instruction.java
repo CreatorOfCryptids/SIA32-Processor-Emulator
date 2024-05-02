@@ -1,4 +1,4 @@
-package Compiler;
+package compiler;
 
 public abstract class Instruction {
 

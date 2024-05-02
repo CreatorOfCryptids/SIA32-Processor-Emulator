@@ -1,4 +1,4 @@
-package Compiler;
+package compiler;
 
 import java.util.LinkedList;
 import java.util.HashMap;
