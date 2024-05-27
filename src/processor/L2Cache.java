@@ -132,11 +132,15 @@ public class L2Cache{
      * Clears the cache for use by another process.
      */
     public static void clear(){
+
         for(int i = 0; i<CACHE_COUNT; i++){
+            // Empty caches
             for(int j=0; j<CACHE_SIZE; j++){
                 cache[i][j] = new Word();
             }
-            addresses[i] = -9;
+
+            // Empty addresses.
+            addresses[i] = -1 - CACHE_SIZE;
         }
     }
 }

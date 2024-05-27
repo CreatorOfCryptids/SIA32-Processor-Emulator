@@ -41,6 +41,9 @@ public class InstructionCache {
      * Clears the cache for use by another process.
      */
     public static void clear(){
+        
+        startAddress = -2 - CACHE_SIZE;
+
         for(int i=0; i< CACHE_SIZE; i++){
             cache[i] = new Word();
         }
