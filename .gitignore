@@ -1,9 +1,7 @@
 *
-!src/
 !src/*.java
-!src/compiler
 !src/compiler/*.java
-!src/processor
 !src/processor/*.java
 !.gitignore
 !README.md
+!*.sia32
