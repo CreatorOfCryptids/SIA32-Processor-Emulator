@@ -56,7 +56,7 @@ public class L2Cache{
 
         // If it exists, update it.
         if (index != -1){
-            cache[index][addr - addresses[index]] = value;
+            cache[index][addr - addresses[index]].copy(value);
         }
 
         MainMemory.write(address, value);
